@@ -15,7 +15,6 @@ addons:
   apt:
     sources:
       - sourceline: 'ppa:openmw/openmw'
-      - sourceline: 'ppa:rakhimov/boost'
       - ubuntu-toolchain-r-test
     packages: [
       # Dev
