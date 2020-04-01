@@ -33,7 +33,7 @@ namespace Compiler
         {
             extensions.registerInstruction ("aiactivate", "c/l", opcodeAIActivate,
                 opcodeAIActivateExplicit);
-            extensions.registerInstruction ("aitravel", "fff/zx", opcodeAiTravel,
+            extensions.registerInstruction ("aitravel", "fff/lx", opcodeAiTravel,
                 opcodeAiTravelExplicit);
             extensions.registerInstruction ("aiescort", "cffff/l", opcodeAiEscort,
                 opcodeAiEscortExplicit);
@@ -327,6 +327,7 @@ namespace Compiler
             extensions.registerInstruction ("toggleactorspaths", "", opcodeToggleActorsPaths);
             extensions.registerInstruction ("setnavmeshnumber", "l", opcodeSetNavMeshNumberToRender);
             extensions.registerFunction ("repairedonme", 'l', "S", opcodeRepairedOnMe, opcodeRepairedOnMeExplicit);
+            extensions.registerInstruction ("togglerecastmesh", "", opcodeToggleRecastMesh);
         }
     }
 

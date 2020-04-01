@@ -66,6 +66,7 @@
 #include "util.hpp"
 #include "navmesh.hpp"
 #include "actorspaths.hpp"
+#include "recastmesh.hpp"
 
 namespace
 {
@@ -217,7 +218,9 @@ namespace MWRender
     {
         resourceSystem->getSceneManager()->setParticleSystemMask(SceneUtil::Mask_ParticleSystem);
         resourceSystem->getSceneManager()->setShaderPath(resourcePath + "/shaders");
-        resourceSystem->getSceneManager()->setForceShaders(Settings::Manager::getBool("force shaders", "Shaders") || Settings::Manager::getBool("enable shadows", "Shadows")); // Shadows have problems with fixed-function mode
+        // Shadows and radial fog have problems with fixed-function mode
+        bool forceShaders = Settings::Manager::getBool("radial fog", "Shaders") || Settings::Manager::getBool("force shaders", "Shaders") || Settings::Manager::getBool("enable shadows", "Shadows");
+        resourceSystem->getSceneManager()->setForceShaders(forceShaders);
         // FIXME: calling dummy method because terrain needs to know whether lighting is clamped
         resourceSystem->getSceneManager()->setClampLighting(Settings::Manager::getBool("clamp lighting", "Shaders"));
         resourceSystem->getSceneManager()->setAutoUseNormalMaps(Settings::Manager::getBool("auto use object normal maps", "Shaders"));
@@ -254,12 +257,14 @@ namespace MWRender
         globalDefines["forcePPL"] = Settings::Manager::getBool("force per pixel lighting", "Shaders") ? "1" : "0";
         globalDefines["clamp"] = Settings::Manager::getBool("clamp lighting", "Shaders") ? "1" : "0";
         globalDefines["preLightEnv"] = Settings::Manager::getBool("apply lighting to environment maps", "Shaders") ? "1" : "0";
+        globalDefines["radialFog"] = Settings::Manager::getBool("radial fog", "Shaders") ? "1" : "0";
 
         // It is unnecessary to stop/start the viewer as no frames are being rendered yet.
         mResourceSystem->getSceneManager()->getShaderManager().setGlobalDefines(globalDefines);
 
         mNavMesh.reset(new NavMesh(mRootNode, Settings::Manager::getBool("enable nav mesh render", "Navigator")));
         mActorsPaths.reset(new ActorsPaths(mRootNode, Settings::Manager::getBool("enable agents paths render", "Navigator")));
+        mRecastMesh.reset(new RecastMesh(mRootNode, Settings::Manager::getBool("enable recast mesh render", "Navigator")));
         mPathgrid.reset(new Pathgrid(mRootNode));
 
         mObjects.reset(new Objects(mResourceSystem, sceneRoot, mUnrefQueue.get()));
@@ -585,6 +590,10 @@ namespace MWRender
         {
             return mActorsPaths->toggle();
         }
+        else if (mode == Render_RecastMesh)
+        {
+            return mRecastMesh->toggle();
+        }
         return false;
     }
 
@@ -651,6 +660,7 @@ namespace MWRender
         }
 
         updateNavMesh();
+        updateRecastMesh();
 
         mCamera->update(dt, paused);
 
@@ -1462,5 +1472,13 @@ namespace MWRender
                 Log(Debug::Error) << "NavMesh render update exception: " << e.what();
             }
         }
+    }
+
+    void RenderingManager::updateRecastMesh()
+    {
+        if (!mRecastMesh->isEnabled())
+            return;
+
+        mRecastMesh->update(mNavigator.getRecastMeshTiles(), mNavigator.getSettings());
     }
 }

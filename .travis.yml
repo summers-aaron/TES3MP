@@ -17,10 +17,9 @@ addons:
       - sourceline: 'ppa:openmw/openmw'
       - sourceline: 'ppa:rakhimov/boost'
       - ubuntu-toolchain-r-test
-      - llvm-toolchain-xenial-7
     packages: [
       # Dev
-      cmake, clang-7, clang-tools-7, gcc-8, g++-8, ccache,
+      cmake, clang-tools, gcc-8, g++-8, ccache,
       # Boost
       libboost-filesystem-dev, libboost-iostreams-dev, libboost-program-options-dev, libboost-system-dev,
       # FFmpeg
@@ -38,7 +37,7 @@ addons:
       description: "<Your project description here>"
     branch_pattern: coverity_scan
     notification_email: koncord@tes3mp.com
-    build_command_prepend: "cov-configure --comptype gcc --compiler gcc-5 --template; cmake . -DBUILD_UNITTESTS=FALSE -DBUILD_OPENCS=FALSE -DBUILD_BSATOOL=FALSE -DBUILD_ESMTOOL=FALSE -DBUILD_MWINIIMPORTER=FALSE -DBUILD_LAUNCHER=FALSE"
+    build_command_prepend: "cov-configure --comptype gcc --compiler gcc-8 --template; cmake . -DBUILD_UNITTESTS=FALSE -DBUILD_OPENCS=FALSE -DBUILD_BSATOOL=FALSE -DBUILD_ESMTOOL=FALSE -DBUILD_MWINIIMPORTER=FALSE -DBUILD_LAUNCHER=FALSE"
     build_command: "make VERBOSE=1 -j3"
 matrix:
   include:
@@ -48,17 +47,17 @@ matrix:
         - MATRIX_CC="CC=clang-7 && CXX=clang++-7"
       compiler: clang
       sudo: required
-      dist: xenial
+      dist: bionic
     - os: linux
       env:
         - MATRIX_CC="CC=gcc-8 && CXX=g++-8"
       sudo: required
-      dist: xenial
+      dist: bionic
     - os: linux
       env:
         - MATRIX_CC="CC=clang-7 && CXX=clang++-7"
       sudo: required
-      dist: xenial
+      dist: bionic
   allow_failures:
     - env:
         - MATRIX_CC="CC=clang-7 && CXX=clang++-7"

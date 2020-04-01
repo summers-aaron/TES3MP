@@ -43,6 +43,7 @@
     Bug #4594: Actors without AI packages don't use Hello dialogue
     Bug #4598: Script parser does not support non-ASCII characters
     Bug #4600: Crash when no sound output is available or --no-sound is used.
+    Bug #4601: Filtering referenceables by gender is broken
     Bug #4639: Black screen after completing first mages guild mission + training
     Bug #4650: Focus is lost after pressing ESC in confirmation dialog inside savegame dialog
     Bug #4680: Heap corruption on faulty esp
@@ -205,6 +206,10 @@
     Bug #5278: Console command Show doesn't fall back to global variable after local var not found
     Bug #5300: NPCs don't switch from torch to shield when starting combat
     Bug #5308: World map copying makes save loading much slower
+    Bug #5313: Node properties of identical type are not applied in the correct order
+    Bug #5326: Formatting issues in the settings.cfg
+    Bug #5328: Skills aren't properly reset for dead actors
+    Bug #5345: Dopey Necromancy does not work due to a missing quote
     Feature #1774: Handle AvoidNode
     Feature #2229: Improve pathfinding AI
     Feature #3025: Analogue gamepad movement controls
@@ -225,6 +230,7 @@
     Feature #4544: Actors movement deceleration
     Feature #4673: Weapon sheathing
     Feature #4675: Support for NiRollController
+    Feature #4708: Radial fog support
     Feature #4730: Native animated containers support
     Feature #4784: Launcher: Duplicate Content Lists
     Feature #4812: Support NiSwitchNode
@@ -251,6 +257,7 @@
     Feature #5091: Human-readable light source duration
     Feature #5094: Unix like console hotkeys
     Feature #5098: Allow user controller bindings
+    Feature #5114: Refresh launcher mod list
     Feature #5121: Handle NiTriStrips and NiTriStripsData
     Feature #5122: Use magic glow for enchanted arrows
     Feature #5131: Custom skeleton bones
@@ -262,7 +269,9 @@
     Feature #5193: Weapon sheathing
     Feature #5219: Impelement TestCells console command
     Feature #5224: Handle NiKeyframeController for NiTriShape
+    Feature #5274: Editor: Keyboard shortcut to drop objects to ground/obstacle in scene view
     Feature #5304: Morrowind-style bump-mapping
+    Feature #5314: Ingredient filter in the alchemy window
     Task #4686: Upgrade media decoder to a more current FFmpeg API
     Task #4695: Optimize Distant Terrain memory consumption
     Task #4789: Optimize cell transitions
