@@ -787,6 +787,11 @@ namespace MWMechanics
             }
             else if (effectId == ESM::MagicEffect::Open)
             {
+                if (!caster.isEmpty())
+                {
+                    MWBase::Environment::get().getMechanicsManager()->unlockAttempted(getPlayer(), target);
+                    // Use the player instead of the caster for vanilla crime compatibility
+                }
                 const MWWorld::ESMStore& store = MWBase::Environment::get().getWorld()->getStore();
                 const ESM::MagicEffect *magiceffect = store.get<ESM::MagicEffect>().find(effectId);
                 MWRender::Animation* animation = MWBase::Environment::get().getWorld()->getAnimation(target);
@@ -828,11 +833,10 @@ namespace MWMechanics
                     */
                 }
                 else
+                {
                     MWBase::Environment::get().getSoundManager()->playSound3D(target, "Open Lock Fail", 1.f, 1.f);
+                }
 
-                if (!caster.isEmpty())
-                    MWBase::Environment::get().getMechanicsManager()->unlockAttempted(getPlayer(), target);
-                    // Use the player instead of the caster for vanilla crime compatibility
                 return true;
             }
         }

@@ -57,7 +57,7 @@ endif()
 message(STATUS "Configuring OpenMW...")
 
 set(OPENMW_VERSION_MAJOR 0)
-set(OPENMW_VERSION_MINOR 46)
+set(OPENMW_VERSION_MINOR 47)
 set(OPENMW_VERSION_RELEASE 0)
 
 set(OPENMW_VERSION_COMMITHASH "")
@@ -269,7 +269,7 @@ endif()
 if(BUILD_OPENMW OR BUILD_OPENCS OR BUILD_OPENMW_MP)
     find_package(OpenSceneGraph 3.3.4 REQUIRED osgDB osgViewer osgText osgGA osgParticle osgUtil osgFX osgShadow)
     include_directories(SYSTEM ${OPENSCENEGRAPH_INCLUDE_DIRS})
-    find_package(SDL2 REQUIRED)
+    find_package(SDL2 2.0.9 REQUIRED)
 endif()
 
 IF(BUILD_OPENMW OR BUILD_OPENCS)
@@ -415,21 +415,15 @@ copy_resource_file(${OpenMW_SOURCE_DIR}/files/opencs/defaultfilters
 configure_resource_file(${OpenMW_SOURCE_DIR}/files/gamecontrollerdb.txt
     "${OpenMW_BINARY_DIR}" "gamecontrollerdb.txt")
 
-configure_resource_file(${OpenMW_SOURCE_DIR}/files/gamecontrollerdb_204.txt
-        "${OpenMW_BINARY_DIR}" "gamecontrollerdb_204.txt")
-
-configure_resource_file(${OpenMW_SOURCE_DIR}/files/gamecontrollerdb_205.txt
-        "${OpenMW_BINARY_DIR}" "gamecontrollerdb_205.txt")
-
 if (NOT WIN32 AND NOT APPLE)
-    configure_file(${OpenMW_SOURCE_DIR}/files/openmw.desktop
-        "${OpenMW_BINARY_DIR}/openmw.desktop")
+    configure_file(${OpenMW_SOURCE_DIR}/files/org.openmw.launcher.desktop
+        "${OpenMW_BINARY_DIR}/org.openmw.launcher.desktop")
     configure_file(${OpenMW_SOURCE_DIR}/files/openmw.appdata.xml
         "${OpenMW_BINARY_DIR}/openmw.appdata.xml")
     configure_file(${OpenMW_SOURCE_DIR}/files/tes3mp-browser.desktop
 	    "${OpenMW_BINARY_DIR}/tes3mp-browser.desktop")
-    configure_file(${OpenMW_SOURCE_DIR}/files/openmw-cs.desktop
-        "${OpenMW_BINARY_DIR}/openmw-cs.desktop")
+    configure_file(${OpenMW_SOURCE_DIR}/files/org.openmw.cs.desktop
+        "${OpenMW_BINARY_DIR}/org.openmw.cs.desktop")
 endif()
 
 # CXX Compiler settings
@@ -509,14 +503,14 @@ IF(NOT WIN32 AND NOT APPLE)
     INSTALL(FILES "files/mygui/DejaVu Font License.txt" DESTINATION "${LICDIR}" )
 
     # Install icon and desktop file
-    INSTALL(FILES "${OpenMW_BINARY_DIR}/openmw.desktop" DESTINATION "${DATAROOTDIR}/applications" COMPONENT "openmw")
+    INSTALL(FILES "${OpenMW_BINARY_DIR}/org.openmw.launcher.desktop" DESTINATION "${DATAROOTDIR}/applications" COMPONENT "openmw")
     INSTALL(FILES "${OpenMW_SOURCE_DIR}/files/launcher/images/openmw.png" DESTINATION "${ICONDIR}" COMPONENT "openmw")
     INSTALL(FILES "${OpenMW_BINARY_DIR}/openmw.appdata.xml" DESTINATION "${DATAROOTDIR}/metainfo" COMPONENT "openmw")
     IF(BUILD_BROWSER)
         INSTALL(FILES "${OpenMW_BINARY_DIR}/tes3mp-browser.desktop" DESTINATION "${DATAROOTDIR}/applications" COMPONENT "browser")
     ENDIF(BUILD_BROWSER)
     IF(BUILD_OPENCS)
-        INSTALL(FILES "${OpenMW_BINARY_DIR}/openmw-cs.desktop" DESTINATION "${DATAROOTDIR}/applications" COMPONENT "opencs")
+        INSTALL(FILES "${OpenMW_BINARY_DIR}/org.openmw.cs.desktop" DESTINATION "${DATAROOTDIR}/applications" COMPONENT "opencs")
         INSTALL(FILES "${OpenMW_SOURCE_DIR}/files/opencs/openmw-cs.png" DESTINATION "${ICONDIR}" COMPONENT "opencs")
     ENDIF(BUILD_OPENCS)
 
@@ -525,8 +519,6 @@ IF(NOT WIN32 AND NOT APPLE)
     INSTALL(FILES "${OpenMW_BINARY_DIR}/openmw.cfg.install" DESTINATION "${SYSCONFDIR}" RENAME "openmw.cfg" COMPONENT "openmw")
     INSTALL(FILES "${OpenMW_BINARY_DIR}/resources/version" DESTINATION "${SYSCONFDIR}" COMPONENT "openmw")
     INSTALL(FILES "${OpenMW_BINARY_DIR}/gamecontrollerdb.txt" DESTINATION "${SYSCONFDIR}" COMPONENT "openmw")
-    INSTALL(FILES "${OpenMW_BINARY_DIR}/gamecontrollerdb_204.txt" DESTINATION "${SYSCONFDIR}" COMPONENT "openmw")
-    INSTALL(FILES "${OpenMW_BINARY_DIR}/gamecontrollerdb_205.txt" DESTINATION "${SYSCONFDIR}" COMPONENT "openmw")
 
     INSTALL(FILES "${OpenMW_BINARY_DIR}/tes3mp-client-default.cfg" DESTINATION "${SYSCONFDIR}" COMPONENT "openmw")
     #INSTALL(FILES "${OpenMW_BINARY_DIR}/tes3mp-client.install" DESTINATION "${SYSCONFDIR}" RENAME "tes3mp-client.cfg" COMPONENT "openmw")
@@ -562,10 +554,6 @@ if(WIN32)
     INSTALL(FILES "${OpenMW_BINARY_DIR}/Release/tes3mp-client-default.cfg" DESTINATION "." CONFIGURATIONS Release;RelWithDebInfo;MinSizeRel)
     INSTALL(FILES "${OpenMW_BINARY_DIR}/Debug/gamecontrollerdb.txt" DESTINATION "." CONFIGURATIONS Debug)
     INSTALL(FILES "${OpenMW_BINARY_DIR}/Release/gamecontrollerdb.txt" DESTINATION "." CONFIGURATIONS Release;RelWithDebInfo;MinSizeRel)
-    INSTALL(FILES "${OpenMW_BINARY_DIR}/Debug/gamecontrollerdb_204.txt" DESTINATION "." CONFIGURATIONS Debug)
-    INSTALL(FILES "${OpenMW_BINARY_DIR}/Release/gamecontrollerdb_204.txt" DESTINATION "." CONFIGURATIONS Release;RelWithDebInfo;MinSizeRel)
-    INSTALL(FILES "${OpenMW_BINARY_DIR}/Debug/gamecontrollerdb_205.txt" DESTINATION "." CONFIGURATIONS Debug)
-    INSTALL(FILES "${OpenMW_BINARY_DIR}/Release/gamecontrollerdb_205.txt" DESTINATION "." CONFIGURATIONS Release;RelWithDebInfo;MinSizeRel)
 
     if(BUILD_MYGUI_PLUGIN)
         INSTALL(PROGRAMS "${OpenMW_BINARY_DIR}/Debug/Plugin_MyGUI_OpenMW_Resources.dll" DESTINATION "." CONFIGURATIONS Debug)
@@ -772,6 +760,7 @@ if (WIN32)
         # caused by boost
         4191 # 'type cast' : unsafe conversion (1.56, thread_primitives.hpp, normally off)
         4643 # Forward declaring 'X' in namespace std is not permitted by the C++ Standard. (in *_std_fwd.h files)
+        5204 # Class has virtual functions, but its trivial destructor is not virtual
 
         # caused by MyGUI
         4275 # non dll-interface class 'std::exception' used as base for dll-interface class 'MyGUI::Exception'

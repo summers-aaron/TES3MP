@@ -44,6 +44,8 @@ ESM::Position MechanicsHelper::getPositionFromVector(osg::Vec3f vector)
 }
 
 // Inspired by similar code in mwclass\creaturelevlist.cpp
+//
+// TODO: Add handling of scaling based on leveled list's assigned scale
 void MechanicsHelper::spawnLeveledCreatures(MWWorld::CellStore* cellStore)
 {
     MWWorld::CellRefList<ESM::CreatureLevList> *creatureLevList = cellStore->getCreatureLists();

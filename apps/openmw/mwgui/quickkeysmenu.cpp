@@ -483,7 +483,8 @@ namespace MWGui
                 */
 
                 /*
-                MWBase::Environment::get().getWindowManager()->useItem(item);
+                if (!store.isEquipped(item))
+                    MWBase::Environment::get().getWindowManager()->useItem(item);
                 MWWorld::ConstContainerStoreIterator rightHand = store.getSlot(MWWorld::InventoryStore::Slot_CarriedRight);
                 // change draw state only if the item is in player's right hand
                 if (rightHand != store.end() && item == *rightHand)
@@ -493,14 +494,18 @@ namespace MWGui
                 */
 
                 bool shouldDraw = isWeapon || isTool;
-                mwmp::Main::get().getLocalPlayer()->sendItemUse(item, false, shouldDraw ? MWMechanics::DrawState_Weapon : MWMechanics::DrawState_Nothing);
+                
+                if (!store.isEquipped(item))
+                {
+                    mwmp::Main::get().getLocalPlayer()->sendItemUse(item, false, shouldDraw ? MWMechanics::DrawState_Weapon : MWMechanics::DrawState_Nothing);
+                }
                 /*
                     End of tes3mp change (major)
                 */
             }
             else if (key->type == Type_MagicItem)
             {
-                // equip, if it can be equipped
+                // equip, if it can be equipped and isn't yet equipped
 
                 /*
                     Start of tes3mp change (major)
@@ -508,7 +513,7 @@ namespace MWGui
                     Instead of unilaterally using an item, send an ID_PLAYER_ITEM_USE packet and let the server
                     decide if the item actually gets used
                 */
-                if (!item.getClass().getEquipmentSlots(item).first.empty())
+                if (!item.getClass().getEquipmentSlots(item).first.empty() && !store.isEquipped(item))
                 {
 
                     /*

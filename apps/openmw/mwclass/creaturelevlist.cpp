@@ -131,8 +131,11 @@ namespace MWClass
 
                 Don't spawn leveled creatures in multiplayer; they'll be spawned when the server requests them
             */
-            //MWWorld::Ptr placed = MWBase::Environment::get().getWorld()->placeObject(manualRef.getPtr(), ptr.getCell() , ptr.getCellRef().getPosition());
-            //customData.mSpawnActorId = placed.getClass().getCreatureStats(placed).getActorId();
+            /*
+            manualRef.getPtr().getCellRef().setScale(ptr.getCellRef().getScale());
+            MWWorld::Ptr placed = MWBase::Environment::get().getWorld()->placeObject(manualRef.getPtr(), ptr.getCell() , ptr.getCellRef().getPosition());
+            customData.mSpawnActorId = placed.getClass().getCreatureStats(placed).getActorId();
+            */
             /*
                 End of tes3mp change (major)
             */
