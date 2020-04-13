@@ -678,8 +678,8 @@ void RecordHelper::overrideRecord(const mwmp::EnchantmentRecord& record)
         if (record.baseOverrides.hasCharge)
             finalData.mData.mCharge = recordData.mData.mCharge;
 
-        if (record.baseOverrides.hasAutoCalc)
-            finalData.mData.mAutocalc = recordData.mData.mAutocalc;
+        if (record.baseOverrides.hasFlags)
+            finalData.mData.mFlags = recordData.mData.mFlags;
 
         if (record.baseOverrides.hasEffects)
             finalData.mEffects.mList = recordData.mEffects.mList;

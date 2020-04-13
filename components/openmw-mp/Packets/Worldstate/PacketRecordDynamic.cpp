@@ -208,7 +208,7 @@ void PacketRecordDynamic::Packet(RakNet::BitStream *newBitstream, bool send)
             RW(recordData.mData.mType, send);
             RW(recordData.mData.mCost, send);
             RW(recordData.mData.mCharge, send);
-            RW(recordData.mData.mAutocalc, send);
+            RW(recordData.mData.mFlags, send);
             ProcessEffects(recordData.mEffects, send);
 
             if (!record.baseId.empty())
@@ -217,7 +217,7 @@ void PacketRecordDynamic::Packet(RakNet::BitStream *newBitstream, bool send)
                 RW(overrides.hasSubtype, send);
                 RW(overrides.hasCost, send);
                 RW(overrides.hasCharge, send);
-                RW(overrides.hasAutoCalc, send);
+                RW(overrides.hasFlags, send);
                 RW(overrides.hasEffects, send);
             }
         }

@@ -239,8 +239,6 @@ int RecordsDynamicFunctions::GetRecordAutoCalc(unsigned int index) noexcept
 
     if (readRecordsType == mwmp::RECORD_TYPE::POTION)
         return WorldstateFunctions::readWorldstate->potionRecords.at(index).data.mData.mAutoCalc;
-    else if (readRecordsType == mwmp::RECORD_TYPE::ENCHANTMENT)
-        return WorldstateFunctions::readWorldstate->enchantmentRecords.at(index).data.mData.mAutocalc;
 
     return -1;
 }
@@ -273,6 +271,8 @@ int RecordsDynamicFunctions::GetRecordFlags(unsigned int index) noexcept
 
     if (readRecordsType == mwmp::RECORD_TYPE::SPELL)
         return WorldstateFunctions::readWorldstate->spellRecords.at(index).data.mData.mFlags;
+    else if (readRecordsType == mwmp::RECORD_TYPE::ENCHANTMENT)
+        return WorldstateFunctions::readWorldstate->enchantmentRecords.at(index).data.mData.mFlags;
 
     return -1;
 }
@@ -737,8 +737,6 @@ void RecordsDynamicFunctions::SetRecordAutoCalc(int autoCalc) noexcept
 
     if (writeRecordsType == mwmp::RECORD_TYPE::POTION)
         tempPotion.data.mData.mAutoCalc = autoCalc;
-    else if (writeRecordsType == mwmp::RECORD_TYPE::ENCHANTMENT)
-        tempEnchantment.data.mData.mAutocalc = autoCalc;
     else if (writeRecordsType == mwmp::RECORD_TYPE::NPC)
     {
         if (autoCalc)
@@ -799,6 +797,8 @@ void RecordsDynamicFunctions::SetRecordFlags(int flags) noexcept
 
     if (writeRecordsType == mwmp::RECORD_TYPE::SPELL)
         tempSpell.data.mData.mFlags = flags;
+    else if (writeRecordsType == mwmp::RECORD_TYPE::ENCHANTMENT)
+        tempEnchantment.data.mData.mFlags = flags;
     else if (writeRecordsType == mwmp::RECORD_TYPE::WEAPON)
         tempWeapon.data.mData.mFlags = flags;
     else if (writeRecordsType == mwmp::RECORD_TYPE::BODYPART)
