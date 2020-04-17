@@ -265,7 +265,7 @@ void ObjectList::editContainers(MWWorld::CellStore* cellStore)
                                     {
                                         MWWorld::Ptr ptrPlayer = MWBase::Environment::get().getWorld()->getPlayerPtr();
                                         MWWorld::ContainerStore &playerStore = ptrPlayer.getClass().getContainerStore(ptrPlayer);
-                                        *playerStore.add(containerItem.refId, containerItem.actionCount, ptrPlayer);
+                                        *playerStore.add(itemPtr, containerItem.actionCount, ownerPtr);
                                     }
                                 }
                             }
