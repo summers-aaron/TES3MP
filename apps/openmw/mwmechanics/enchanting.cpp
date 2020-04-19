@@ -11,6 +11,7 @@
 #include <components/openmw-mp/TimedLog.hpp>
 #include "../mwmp/Main.hpp"
 #include "../mwmp/Networking.hpp"
+#include "../mwmp/LocalPlayer.hpp"
 #include "../mwmp/Worldstate.hpp"
 /*
     End of tes3mp addition
@@ -117,8 +118,11 @@ namespace MWMechanics
 
             Don't add the new item to the player's inventory and instead expect the server to
             add it
+
+            Store the quantity used for the enchantment so it can be retrieved in applyEnchantment()
+            when applicable
             
-            The applyEnchantment() method is where the record of the newly enchanted will be sent
+            The applyEnchantment() method is where the record of the newly enchanted item will be sent
             to the server, causing the server to send back the player's inventory with the new item
             included
         */
@@ -128,6 +132,8 @@ namespace MWMechanics
 
         if(!mSelfEnchanting)
             payForEnchantment();
+
+        mwmp::Main::get().getLocalPlayer()->storeLastEnchantmentQuantity(count);
 
         std::string newItemId = mOldItemPtr.getClass().applyEnchantment(mOldItemPtr, enchantmentPtr->mId, getGemCharge(), mNewItemName);
         /*

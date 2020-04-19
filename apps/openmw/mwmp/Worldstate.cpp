@@ -627,7 +627,7 @@ void Worldstate::sendClothingRecord(const ESM::Clothing* clothing, std::string b
     getNetworking()->getWorldstatePacket(ID_RECORD_DYNAMIC)->Send();
 }
 
-void Worldstate::sendWeaponRecord(const ESM::Weapon* weapon, std::string baseId)
+void Worldstate::sendWeaponRecord(const ESM::Weapon* weapon, std::string baseId, unsigned int quantity)
 {
     weaponRecords.clear();
 
@@ -637,6 +637,7 @@ void Worldstate::sendWeaponRecord(const ESM::Weapon* weapon, std::string baseId)
 
     mwmp::WeaponRecord record;
     record.data = *weapon;
+    record.quantity = quantity;
     record.baseId = baseId;
     record.baseOverrides.hasName = true;
     record.baseOverrides.hasEnchantmentId = true;

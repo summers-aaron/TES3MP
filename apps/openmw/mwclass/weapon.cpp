@@ -8,6 +8,7 @@
 #include <components/openmw-mp/Utils.hpp>
 #include "../mwmp/Main.hpp"
 #include "../mwmp/Networking.hpp"
+#include "../mwmp/LocalPlayer.hpp"
 /*
     End of tes3mp addition
 */
@@ -320,7 +321,9 @@ namespace MWClass
             Send the newly created record to the server and expect it to be
             returned with a server-set id
         */
-        mwmp::Main::get().getNetworking()->getWorldstate()->sendWeaponRecord(&newItem, ref->mBase->mId);
+        unsigned int quantity = mwmp::Main::get().getLocalPlayer()->lastEnchantmentQuantity;
+
+        mwmp::Main::get().getNetworking()->getWorldstate()->sendWeaponRecord(&newItem, ref->mBase->mId, quantity);
         /*
             End of tes3mp addition
         */

@@ -23,6 +23,7 @@ namespace mwmp
         bool isReceivingQuickKeys;
         bool isPlayingAnimation;
         bool diedSinceArrestAttempt;
+        unsigned int lastEnchantmentQuantity;
 
         void update();
 
@@ -105,6 +106,7 @@ namespace mwmp
         void storeCellState(const ESM::Cell& cell, int stateType);
         void storeCurrentContainer(const MWWorld::Ptr& container);
         void storeItemRemoval(const std::string& refId, int count);
+        void storeLastEnchantmentQuantity(unsigned int quantity);
 
         void playAnimation();
         void playSpeech();

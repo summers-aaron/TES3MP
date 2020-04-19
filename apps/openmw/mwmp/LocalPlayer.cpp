@@ -1749,6 +1749,11 @@ void LocalPlayer::storeItemRemoval(const std::string& refId, int count)
     storedItemRemovals[refId] = storedItemRemovals[refId] + count;
 }
 
+void LocalPlayer::storeLastEnchantmentQuantity(unsigned int quantity)
+{
+    lastEnchantmentQuantity = quantity;
+}
+
 void LocalPlayer::playAnimation()
 {
     MWBase::Environment::get().getMechanicsManager()->playAnimationGroup(getPlayerPtr(),

@@ -303,6 +303,8 @@ unsigned int RecordsDynamicFunctions::GetRecordQuantity(unsigned int index) noex
 
     if (readRecordsType == mwmp::RECORD_TYPE::POTION)
         return WorldstateFunctions::readWorldstate->potionRecords.at(index).quantity;
+    else if (readRecordsType == mwmp::RECORD_TYPE::WEAPON)
+        return WorldstateFunctions::readWorldstate->weaponRecords.at(index).quantity;
 
     return 1;
 }

@@ -309,6 +309,7 @@ namespace mwmp
     struct WeaponRecord
     {
         ESM::Weapon data;
+        unsigned int quantity = 1;
         std::string baseId;
         BaseOverrides baseOverrides;
     };

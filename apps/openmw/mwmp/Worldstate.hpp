@@ -35,7 +35,7 @@ namespace mwmp
         void sendArmorRecord(const ESM::Armor* armor, std::string baseRefId = "");
         void sendBookRecord(const ESM::Book* book, std::string baseRefId = "");
         void sendClothingRecord(const ESM::Clothing* clothing, std::string baseRefId = "");
-        void sendWeaponRecord(const ESM::Weapon* weapon, std::string baseRefId = "");
+        void sendWeaponRecord(const ESM::Weapon* weapon, std::string baseRefId = "", unsigned int quantity = 1);
 
     private:
 
