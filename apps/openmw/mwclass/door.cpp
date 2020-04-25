@@ -15,7 +15,6 @@
 #include <components/esm/loaddoor.hpp>
 #include <components/esm/doorstate.hpp>
 #include <components/sceneutil/positionattitudetransform.hpp>
-#include <components/sceneutil/vismask.hpp>
 
 #include "../mwbase/environment.hpp"
 #include "../mwbase/world.hpp"
@@ -38,6 +37,7 @@
 #include "../mwrender/objects.hpp"
 #include "../mwrender/renderinginterface.hpp"
 #include "../mwrender/animation.hpp"
+#include "../mwrender/vismask.hpp"
 
 #include "../mwmechanics/actorutil.hpp"
 
@@ -70,7 +70,7 @@ namespace MWClass
         if (!model.empty())
         {
             renderingInterface.getObjects().insertModel(ptr, model, true);
-            ptr.getRefData().getBaseNode()->setNodeMask(SceneUtil::Mask_Static);
+            ptr.getRefData().getBaseNode()->setNodeMask(MWRender::Mask_Static);
         }
     }
 
@@ -170,7 +170,7 @@ namespace MWClass
             }
         }
 
-        if ((isLocked || isTrapped) && hasKey)
+        if (isLocked && hasKey)
         {
             if(actor == MWMechanics::getPlayer())
                 MWBase::Environment::get().getWindowManager()->messageBox(keyName + " #{sKeyUsed}");
@@ -181,8 +181,7 @@ namespace MWClass
                 Disable unilateral unlocking on this client and expect the server's reply to our
                 packet to do it instead
             */
-            //if(isLocked)
-            //    ptr.getCellRef().unlock(); //Call the function here. because that makes sense.
+            //ptr.getCellRef().unlock(); //Call the function here. because that makes sense.
             /*
                 End of tes3mp change (major)
             */

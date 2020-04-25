@@ -189,7 +189,7 @@ namespace MWClass
             }
         }
 
-        if ((isLocked || isTrapped) && hasKey)
+        if (isLocked && hasKey)
         {
             MWBase::Environment::get().getWindowManager ()->messageBox (keyName + " #{sKeyUsed}");
 
@@ -199,8 +199,7 @@ namespace MWClass
                 Disable unilateral unlocking on this client and expect the server's reply to our
                 packet to do it instead
             */
-            //if(isLocked)
-            //    ptr.getCellRef().unlock();
+            //ptr.getCellRef().unlock();
             /*
                 End of tes3mp change (major)
             */

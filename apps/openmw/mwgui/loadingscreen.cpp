@@ -1,5 +1,7 @@
 #include "loadingscreen.hpp"
 
+#include <array>
+
 #include <osgViewer/Viewer>
 
 #include <osg/Texture2D>
@@ -14,12 +16,13 @@
 #include <components/myguiplatform/myguitexture.hpp>
 #include <components/settings/settings.hpp>
 #include <components/vfs/manager.hpp>
-#include <components/sceneutil/vismask.hpp>
 
 #include "../mwbase/environment.hpp"
 #include "../mwbase/statemanager.hpp"
 #include "../mwbase/windowmanager.hpp"
 #include "../mwbase/inputmanager.hpp"
+
+#include "../mwrender/vismask.hpp"
 
 #include "backgroundimage.hpp"
 
@@ -66,7 +69,7 @@ namespace MWGui
         mVFS->normalizeFilename(pattern);
 
         /* priority given to the left */
-        std::list<std::string> supported_extensions = {".tga", ".dds", ".ktx", ".png", ".bmp", ".jpeg", ".jpg"};
+        const std::array<std::string, 7> supported_extensions {{".tga", ".dds", ".ktx", ".png", ".bmp", ".jpeg", ".jpg"}};
 
         auto found = index.lower_bound(pattern);
         while (found != index.end())
@@ -77,7 +80,7 @@ namespace MWGui
                 size_t pos = name.find_last_of('.');
                 if (pos != std::string::npos)
                 {
-                    for(auto const extension: supported_extensions)
+                    for(auto const& extension: supported_extensions)
                     {
                         if (name.compare(pos, name.size() - pos, extension) == 0)
                         {
@@ -334,8 +337,8 @@ namespace MWGui
         // Turn off rendering except the GUI
         int oldUpdateMask = mViewer->getUpdateVisitor()->getTraversalMask();
         int oldCullMask = mViewer->getCamera()->getCullMask();
-        mViewer->getUpdateVisitor()->setTraversalMask(SceneUtil::Mask_GUI|SceneUtil::Mask_PreCompile);
-        mViewer->getCamera()->setCullMask(SceneUtil::Mask_GUI|SceneUtil::Mask_PreCompile);
+        mViewer->getUpdateVisitor()->setTraversalMask(MWRender::Mask_GUI|MWRender::Mask_PreCompile);
+        mViewer->getCamera()->setCullMask(MWRender::Mask_GUI|MWRender::Mask_PreCompile);
 
         MWBase::Environment::get().getInputManager()->update(0, true, true);
 
