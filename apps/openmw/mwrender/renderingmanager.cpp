@@ -235,6 +235,8 @@ namespace MWRender
         sceneRoot->setLightingMask(Mask_Lighting);
         mSceneRoot = sceneRoot;
         sceneRoot->setStartLight(1);
+        sceneRoot->setNodeMask(Mask_Scene);
+        sceneRoot->setName("Scene Root");
 
         int shadowCastingTraversalMask = Mask_Scene;
         if (Settings::Manager::getBool("actor shadows", "Shadows"))
@@ -347,9 +349,6 @@ namespace MWRender
         defaultMat->setSpecular(osg::Material::FRONT_AND_BACK, osg::Vec4f(0.f, 0.f, 0.f, 0.f));
         sceneRoot->getOrCreateStateSet()->setAttribute(defaultMat);
 
-        sceneRoot->setNodeMask(Mask_Scene);
-        sceneRoot->setName("Scene Root");
-
         mSky.reset(new SkyManager(sceneRoot, resourceSystem->getSceneManager()));
 
         mSky->setCamera(mViewer->getCamera());
@@ -377,6 +376,7 @@ namespace MWRender
 
         mViewer->getCamera()->setCullMask(~(Mask_UpdateVisitor|Mask_SimpleWater));
         NifOsg::Loader::setHiddenNodeMask(Mask_UpdateVisitor);
+        NifOsg::Loader::setIntersectionDisabledNodeMask(Mask_Effect);
 
         mNearClip = Settings::Manager::getFloat("near clip", "Camera");
         mViewDistance = Settings::Manager::getFloat("viewing distance", "Camera");
@@ -768,11 +768,10 @@ namespace MWRender
 
         void waitTillDone()
         {
-            mMutex.lock();
+            OpenThreads::ScopedLock<OpenThreads::Mutex> lock(mMutex);
             if (mDone)
                 return;
             mCondition.wait(&mMutex);
-            mMutex.unlock();
         }
 
         mutable OpenThreads::Condition mCondition;

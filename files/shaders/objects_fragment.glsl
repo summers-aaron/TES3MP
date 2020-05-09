@@ -49,6 +49,8 @@ uniform vec2 envMapLumaBias;
 uniform mat2 bumpMapMatrix;
 #endif
 
+uniform bool simpleWater = false;
+
 varying float euclideanDepth;
 varying float linearDepth;
 
@@ -90,7 +92,7 @@ void main()
     vec3 cameraPos = (gl_ModelViewMatrixInverse * vec4(0,0,0,1)).xyz;
     vec3 objectPos = (gl_ModelViewMatrixInverse * vec4(passViewPos, 1)).xyz;
     vec3 eyeDir = normalize(cameraPos - objectPos);
-    vec2 offset = getParallaxOffset(eyeDir, tbnTranspose, normalTex.a, (passTangent.w > 0) ? -1.f : 1.f);
+    vec2 offset = getParallaxOffset(eyeDir, tbnTranspose, normalTex.a, (passTangent.w > 0.0) ? -1.f : 1.f);
     adjustedDiffuseUV += offset; // only offset diffuse for now, other textures are more likely to be using a completely different UV set
 
     // TODO: check not working as the same UV buffer is being bound to different targets
@@ -171,7 +173,7 @@ void main()
 
 #if @specularMap
     vec4 specTex = texture2D(specularMap, specularMapUV);
-    float shininess = specTex.a * 255;
+    float shininess = specTex.a * 255.0;
     vec3 matSpec = specTex.xyz;
 #else
     float shininess = gl_FrontMaterial.shininess;
@@ -180,7 +182,11 @@ void main()
 
     gl_FragData[0].xyz += getSpecular(normalize(viewNormal), normalize(passViewPos.xyz), shininess, matSpec) * shadowing;
 #if @radialFog
-    float fogValue = clamp((euclideanDepth - gl_Fog.start) * gl_Fog.scale, 0.0, 1.0);
+    float depth = euclideanDepth;
+    // For the less detailed mesh of simple water we need to recalculate depth on per-pixel basis
+    if (simpleWater)
+        depth = length(passViewPos);
+    float fogValue = clamp((depth - gl_Fog.start) * gl_Fog.scale, 0.0, 1.0);
 #else
     float fogValue = clamp((linearDepth - gl_Fog.start) * gl_Fog.scale, 0.0, 1.0);
 #endif

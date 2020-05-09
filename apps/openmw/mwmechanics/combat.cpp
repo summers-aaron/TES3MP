@@ -33,6 +33,7 @@
 #include "npcstats.hpp"
 #include "movement.hpp"
 #include "spellcasting.hpp"
+#include "spellresistance.hpp"
 #include "difficultyscaling.hpp"
 #include "actorutil.hpp"
 #include "pathfinding.hpp"

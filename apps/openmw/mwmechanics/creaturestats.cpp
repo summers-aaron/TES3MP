@@ -8,7 +8,7 @@
     Include additional headers for multiplayer purposes
 */
 #include <components/openmw-mp/TimedLog.hpp>
-#include "spellcasting.hpp"
+#include "summoning.hpp"
 /*
     End of tes3mp addition
 */

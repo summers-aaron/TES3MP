@@ -29,7 +29,7 @@
 #include "../mwworld/esmstore.hpp"
 #include "../mwworld/player.hpp"
 
-#include "../mwmechanics/spellcasting.hpp"
+#include "../mwmechanics/spellutil.hpp"
 #include "../mwmechanics/spells.hpp"
 #include "../mwmechanics/creaturestats.hpp"
 #include "../mwmechanics/actorutil.hpp"

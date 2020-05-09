@@ -21,6 +21,7 @@
 #include "../mwmechanics/creaturestats.hpp"
 #include "../mwmechanics/mechanicsmanagerimp.hpp"
 #include "../mwmechanics/spellcasting.hpp"
+#include "../mwmechanics/spellutil.hpp"
 
 #include "../mwscript/scriptmanagerimp.hpp"
 

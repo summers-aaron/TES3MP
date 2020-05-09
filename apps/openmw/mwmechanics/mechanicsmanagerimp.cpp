@@ -35,7 +35,7 @@
 
 #include "aicombat.hpp"
 #include "aipursue.hpp"
-#include "spellcasting.hpp"
+#include "spellutil.hpp"
 #include "autocalcspell.hpp"
 #include "npcstats.hpp"
 #include "actorutil.hpp"
@@ -390,7 +390,7 @@ namespace MWMechanics
             {
                 const std::string& spell = winMgr->getSelectedSpell();
                 if (!spell.empty())
-                    winMgr->setSelectedSpell(spell, int(MWMechanics::getSpellSuccessChance(spell, mWatched)));
+                    winMgr->setSelectedSpell(spell, int(getSpellSuccessChance(spell, mWatched)));
                 else
                     winMgr->unsetSelectedSpell();
             }

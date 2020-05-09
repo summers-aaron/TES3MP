@@ -32,7 +32,7 @@
 
 #include "../mwmechanics/movement.hpp"
 #include "../mwmechanics/npcstats.hpp"
-#include "../mwmechanics/spellcasting.hpp"
+#include "../mwmechanics/spellutil.hpp"
 
 #include "class.hpp"
 #include "ptr.hpp"

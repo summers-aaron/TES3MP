@@ -11,6 +11,7 @@
 #include "../mwmechanics/combat.hpp"
 #include "../mwmechanics/levelledlist.hpp"
 #include "../mwmechanics/spellcasting.hpp"
+#include "../mwmechanics/spellutil.hpp"
 
 #include "../mwworld/class.hpp"
 #include "../mwworld/inventorystore.hpp"
