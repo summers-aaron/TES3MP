@@ -44,6 +44,8 @@ namespace mwmp
 
         virtual bool exit();
 
+        bool getEditState();
+
         void setFont(const std::string &fntName);
 
         void onResChange(int width, int height);

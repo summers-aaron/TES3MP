@@ -45,8 +45,8 @@ namespace mwmp
 
         void showDialogList(const BasePlayer::GUIMessageBox &guiMessageBox);
 
-        /// Return true if any tes3mp gui element in active state
-        bool hasFocusedElement();
+        bool getChatEditState();
+
         /// Returns 0 if there was no events
         bool pressedKey(int key);
 

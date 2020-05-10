@@ -213,9 +213,9 @@ bool mwmp::GUIController::pressedKey(int key)
     return false;
 }
 
-bool mwmp::GUIController::hasFocusedElement()
+bool mwmp::GUIController::getChatEditState()
 {
-    return false;
+    return mChat->editState;
 }
 
 void mwmp::GUIController::update(float dt)

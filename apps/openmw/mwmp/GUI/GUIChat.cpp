@@ -66,6 +66,11 @@ namespace mwmp
         return true;
     }
 
+    bool GUIChat::getEditState()
+    {
+        return editState;
+    }
+
     void GUIChat::acceptCommand(MyGUI::EditBox *_sender)
     {
         const std::string &cm =  MyGUI::TextIterator::toTagsString(mCommandLine->getCaption());
