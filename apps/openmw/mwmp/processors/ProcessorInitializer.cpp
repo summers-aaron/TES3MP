@@ -58,6 +58,7 @@
 #include "object/ProcessorObjectDelete.hpp"
 #include "object/ProcessorObjectHit.hpp"
 #include "object/ProcessorObjectLock.hpp"
+#include "object/ProcessorObjectMiscellaneous.hpp"
 #include "object/ProcessorObjectMove.hpp"
 #include "object/ProcessorObjectPlace.hpp"
 #include "object/ProcessorObjectRestock.hpp"
@@ -69,7 +70,6 @@
 #include "object/ProcessorObjectTrap.hpp"
 #include "object/ProcessorClientScriptLocal.hpp"
 #include "object/ProcessorScriptMemberShort.hpp"
-#include "object/ProcessorScriptMemberFloat.hpp"
 #include "object/ProcessorVideoPlay.hpp"
 
 #include "ActorProcessor.hpp"
@@ -160,6 +160,7 @@ void ProcessorInitializer()
     ObjectProcessor::AddProcessor(new ProcessorObjectDelete());
     ObjectProcessor::AddProcessor(new ProcessorObjectHit());
     ObjectProcessor::AddProcessor(new ProcessorObjectLock());
+    ObjectProcessor::AddProcessor(new ProcessorObjectMiscellaneous());
     ObjectProcessor::AddProcessor(new ProcessorObjectMove());
     ObjectProcessor::AddProcessor(new ProcessorObjectPlace());
     ObjectProcessor::AddProcessor(new ProcessorObjectRestock());
@@ -171,7 +172,6 @@ void ProcessorInitializer()
     ObjectProcessor::AddProcessor(new ProcessorObjectTrap());
     ObjectProcessor::AddProcessor(new ProcessorClientScriptLocal());
     ObjectProcessor::AddProcessor(new ProcessorScriptMemberShort());
-    ObjectProcessor::AddProcessor(new ProcessorScriptMemberFloat());
     ObjectProcessor::AddProcessor(new ProcessorVideoPlay());
 
     ActorProcessor::AddProcessor(new ProcessorActorAI());

@@ -4,6 +4,7 @@
 #include "../Packets/Object/PacketObjectDelete.hpp"
 #include "../Packets/Object/PacketObjectHit.hpp"
 #include "../Packets/Object/PacketObjectLock.hpp"
+#include "../Packets/Object/PacketObjectMiscellaneous.hpp"
 #include "../Packets/Object/PacketObjectMove.hpp"
 #include "../Packets/Object/PacketObjectPlace.hpp"
 #include "../Packets/Object/PacketObjectRestock.hpp"
@@ -23,7 +24,6 @@
 #include "../Packets/Object/PacketConsoleCommand.hpp"
 #include "../Packets/Object/PacketClientScriptLocal.hpp"
 #include "../Packets/Object/PacketScriptMemberShort.hpp"
-#include "../Packets/Object/PacketScriptMemberFloat.hpp"
 
 #include "ObjectPacketController.hpp"
 
@@ -43,6 +43,7 @@ mwmp::ObjectPacketController::ObjectPacketController(RakNet::RakPeerInterface *p
     AddPacket<PacketObjectDelete>(&packets, peer);
     AddPacket<PacketObjectHit>(&packets, peer);
     AddPacket<PacketObjectLock>(&packets, peer);
+    AddPacket<PacketObjectMiscellaneous>(&packets, peer);
     AddPacket<PacketObjectMove>(&packets, peer);
     AddPacket<PacketObjectPlace>(&packets, peer);
     AddPacket<PacketObjectRestock>(&packets, peer);
@@ -62,7 +63,6 @@ mwmp::ObjectPacketController::ObjectPacketController(RakNet::RakPeerInterface *p
     AddPacket<PacketConsoleCommand>(&packets, peer);
     AddPacket<PacketClientScriptLocal>(&packets, peer);
     AddPacket<PacketScriptMemberShort>(&packets, peer);
-    AddPacket<PacketScriptMemberFloat>(&packets, peer);
 }
 
 
