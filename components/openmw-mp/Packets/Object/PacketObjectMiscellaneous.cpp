@@ -6,9 +6,11 @@ using namespace mwmp;
 PacketObjectMiscellaneous::PacketObjectMiscellaneous(RakNet::RakPeerInterface *peer) : ObjectPacket(peer)
 {
     packetID = ID_OBJECT_MISCELLANEOUS;
+    hasCellData = true;
 }
 
 void PacketObjectMiscellaneous::Object(BaseObject &baseObject, bool send)
 {
-
+    ObjectPacket::Object(baseObject, send);
+    RW(baseObject.goldPool, send);
 }

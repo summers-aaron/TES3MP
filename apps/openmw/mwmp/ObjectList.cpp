@@ -813,6 +813,33 @@ void ObjectList::playObjectSounds(MWWorld::CellStore* cellStore)
     }
 }
 
+void ObjectList::setGoldPoolsForObjects(MWWorld::CellStore* cellStore)
+{
+    for (const auto& baseObject : baseObjects)
+    {
+        LOG_APPEND(TimedLog::LOG_VERBOSE, "- cellRef: %s %i-%i", baseObject.refId.c_str(), baseObject.refNum, baseObject.mpNum);
+
+        MWWorld::Ptr ptrFound = cellStore->searchExact(baseObject.refNum, baseObject.mpNum);
+
+        if (ptrFound)
+        {
+            LOG_APPEND(TimedLog::LOG_VERBOSE, "-- Found %s %i-%i", ptrFound.getCellRef().getRefId().c_str(),
+                ptrFound.getCellRef().getRefNum(), ptrFound.getCellRef().getMpNum());
+
+            if (ptrFound.getClass().isActor())
+            {
+                LOG_APPEND(TimedLog::LOG_VERBOSE, "-- Setting gold pool to %u", baseObject.goldPool);
+                ptrFound.getClass().getCreatureStats(ptrFound).setGoldPool(baseObject.goldPool);
+            }
+            else
+            {
+                LOG_MESSAGE_SIMPLE(TimedLog::LOG_WARN, "Failed to set gold pool on %s %i-%i because it is not an actor!",
+                    ptrFound.getCellRef().getRefId().c_str(), ptrFound.getCellRef().getRefNum(), ptrFound.getCellRef().getMpNum());
+            }
+        }
+    }
+}
+
 void ObjectList::activateDoors(MWWorld::CellStore* cellStore)
 {
     for (const auto &baseObject : baseObjects)
@@ -1166,6 +1193,15 @@ void ObjectList::addObjectLock(const MWWorld::Ptr& ptr, int lockLevel)
     addBaseObject(baseObject);
 }
 
+void ObjectList::addObjectMiscellaneous(const MWWorld::Ptr& ptr, unsigned int goldPool)
+{
+    cell = *ptr.getCell()->getCell();
+
+    mwmp::BaseObject baseObject = getBaseObjectFromPtr(ptr);
+    baseObject.goldPool = goldPool;
+    addBaseObject(baseObject);
+}
+
 void ObjectList::addObjectTrap(const MWWorld::Ptr& ptr, const ESM::Position& pos, bool isDisarmed)
 {
     cell = *ptr.getCell()->getCell();
@@ -1320,6 +1356,12 @@ void ObjectList::sendObjectLock()
 {
     mwmp::Main::get().getNetworking()->getObjectPacket(ID_OBJECT_LOCK)->setObjectList(this);
     mwmp::Main::get().getNetworking()->getObjectPacket(ID_OBJECT_LOCK)->Send();
+}
+
+void ObjectList::sendObjectMiscellaneous()
+{
+    mwmp::Main::get().getNetworking()->getObjectPacket(ID_OBJECT_MISCELLANEOUS)->setObjectList(this);
+    mwmp::Main::get().getNetworking()->getObjectPacket(ID_OBJECT_MISCELLANEOUS)->Send();
 }
 
 void ObjectList::sendObjectRestock()

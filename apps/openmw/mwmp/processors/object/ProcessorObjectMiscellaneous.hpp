@@ -1,11 +1,11 @@
 #ifndef OPENMW_PROCESSOROBJECTMISCELLANEOUS_HPP
 #define OPENMW_PROCESSOROBJECTMISCELLANEOUS_HPP
 
-#include "../ObjectProcessor.hpp"
+#include "BaseObjectProcessor.hpp"
 
 namespace mwmp
 {
-    class ProcessorObjectMiscellaneous final: public ObjectProcessor
+    class ProcessorObjectMiscellaneous final: public BaseObjectProcessor
     {
     public:
         ProcessorObjectMiscellaneous()
@@ -16,6 +16,10 @@ namespace mwmp
         virtual void Do(ObjectPacket &packet, ObjectList &objectList)
         {
             LOG_MESSAGE_SIMPLE(TimedLog::LOG_VERBOSE, "Received %s", strPacketID.c_str());
+
+            BaseObjectProcessor::Do(packet, objectList);
+
+            objectList.setGoldPoolsForObjects(ptrCellStore);
         }
     };
 }

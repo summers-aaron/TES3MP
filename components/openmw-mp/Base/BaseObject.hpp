@@ -45,6 +45,8 @@ namespace mwmp
         float volume;
         float pitch;
 
+        unsigned int goldPool;
+
         int doorState;
         bool teleportState;
         ESM::Cell destinationCell;

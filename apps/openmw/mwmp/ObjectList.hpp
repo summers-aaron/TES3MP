@@ -38,6 +38,7 @@ namespace mwmp
         void rotateObjects(MWWorld::CellStore* cellStore);
         void animateObjects(MWWorld::CellStore* cellStore);
         void playObjectSounds(MWWorld::CellStore* cellStore);
+        void setGoldPoolsForObjects(MWWorld::CellStore* cellStore);
         void activateDoors(MWWorld::CellStore* cellStore);
         void setDoorDestinations(MWWorld::CellStore* cellStore);
         void runConsoleCommands(MWWorld::CellStore* cellStore);
@@ -59,6 +60,7 @@ namespace mwmp
         void addObjectSpawn(const MWWorld::Ptr& ptr);
         void addObjectSpawn(const MWWorld::Ptr& ptr, const MWWorld::Ptr& master, std::string spellId, int effectId, float duration);
         void addObjectLock(const MWWorld::Ptr& ptr, int lockLevel);
+        void addObjectMiscellaneous(const MWWorld::Ptr& ptr, unsigned int goldPool);
         void addObjectTrap(const MWWorld::Ptr& ptr, const ESM::Position& pos, bool isDisarmed);
         void addObjectScale(const MWWorld::Ptr& ptr, float scale);
         void addObjectSound(const MWWorld::Ptr& ptr, std::string soundId, float volume, float pitch);
@@ -78,6 +80,7 @@ namespace mwmp
         void sendObjectSpawn();
         void sendObjectDelete();
         void sendObjectLock();
+        void sendObjectMiscellaneous();
         void sendObjectRestock();
         void sendObjectTrap();
         void sendObjectScale();

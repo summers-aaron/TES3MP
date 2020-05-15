@@ -396,8 +396,23 @@ namespace MWGui
         if (mCurrentBalance != 0)
         {
             addOrRemoveGold(mCurrentBalance, player);
-            mPtr.getClass().getCreatureStats(mPtr).setGoldPool(
-                        mPtr.getClass().getCreatureStats(mPtr).getGoldPool() - mCurrentBalance );
+
+            /*
+                Start of tes3mp change (major)
+
+                Don't unilaterally change the merchant's gold pool on our client and instead let the server do it
+            */
+            //mPtr.getClass().getCreatureStats(mPtr).setGoldPool(
+            //    mPtr.getClass().getCreatureStats(mPtr).getGoldPool() - mCurrentBalance);
+
+            mwmp::ObjectList *objectList = mwmp::Main::get().getNetworking()->getObjectList();
+            objectList->reset();
+            objectList->packetOrigin = mwmp::CLIENT_GAMEPLAY;
+            objectList->addObjectMiscellaneous(mPtr, mPtr.getClass().getCreatureStats(mPtr).getGoldPool() - mCurrentBalance);
+            objectList->sendObjectMiscellaneous();
+            /*
+                End of tes3mp change (major)
+            */
         }
 
         eventTradeDone();

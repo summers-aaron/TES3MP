@@ -12,6 +12,14 @@ namespace mwmp
         {
             BPP_INIT(ID_OBJECT_MISCELLANEOUS)
         }
+
+        void Do(ObjectPacket& packet, Player& player, BaseObjectList& objectList) override
+        {
+            LOG_MESSAGE_SIMPLE(TimedLog::LOG_INFO, "Received %s from %s", strPacketID.c_str(), player.npc.mName.c_str());
+
+            packet.Send(false);
+            packet.Send(true);
+        }
     };
 }
 
