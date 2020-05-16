@@ -46,6 +46,9 @@ namespace mwmp
         float pitch;
 
         unsigned int goldPool;
+        float lastGoldRestockHour;
+        int lastGoldRestockDay;
+
 
         int doorState;
         bool teleportState;

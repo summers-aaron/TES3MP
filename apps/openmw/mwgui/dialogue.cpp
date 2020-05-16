@@ -10,6 +10,18 @@
 #include <components/widgets/list.hpp>
 #include <components/translation/translation.hpp>
 
+/*
+    Start of tes3mp addition
+
+    Include additional headers for multiplayer purposes
+*/
+#include "../mwmp/Main.hpp"
+#include "../mwmp/Networking.hpp"
+#include "../mwmp/ObjectList.hpp"
+/*
+    End of tes3mp addition
+*/
+
 #include "../mwbase/environment.hpp"
 #include "../mwbase/windowmanager.hpp"
 #include "../mwbase/mechanicsmanager.hpp"
@@ -462,9 +474,25 @@ namespace MWGui
         // Gold is restocked every 24h
         if (MWBase::Environment::get().getWorld()->getTimeStamp() >= sellerStats.getLastRestockTime() + delay)
         {
+            /*
+                Start of tes3mp change (major)
+
+                Instead of restocking the NPC's gold pool or last restock time here, send a packet about them to the server
+            */
+            /*
             sellerStats.setGoldPool(mPtr.getClass().getBaseGold(mPtr));
 
             sellerStats.setLastRestockTime(MWBase::Environment::get().getWorld()->getTimeStamp());
+            */
+            mwmp::ObjectList* objectList = mwmp::Main::get().getNetworking()->getObjectList();
+            objectList->reset();
+            objectList->packetOrigin = mwmp::CLIENT_GAMEPLAY;
+            objectList->addObjectMiscellaneous(mPtr, mPtr.getClass().getBaseGold(mPtr), MWBase::Environment::get().getWorld()->getTimeStamp().getHour(),
+                MWBase::Environment::get().getWorld()->getTimeStamp().getDay());
+            objectList->sendObjectMiscellaneous();
+            /*
+                End of tes3mp change (major)
+            */
         }
     }
 

@@ -32,6 +32,8 @@
     {"GetObjectDoorState",                    ObjectFunctions::GetObjectDoorState},\
     {"GetObjectLockLevel",                    ObjectFunctions::GetObjectLockLevel},\
     {"GetObjectGoldPool",                     ObjectFunctions::GetObjectGoldPool},\
+    {"GetObjectLastGoldRestockHour",          ObjectFunctions::GetObjectLastGoldRestockHour},\
+    {"GetObjectLastGoldRestockDay",           ObjectFunctions::GetObjectLastGoldRestockDay},\
     \
     {"DoesObjectHavePlayerActivating",        ObjectFunctions::DoesObjectHavePlayerActivating},\
     {"GetObjectActivatingPid",                ObjectFunctions::GetObjectActivatingPid},\
@@ -100,6 +102,8 @@
     {"SetObjectState",                        ObjectFunctions::SetObjectState},\
     {"SetObjectLockLevel",                    ObjectFunctions::SetObjectLockLevel},\
     {"SetObjectGoldPool",                     ObjectFunctions::SetObjectGoldPool},\
+    {"SetObjectLastGoldRestockHour",      ObjectFunctions::SetObjectLastGoldRestockHour},\
+    {"SetObjectLastGoldRestockDay",       ObjectFunctions::SetObjectLastGoldRestockDay},\
     {"SetObjectDisarmState",                  ObjectFunctions::SetObjectDisarmState},\
     {"SetObjectDroppedByPlayerState",         ObjectFunctions::SetObjectDroppedByPlayerState},\
     {"SetObjectPosition",                     ObjectFunctions::SetObjectPosition},\
@@ -391,6 +395,24 @@ public:
     * \return The gold pool.
     */
     static unsigned int GetObjectGoldPool(unsigned int index) noexcept;
+
+    /**
+    * \brief Get the hour of the last gold restock of the object at a certain index in the
+    * read object list.
+    *
+    * \param index The index of the object.
+    * \return The hour of the last gold restock.
+    */
+    static double GetObjectLastGoldRestockHour(unsigned int index) noexcept;
+
+    /**
+    * \brief Get the day of the last gold restock of the object at a certain index in the
+    * read object list.
+    *
+    * \param index The index of the object.
+    * \return The day of the last gold restock.
+    */
+    static int GetObjectLastGoldRestockDay(unsigned int index) noexcept;
 
     /**
     * \brief Check whether the object at a certain index in the read object list has been
@@ -916,7 +938,23 @@ public:
     * \param goldPool The gold pool.
     * \return void
     */
-    static void SetObjectGoldPool(int goldPool) noexcept;
+    static void SetObjectGoldPool(unsigned int goldPool) noexcept;
+
+    /**
+    * \brief Set the hour of the last gold restock of the temporary object stored on the server.
+    *
+    * \param hour The hour of the last gold restock.
+    * \return void
+    */
+    static void SetObjectLastGoldRestockHour(double hour) noexcept;
+
+    /**
+    * \brief Set the day of the last gold restock of the temporary object stored on the server.
+    *
+    * \param day The day of the last gold restock.
+    * \return void
+    */
+    static void SetObjectLastGoldRestockDay(int day) noexcept;
 
     /**
     * \brief Set the disarm state of the temporary object stored on the server.

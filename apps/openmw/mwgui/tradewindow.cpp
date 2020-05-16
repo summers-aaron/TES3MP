@@ -408,7 +408,9 @@ namespace MWGui
             mwmp::ObjectList *objectList = mwmp::Main::get().getNetworking()->getObjectList();
             objectList->reset();
             objectList->packetOrigin = mwmp::CLIENT_GAMEPLAY;
-            objectList->addObjectMiscellaneous(mPtr, mPtr.getClass().getCreatureStats(mPtr).getGoldPool() - mCurrentBalance);
+            MWMechanics::CreatureStats& merchantCreatureStats = mPtr.getClass().getCreatureStats(mPtr);
+            objectList->addObjectMiscellaneous(mPtr, merchantCreatureStats.getGoldPool() - mCurrentBalance, merchantCreatureStats.getLastRestockTime().getHour(),
+                merchantCreatureStats.getLastRestockTime().getDay());
             objectList->sendObjectMiscellaneous();
             /*
                 End of tes3mp change (major)

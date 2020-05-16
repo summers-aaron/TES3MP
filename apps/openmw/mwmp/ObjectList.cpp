@@ -35,6 +35,7 @@
 #include "../mwworld/esmstore.hpp"
 #include "../mwworld/inventorystore.hpp"
 #include "../mwworld/manualref.hpp"
+#include "../mwworld/timestamp.hpp"
 
 using namespace mwmp;
 using namespace std;
@@ -830,6 +831,11 @@ void ObjectList::setGoldPoolsForObjects(MWWorld::CellStore* cellStore)
             {
                 LOG_APPEND(TimedLog::LOG_VERBOSE, "-- Setting gold pool to %u", baseObject.goldPool);
                 ptrFound.getClass().getCreatureStats(ptrFound).setGoldPool(baseObject.goldPool);
+
+                LOG_APPEND(TimedLog::LOG_VERBOSE, "-- Setting last gold restock time to %f hours and %i days passed",
+                    baseObject.lastGoldRestockHour, baseObject.lastGoldRestockDay);
+                ptrFound.getClass().getCreatureStats(ptrFound).setLastRestockTime(MWWorld::TimeStamp::TimeStamp(baseObject.lastGoldRestockHour,
+                    baseObject.lastGoldRestockDay));
             }
             else
             {
@@ -1193,12 +1199,14 @@ void ObjectList::addObjectLock(const MWWorld::Ptr& ptr, int lockLevel)
     addBaseObject(baseObject);
 }
 
-void ObjectList::addObjectMiscellaneous(const MWWorld::Ptr& ptr, unsigned int goldPool)
+void ObjectList::addObjectMiscellaneous(const MWWorld::Ptr& ptr, unsigned int goldPool, float lastGoldRestockHour, int lastGoldRestockDay)
 {
     cell = *ptr.getCell()->getCell();
 
     mwmp::BaseObject baseObject = getBaseObjectFromPtr(ptr);
     baseObject.goldPool = goldPool;
+    baseObject.lastGoldRestockHour = lastGoldRestockHour;
+    baseObject.lastGoldRestockDay = lastGoldRestockDay;
     addBaseObject(baseObject);
 }
 

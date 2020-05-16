@@ -159,6 +159,16 @@ unsigned int ObjectFunctions::GetObjectGoldPool(unsigned int index) noexcept
     return readObjectList->baseObjects.at(index).goldPool;
 }
 
+double ObjectFunctions::GetObjectLastGoldRestockHour(unsigned int index) noexcept
+{
+    return readObjectList->baseObjects.at(index).lastGoldRestockHour;
+}
+
+int ObjectFunctions::GetObjectLastGoldRestockDay(unsigned int index) noexcept
+{
+    return readObjectList->baseObjects.at(index).lastGoldRestockDay;
+}
+
 bool ObjectFunctions::DoesObjectHavePlayerActivating(unsigned int index) noexcept
 {
     return readObjectList->baseObjects.at(index).activatingActor.isPlayer;
@@ -465,9 +475,19 @@ void ObjectFunctions::SetObjectLockLevel(int lockLevel) noexcept
     tempObject.lockLevel = lockLevel;
 }
 
-void ObjectFunctions::SetObjectGoldPool(int goldPool) noexcept
+void ObjectFunctions::SetObjectGoldPool(unsigned int goldPool) noexcept
 {
     tempObject.goldPool = goldPool;
+}
+
+void ObjectFunctions::SetObjectLastGoldRestockHour(double lastGoldRestockHour) noexcept
+{
+    tempObject.lastGoldRestockHour = lastGoldRestockHour;
+}
+
+void ObjectFunctions::SetObjectLastGoldRestockDay(int lastGoldRestockDay) noexcept
+{
+    tempObject.lastGoldRestockDay = lastGoldRestockDay;
 }
 
 void ObjectFunctions::SetObjectDisarmState(bool disarmState) noexcept
