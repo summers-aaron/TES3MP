@@ -154,6 +154,11 @@ int ObjectFunctions::GetObjectLockLevel(unsigned int index) noexcept
     return readObjectList->baseObjects.at(index).lockLevel;
 }
 
+unsigned int ObjectFunctions::GetObjectGoldPool(unsigned int index) noexcept
+{
+    return readObjectList->baseObjects.at(index).goldPool;
+}
+
 bool ObjectFunctions::DoesObjectHavePlayerActivating(unsigned int index) noexcept
 {
     return readObjectList->baseObjects.at(index).activatingActor.isPlayer;
@@ -460,6 +465,11 @@ void ObjectFunctions::SetObjectLockLevel(int lockLevel) noexcept
     tempObject.lockLevel = lockLevel;
 }
 
+void ObjectFunctions::SetObjectGoldPool(int goldPool) noexcept
+{
+    tempObject.goldPool = goldPool;
+}
+
 void ObjectFunctions::SetObjectDisarmState(bool disarmState) noexcept
 {
     tempObject.isDisarmed = disarmState;
@@ -679,6 +689,17 @@ void ObjectFunctions::SendObjectDelete(bool sendToOtherPlayers, bool skipAttache
 void ObjectFunctions::SendObjectLock(bool sendToOtherPlayers, bool skipAttachedPlayer) noexcept
 {
     mwmp::ObjectPacket *packet = mwmp::Networking::get().getObjectPacketController()->GetPacket(ID_OBJECT_LOCK);
+    packet->setObjectList(&writeObjectList);
+
+    if (!skipAttachedPlayer)
+        packet->Send(false);
+    if (sendToOtherPlayers)
+        packet->Send(true);
+}
+
+void ObjectFunctions::SendObjectMiscellaneous(bool sendToOtherPlayers, bool skipAttachedPlayer) noexcept
+{
+    mwmp::ObjectPacket* packet = mwmp::Networking::get().getObjectPacketController()->GetPacket(ID_OBJECT_MISCELLANEOUS);
     packet->setObjectList(&writeObjectList);
 
     if (!skipAttachedPlayer)

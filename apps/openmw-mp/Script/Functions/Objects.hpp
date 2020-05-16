@@ -31,6 +31,7 @@
     {"GetObjectState",                        ObjectFunctions::GetObjectState},\
     {"GetObjectDoorState",                    ObjectFunctions::GetObjectDoorState},\
     {"GetObjectLockLevel",                    ObjectFunctions::GetObjectLockLevel},\
+    {"GetObjectGoldPool",                     ObjectFunctions::GetObjectGoldPool},\
     \
     {"DoesObjectHavePlayerActivating",        ObjectFunctions::DoesObjectHavePlayerActivating},\
     {"GetObjectActivatingPid",                ObjectFunctions::GetObjectActivatingPid},\
@@ -98,6 +99,7 @@
     {"SetObjectScale",                        ObjectFunctions::SetObjectScale},\
     {"SetObjectState",                        ObjectFunctions::SetObjectState},\
     {"SetObjectLockLevel",                    ObjectFunctions::SetObjectLockLevel},\
+    {"SetObjectGoldPool",                     ObjectFunctions::SetObjectGoldPool},\
     {"SetObjectDisarmState",                  ObjectFunctions::SetObjectDisarmState},\
     {"SetObjectDroppedByPlayerState",         ObjectFunctions::SetObjectDroppedByPlayerState},\
     {"SetObjectPosition",                     ObjectFunctions::SetObjectPosition},\
@@ -141,6 +143,7 @@
     {"SendObjectSpawn",                       ObjectFunctions::SendObjectSpawn},\
     {"SendObjectDelete",                      ObjectFunctions::SendObjectDelete},\
     {"SendObjectLock",                        ObjectFunctions::SendObjectLock},\
+    {"SendObjectMiscellaneous",               ObjectFunctions::SendObjectMiscellaneous},\
     {"SendObjectRestock",                     ObjectFunctions::SendObjectRestock},\
     {"SendObjectTrap",                        ObjectFunctions::SendObjectTrap},\
     {"SendObjectScale",                       ObjectFunctions::SendObjectScale},\
@@ -380,6 +383,14 @@ public:
     * \return The lock level.
     */
     static int GetObjectLockLevel(unsigned int index) noexcept;
+
+    /**
+    * \brief Get the gold pool of the object at a certain index in the read object list.
+    *
+    * \param index The index of the object.
+    * \return The gold pool.
+    */
+    static unsigned int GetObjectGoldPool(unsigned int index) noexcept;
 
     /**
     * \brief Check whether the object at a certain index in the read object list has been
@@ -900,6 +911,14 @@ public:
     static void SetObjectLockLevel(int lockLevel) noexcept;
 
     /**
+    * \brief Set the gold pool of the temporary object stored on the server.
+    *
+    * \param goldPool The gold pool.
+    * \return void
+    */
+    static void SetObjectGoldPool(int goldPool) noexcept;
+
+    /**
     * \brief Set the disarm state of the temporary object stored on the server.
     *
     * \param disarmState The disarmState.
@@ -1201,6 +1220,17 @@ public:
     * \return void
     */
     static void SendObjectLock(bool sendToOtherPlayers, bool skipAttachedPlayer) noexcept;
+
+    /**
+    * \brief Send an ObjectMiscellaneous packet.
+    *
+    * \param sendToOtherPlayers Whether this packet should be sent to players other than the
+    *                           player attached to the packet (false by default).
+    * \param skipAttachedPlayer Whether the packet should skip being sent to the player attached
+    *                           to the packet (false by default).
+    * \return void
+    */
+    static void SendObjectMiscellaneous(bool sendToOtherPlayers, bool skipAttachedPlayer) noexcept;
 
     /**
     * \brief Send an ObjectRestock packet.

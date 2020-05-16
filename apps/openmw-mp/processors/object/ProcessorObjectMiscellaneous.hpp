@@ -17,8 +17,7 @@ namespace mwmp
         {
             LOG_MESSAGE_SIMPLE(TimedLog::LOG_INFO, "Received %s from %s", strPacketID.c_str(), player.npc.mName.c_str());
 
-            packet.Send(false);
-            packet.Send(true);
+            Script::Call<Script::CallbackIdentity("OnObjectMiscellaneous")>(player.getId(), objectList.cell.getDescription().c_str());
         }
     };
 }
