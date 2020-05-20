@@ -834,7 +834,7 @@ void ObjectList::setGoldPoolsForObjects(MWWorld::CellStore* cellStore)
 
                 LOG_APPEND(TimedLog::LOG_VERBOSE, "-- Setting last gold restock time to %f hours and %i days passed",
                     baseObject.lastGoldRestockHour, baseObject.lastGoldRestockDay);
-                ptrFound.getClass().getCreatureStats(ptrFound).setLastRestockTime(MWWorld::TimeStamp::TimeStamp(baseObject.lastGoldRestockHour,
+                ptrFound.getClass().getCreatureStats(ptrFound).setLastRestockTime(MWWorld::TimeStamp(baseObject.lastGoldRestockHour,
                     baseObject.lastGoldRestockDay));
             }
             else
