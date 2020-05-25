@@ -7,6 +7,7 @@
 */
 #include "../mwmp/Main.hpp"
 #include "../mwmp/Networking.hpp"
+#include "../mwmp/CellController.hpp"
 #include "../mwmp/ObjectList.hpp"
 /*
     End of tes3mp addition
@@ -57,7 +58,7 @@ void MWWorld::Action::execute (const Ptr& actor, bool noSound)
             /*
                 Start of tes3mp addition
 
-                Send an ID_OBJECT_SOUND packet every time an actor makes a sound here
+                Send an ID_OBJECT_SOUND packet every time the local player makes a sound here
             */
             mwmp::ObjectList *objectList = mwmp::Main::get().getNetworking()->getObjectList();
             objectList->reset();
@@ -81,13 +82,16 @@ void MWWorld::Action::execute (const Ptr& actor, bool noSound)
                 /*
                     Start of tes3mp addition
 
-                    Send an ID_OBJECT_SOUND packet every time an actor makes a sound here
+                    Send an ID_OBJECT_SOUND packet every time a local actor makes a sound here
                 */
-                mwmp::ObjectList *objectList = mwmp::Main::get().getNetworking()->getObjectList();
-                objectList->reset();
-                objectList->packetOrigin = mwmp::CLIENT_GAMEPLAY;
-                objectList->addObjectSound(local ? actor : mTarget, mSoundId, 1.0, 1.0);
-                objectList->sendObjectSound();
+                if (mwmp::Main::get().getCellController()->isLocalActor(actor))
+                {
+                    mwmp::ObjectList* objectList = mwmp::Main::get().getNetworking()->getObjectList();
+                    objectList->reset();
+                    objectList->packetOrigin = mwmp::CLIENT_GAMEPLAY;
+                    objectList->addObjectSound(local ? actor : mTarget, mSoundId, 1.0, 1.0);
+                    objectList->sendObjectSound();
+                }
                 /*
                     End of tes3mp addition
                 */
@@ -101,13 +105,16 @@ void MWWorld::Action::execute (const Ptr& actor, bool noSound)
                 /*
                     Start of tes3mp addition
 
-                    Send an ID_OBJECT_SOUND packet every time an actor makes a sound here
+                    Send an ID_OBJECT_SOUND packet every time a local actor makes a sound here
                 */
-                mwmp::ObjectList *objectList = mwmp::Main::get().getNetworking()->getObjectList();
-                objectList->reset();
-                objectList->packetOrigin = mwmp::CLIENT_GAMEPLAY;
-                objectList->addObjectSound(local ? actor : mTarget, mSoundId, 1.0, 1.0);
-                objectList->sendObjectSound();
+                if (mwmp::Main::get().getCellController()->isLocalActor(actor))
+                {
+                    mwmp::ObjectList* objectList = mwmp::Main::get().getNetworking()->getObjectList();
+                    objectList->reset();
+                    objectList->packetOrigin = mwmp::CLIENT_GAMEPLAY;
+                    objectList->addObjectSound(local ? actor : mTarget, mSoundId, 1.0, 1.0);
+                    objectList->sendObjectSound();
+                }
                 /*
                     End of tes3mp addition
                 */
