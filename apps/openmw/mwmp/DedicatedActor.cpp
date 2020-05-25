@@ -42,6 +42,7 @@ DedicatedActor::DedicatedActor()
 
     hasPositionData = false;
     hasStatsDynamicData = false;
+    hasReceivedInitialEquipment = false;
     hasChangedCell = true;
 
     attack.pressed = false;
@@ -195,14 +196,16 @@ void DedicatedActor::setEquipment()
         if (packetRefId.empty() || equal)
             continue;
 
-        if (hasItem(packetRefId, packetCharge))
-            equipItem(packetRefId, packetCharge);
-        else
+        if (!hasItem(packetRefId, packetCharge))
         {
             ptr.getClass().getContainerStore(ptr).add(packetRefId, count, ptr);
-            equipItem(packetRefId, packetCharge);
         }
+
+        // Equip items silently if this is the first time equipment is being set for this character
+        equipItem(packetRefId, packetCharge, !hasReceivedInitialEquipment);
     }
+
+    hasReceivedInitialEquipment = true;
 }
 
 void DedicatedActor::setAi()
@@ -344,14 +347,14 @@ bool DedicatedActor::hasItem(std::string itemId, int charge)
     return false;
 }
 
-void DedicatedActor::equipItem(std::string itemId, int charge)
+void DedicatedActor::equipItem(std::string itemId, int charge, bool noSound)
 {
     for (const auto &itemPtr : ptr.getClass().getInventoryStore(ptr))
     {
         if (::Misc::StringUtils::ciEqual(itemPtr.getCellRef().getRefId(), itemId) && itemPtr.getCellRef().getCharge() == charge)
         {
             std::shared_ptr<MWWorld::Action> action = itemPtr.getClass().use(itemPtr);
-            action->execute(ptr);
+            action->execute(ptr, noSound);
             break;
         }
     }

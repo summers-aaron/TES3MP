@@ -27,7 +27,7 @@ namespace mwmp
         void playSound();
 
         bool hasItem(std::string itemId, int charge);
-        void equipItem(std::string itemId, int charge);
+        void equipItem(std::string itemId, int charge, bool noSound = false);
 
         MWWorld::Ptr getPtr();
         void setPtr(const MWWorld::Ptr& newPtr);
@@ -35,6 +35,7 @@ namespace mwmp
     private:
         MWWorld::Ptr ptr;
 
+        bool hasReceivedInitialEquipment;
         bool hasChangedCell;
     };
 }

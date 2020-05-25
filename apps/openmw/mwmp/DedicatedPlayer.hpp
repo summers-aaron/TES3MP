@@ -48,6 +48,8 @@ namespace mwmp
         void playAnimation();
         void playSpeech();
 
+        void equipItem(std::string itemId, bool noSound = false);
+
         void createReference(const std::string& recId);
         void deleteReference();
 
@@ -75,6 +77,7 @@ namespace mwmp
 
         std::string creatureRecordId;
 
+        bool hasReceivedInitialEquipment;
         bool hasFinishedInitialTeleportation;
         bool isLevitationPurged;
     };

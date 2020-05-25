@@ -63,6 +63,7 @@ DedicatedPlayer::DedicatedPlayer(RakNet::RakNetGUID guid) : BasePlayer(guid)
     npc.mId = "";
     previousRace = npc.mRace;
 
+    hasReceivedInitialEquipment = false;
     hasFinishedInitialTeleportation = false;
 }
 
@@ -306,12 +307,14 @@ void DedicatedPlayer::setEquipment()
     // Go no further if the player is disguised as a creature
     if (!ptr.getClass().hasInventoryStore(ptr)) return;
 
+    bool equippedSomething = false;
+
     MWWorld::InventoryStore& invStore = ptr.getClass().getInventoryStore(ptr);
     for (int slot = 0; slot < MWWorld::InventoryStore::Slots; ++slot)
     {
         MWWorld::ContainerStoreIterator it = invStore.getSlot(slot);
 
-        const string &packetItemId = equipmentItems[slot].refId;
+        const string &packetRefId = equipmentItems[slot].refId;
         std::string ptrItemId = "";
         bool equal = false;
 
@@ -319,7 +322,7 @@ void DedicatedPlayer::setEquipment()
         {
             ptrItemId = it->getCellRef().getRefId();
 
-            if (!Misc::StringUtils::ciEqual(ptrItemId, packetItemId)) // if other item is now equipped
+            if (!Misc::StringUtils::ciEqual(ptrItemId, packetRefId)) // if other item is now equipped
             {
                 MWWorld::ContainerStore &store = ptr.getClass().getContainerStore(ptr);
 
@@ -327,7 +330,7 @@ void DedicatedPlayer::setEquipment()
                 // have just run out but still need to be kept briefly so they can be used in attacks about to be released
                 bool shouldRemove = true;
 
-                if (attack.type == mwmp::Attack::RANGED && packetItemId.empty() && !attack.pressed)
+                if (attack.type == mwmp::Attack::RANGED && packetRefId.empty() && !attack.pressed)
                 {
                     if (slot == MWWorld::InventoryStore::Slot_CarriedRight && Misc::StringUtils::ciEqual(ptrItemId, attack.rangedWeaponId))
                         shouldRemove = false;
@@ -336,28 +339,27 @@ void DedicatedPlayer::setEquipment()
                 }
                 
                 if (shouldRemove)
+                {
                     store.remove(ptrItemId, store.count(ptrItemId), ptr);
+                }
             }
             else
                 equal = true;
         }
 
-        if (packetItemId.empty() || equal)
+        if (packetRefId.empty() || equal)
             continue;
 
         const int count = equipmentItems[slot].count;
-        ptr.getClass().getContainerStore(ptr).add(packetItemId, count, ptr);
-
-        for (const auto &itemPtr : invStore)
-        {
-            if (::Misc::StringUtils::ciEqual(itemPtr.getCellRef().getRefId(), packetItemId)) // equip item
-            {
-                std::shared_ptr<MWWorld::Action> action = itemPtr.getClass().use(itemPtr);
-                action->execute(ptr);
-                break;
-            }
-        }
+        ptr.getClass().getContainerStore(ptr).add(packetRefId, count, ptr);
+        // Equip items silently if this is the first time equipment is being set for this character
+        equipItem(packetRefId, !hasReceivedInitialEquipment);
+        equippedSomething = true;
     }
+
+    // Only track the initial equipment as received if at least one item has been equipped
+    if (equippedSomething)
+        hasReceivedInitialEquipment = true;
 }
 
 void DedicatedPlayer::setCell()
@@ -467,6 +469,19 @@ void DedicatedPlayer::playSpeech()
     MWBase::WindowManager *winMgr = MWBase::Environment::get().getWindowManager();
     if (winMgr->getSubtitlesEnabled())
         winMgr->messageBox(MWBase::Environment::get().getDialogueManager()->getVoiceCaption(sound), MWGui::ShowInDialogueMode_Never);
+}
+
+void DedicatedPlayer::equipItem(std::string itemId, bool noSound)
+{
+    for (const auto& itemPtr : ptr.getClass().getInventoryStore(ptr))
+    {
+        if (::Misc::StringUtils::ciEqual(itemPtr.getCellRef().getRefId(), itemId))
+        {
+            std::shared_ptr<MWWorld::Action> action = itemPtr.getClass().use(itemPtr);
+            action->execute(ptr, noSound);
+            break;
+        }
+    }
 }
 
 void DedicatedPlayer::createReference(const std::string& recId)
