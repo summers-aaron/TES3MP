@@ -241,7 +241,7 @@ public:
     *        client globals.
     *
     * \param index The index of the client global.
-    * \return The variable type (0 for INTEGER, 1 for FLOAT).
+    * \return The variable type (0 for INTEGER, 1 for LONG, 2 for FLOAT).
     */
     static unsigned short GetClientGlobalVariableType(unsigned int index) noexcept;
 

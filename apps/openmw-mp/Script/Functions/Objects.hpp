@@ -102,8 +102,8 @@
     {"SetObjectState",                        ObjectFunctions::SetObjectState},\
     {"SetObjectLockLevel",                    ObjectFunctions::SetObjectLockLevel},\
     {"SetObjectGoldPool",                     ObjectFunctions::SetObjectGoldPool},\
-    {"SetObjectLastGoldRestockHour",      ObjectFunctions::SetObjectLastGoldRestockHour},\
-    {"SetObjectLastGoldRestockDay",       ObjectFunctions::SetObjectLastGoldRestockDay},\
+    {"SetObjectLastGoldRestockHour",          ObjectFunctions::SetObjectLastGoldRestockHour},\
+    {"SetObjectLastGoldRestockDay",           ObjectFunctions::SetObjectLastGoldRestockDay},\
     {"SetObjectDisarmState",                  ObjectFunctions::SetObjectDisarmState},\
     {"SetObjectDroppedByPlayerState",         ObjectFunctions::SetObjectDroppedByPlayerState},\
     {"SetObjectPosition",                     ObjectFunctions::SetObjectPosition},\
