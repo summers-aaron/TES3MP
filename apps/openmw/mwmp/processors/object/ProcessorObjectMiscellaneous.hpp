@@ -15,9 +15,11 @@ namespace mwmp
 
         virtual void Do(ObjectPacket &packet, ObjectList &objectList)
         {
-            LOG_MESSAGE_SIMPLE(TimedLog::LOG_VERBOSE, "Received %s", strPacketID.c_str());
-
             BaseObjectProcessor::Do(packet, objectList);
+
+            ptrCellStore = Main::get().getCellController()->getCellStore(objectList.cell);
+
+            if (!ptrCellStore) return;
 
             objectList.setGoldPoolsForObjects(ptrCellStore);
         }

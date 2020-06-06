@@ -17,6 +17,10 @@ namespace mwmp
         {
             BaseObjectProcessor::Do(packet, objectList);
 
+            ptrCellStore = Main::get().getCellController()->getCellStore(objectList.cell);
+
+            if (!ptrCellStore) return;
+
             std::string debugMessage = "- action ";
             unsigned char action = objectList.action;
             unsigned char containerSubAction = objectList.containerSubAction;

@@ -17,6 +17,10 @@ namespace mwmp
         {
             BaseObjectProcessor::Do(packet, objectList);
 
+            ptrCellStore = Main::get().getCellController()->getCellStore(objectList.cell);
+
+            if (!ptrCellStore) return;
+
             objectList.activateDoors(ptrCellStore);
         }
     };
