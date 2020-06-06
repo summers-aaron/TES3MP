@@ -316,6 +316,8 @@ namespace MWWorld
             Ptr searchPtrViaActorId (int actorId) override;
             ///< Search is limited to the active cells.
 
+            Ptr searchPtrViaRefNum (const std::string& id, const ESM::RefNum& refNum) override;
+
             /*
                 Start of tes3mp addition
 

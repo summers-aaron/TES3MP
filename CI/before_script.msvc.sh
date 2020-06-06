@@ -36,6 +36,7 @@ PLATFORM=""
 CONFIGURATION=""
 TEST_FRAMEWORK=""
 GOOGLE_INSTALL_ROOT=""
+INSTALL_PREFIX="."
 
 while [ $# -gt 0 ]; do
 	ARGSTR=$1
@@ -83,9 +84,13 @@ while [ $# -gt 0 ]; do
 			t )
 				TEST_FRAMEWORK=true ;;
 
+			i )
+				INSTALL_PREFIX=$(echo "$1" | sed 's;\\;/;g' | sed -E 's;/+;/;g')
+				shift ;;
+
 			h )
 				cat <<EOF
-Usage: $0 [-cdehkpuvV]
+Usage: $0 [-cdehkpuvVi]
 Options:
 	-c <Release/Debug>
 		Set the configuration, can also be set with environment variable CONFIGURATION.
@@ -109,6 +114,8 @@ Options:
 		Produce NMake makefiles instead of a Visual Studio solution.
 	-V
 		Run verbosely
+	-i
+		CMake install prefix
 EOF
 				exit 0
 				;;
@@ -386,9 +393,9 @@ if [ -z $SKIP_DOWNLOAD ]; then
 	fi
 
 	# Bullet
-	download "Bullet 2.86" \
-		"https://www.lysator.liu.se/~ace/OpenMW/deps/Bullet-2.86-msvc${MSVC_YEAR}-win${BITS}.7z" \
-		"Bullet-2.86-msvc${MSVC_YEAR}-win${BITS}.7z"
+	download "Bullet 2.87" \
+		"https://www.lysator.liu.se/~ace/OpenMW/deps/Bullet-2.87-msvc${MSVC_YEAR}-win${BITS}.7z" \
+		"Bullet-2.87-msvc${MSVC_YEAR}-win${BITS}.7z"
 
 	# FFmpeg
 	download "FFmpeg 3.2.4" \
@@ -526,15 +533,15 @@ fi
 cd $DEPS
 echo
 # Bullet
-printf "Bullet 2.86... "
+printf "Bullet 2.87... "
 {
 	cd $DEPS_INSTALL
 	if [ -d Bullet ]; then
 		printf -- "Exists. (No version checking) "
 	elif [ -z $SKIP_EXTRACT ]; then
 		rm -rf Bullet
-		eval 7z x -y "${DEPS}/Bullet-2.86-msvc${MSVC_YEAR}-win${BITS}.7z" $STRIP
-		mv "Bullet-2.86-msvc${MSVC_YEAR}-win${BITS}" Bullet
+		eval 7z x -y "${DEPS}/Bullet-2.87-msvc${MSVC_YEAR}-win${BITS}.7z" $STRIP
+		mv "Bullet-2.87-msvc${MSVC_YEAR}-win${BITS}" Bullet
 	fi
 	export BULLET_ROOT="$(real_pwd)/Bullet"
 	echo Done.
@@ -759,8 +766,8 @@ echo
 cd $DEPS_INSTALL/..
 echo
 echo "Setting up OpenMW build..."
-add_cmake_opts -DBUILD_MYGUI_PLUGIN=no \
-	-DOPENMW_MP_BUILD=on
+add_cmake_opts -DOPENMW_MP_BUILD=on
+add_cmake_opts -DCMAKE_INSTALL_PREFIX="${INSTALL_PREFIX}"
 if [ ! -z $CI ]; then
 	case $STEP in
 		components )

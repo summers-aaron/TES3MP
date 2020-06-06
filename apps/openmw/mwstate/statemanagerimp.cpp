@@ -144,6 +144,7 @@ void MWState::StateManager::newGame (bool bypass)
 
     try
     {
+        Log(Debug::Info) << "Starting a new game";
         MWBase::Environment::get().getScriptManager()->getGlobalScripts().addStartup();
 
         MWBase::Environment::get().getWorld()->startNewGame (bypass);
@@ -220,6 +221,7 @@ void MWState::StateManager::saveGame (const std::string& description, const Slot
         profile.mTimePlayed = mTimePlayed;
         profile.mDescription = description;
 
+        Log(Debug::Info) << "Making a screenshot for saved game '" << description << "'";;
         writeScreenshot(profile.mScreenshot);
 
         if (!slot)
@@ -229,6 +231,8 @@ void MWState::StateManager::saveGame (const std::string& description, const Slot
 
         // Make sure the animation state held by references is up to date before saving the game.
         MWBase::Environment::get().getMechanicsManager()->persistAnimationStates();
+
+        Log(Debug::Info) << "Writing saved game '" << description << "' for character '" << profile.mPlayerName << "'";
 
         // Write to a memory stream first. If there is an exception during the save process, we don't want to trash the
         // existing save file we are overwriting.
@@ -324,6 +328,16 @@ void MWState::StateManager::saveGame (const std::string& description, const Slot
 
 void MWState::StateManager::quickSave (std::string name)
 {
+    /*
+        Start of tes3mp change (major)
+
+        It should not be possible to quicksave the game in multiplayer, so it has been disabled
+    */
+    return;
+    /*
+        End of tes3mp change (major)
+    */
+
     if (!(mState==State_Running &&
         MWBase::Environment::get().getWorld()->getGlobalInt ("chargenstate")==-1 // char gen
             && MWBase::Environment::get().getWindowManager()->isSavingAllowed()))
@@ -380,6 +394,8 @@ void MWState::StateManager::loadGame (const Character *character, const std::str
     {
         cleanup();
 
+        Log(Debug::Info) << "Reading save file " << boost::filesystem::path(filepath).filename().string();
+
         ESM::ESMReader reader;
         reader.open (filepath);
 
@@ -418,6 +434,7 @@ void MWState::StateManager::loadGame (const Character *character, const std::str
                             return;
                         }
                         mTimePlayed = profile.mTimePlayed;
+                        Log(Debug::Info) << "Loading saved game '" << profile.mDescription << "' for character '" << profile.mPlayerName << "'";
                     }
                     break;
 
@@ -526,6 +543,7 @@ void MWState::StateManager::loadGame (const Character *character, const std::str
         else
         {
             // Cell no longer exists (i.e. changed game files), choose a default cell
+            Log(Debug::Warning) << "Warning: Player character's cell no longer exists, changing to the default cell";
             MWWorld::CellStore* cell = MWBase::Environment::get().getWorld()->getExterior(0,0);
             float x,y;
             MWBase::Environment::get().getWorld()->indexToPosition(0,0,x,y,false);
@@ -565,6 +583,16 @@ void MWState::StateManager::loadGame (const Character *character, const std::str
 
 void MWState::StateManager::quickLoad()
 {
+    /*
+        Start of tes3mp change (major)
+
+        It should not be possible to quickload the game in multiplayer, so it has been disabled
+    */
+    return;
+    /*
+        End of tes3mp change (major)
+    */
+
     if (Character* currentCharacter = getCurrentCharacter ())
     {
         if (currentCharacter->begin() == currentCharacter->end())
@@ -628,7 +656,7 @@ bool MWState::StateManager::verifyProfile(const ESM::SavedGame& profile) const
         if (std::find(selectedContentFiles.begin(), selectedContentFiles.end(), *it)
                 == selectedContentFiles.end())
         {
-            Log(Debug::Warning) << "Warning: Savegame dependency " << *it << " is missing.";
+            Log(Debug::Warning) << "Warning: Saved game dependency " << *it << " is missing.";
             notFound = true;
         }
     }

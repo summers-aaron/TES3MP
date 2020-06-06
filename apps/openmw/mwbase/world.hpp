@@ -200,6 +200,8 @@ namespace MWBase
             virtual MWWorld::Ptr searchPtrViaActorId (int actorId) = 0;
             ///< Search is limited to the active cells.
 
+            virtual MWWorld::Ptr searchPtrViaRefNum (const std::string& id, const ESM::RefNum& refNum) = 0;
+
             /*
                 Start of tes3mp addition
 

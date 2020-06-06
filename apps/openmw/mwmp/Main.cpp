@@ -5,6 +5,7 @@
 #include <components/openmw-mp/Version.hpp>
 
 #include <components/esm/esmwriter.hpp>
+#include <components/files/configurationmanager.hpp>
 #include <components/files/escape.hpp>
 
 #include "../mwbase/environment.hpp"

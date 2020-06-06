@@ -19,6 +19,7 @@
 
 #include <components/esm/cellstate.hpp>
 #include <components/esm/cellid.hpp>
+#include <components/esm/cellref.hpp>
 #include <components/esm/esmreader.hpp>
 #include <components/esm/esmwriter.hpp>
 #include <components/esm/objectstate.hpp>
@@ -509,19 +510,47 @@ namespace MWWorld
         return Ptr();
     }
 
+    class RefNumSearchVisitor
+    {
+        const ESM::RefNum& mRefNum;
+    public:
+        RefNumSearchVisitor(const ESM::RefNum& refNum) : mRefNum(refNum) {}
+
+        Ptr mFound;
+
+        bool operator()(const Ptr& ptr)
+        {
+            if (ptr.getCellRef().getRefNum() == mRefNum)
+            {
+                mFound = ptr;
+                return false;
+            }
+            return true;
+        }
+    };
+
+    Ptr CellStore::searchViaRefNum(const ESM::RefNum& refNum)
+    {
+        RefNumSearchVisitor searchVisitor(refNum);
+        forEach(searchVisitor);
+        return searchVisitor.mFound;
+    }
+
     /*
         Start of tes3mp addition
 
         A custom type of search visitor used to find objects by their reference numbers
     */
-    template <typename PtrType>
-    struct SearchExactVisitor
+    class SearchExactVisitor
     {
-        PtrType mFound;
-        unsigned int mRefNumToFind;
-        unsigned int mMpNumToFind;
+        const unsigned int mRefNumToFind;
+        const unsigned int mMpNumToFind;
+    public:
+        SearchExactVisitor(const unsigned int refNum, const unsigned int mpNum) : mRefNumToFind(refNum), mMpNumToFind(mpNum) {}
 
-        bool operator()(const PtrType& ptr)
+        Ptr mFound;
+
+        bool operator()(const Ptr& ptr)
         {
             if (ptr.getCellRef().getRefNum().mIndex == mRefNumToFind && ptr.getCellRef().getMpNum() == mMpNumToFind)
             {
@@ -540,15 +569,13 @@ namespace MWWorld
 
         Allow the searching of objects by their reference numbers
     */
-    Ptr CellStore::searchExact (unsigned int refNum, unsigned int mpNum)
+    Ptr CellStore::searchExact (const unsigned int refNum, const unsigned int mpNum)
     {
         // Ensure that all objects searched for have a valid reference number
         if (refNum == 0 && mpNum == 0)
             return 0;
 
-        SearchExactVisitor<MWWorld::Ptr> searchVisitor;
-        searchVisitor.mRefNumToFind = refNum;
-        searchVisitor.mMpNumToFind = mpNum;
+        SearchExactVisitor searchVisitor(refNum, mpNum);
         forEach(searchVisitor);
         return searchVisitor.mFound;
     }
