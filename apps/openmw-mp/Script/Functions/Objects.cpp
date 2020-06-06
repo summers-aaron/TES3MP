@@ -344,14 +344,29 @@ const char *ObjectFunctions::GetVideoFilename(unsigned int index) noexcept
     return readObjectList->baseObjects.at(index).videoFilename.c_str();
 }
 
-const char *ObjectFunctions::GetScriptVariableName(unsigned int index) noexcept
+unsigned int ObjectFunctions::GetClientLocalsSize(unsigned int objectIndex) noexcept
 {
-    return readObjectList->baseObjects.at(index).clientVariable.id.c_str();
+    return readObjectList->baseObjects.at(objectIndex).clientLocals.size();
 }
 
-int ObjectFunctions::GetScriptVariableShortValue(unsigned int index) noexcept
+unsigned int ObjectFunctions::GetClientLocalInternalIndex(unsigned int objectIndex, unsigned int variableIndex) noexcept
 {
-    return readObjectList->baseObjects.at(index).clientVariable.intValue;
+    return readObjectList->baseObjects.at(objectIndex).clientLocals.at(variableIndex).internalIndex;
+}
+
+unsigned short ObjectFunctions::GetClientLocalVariableType(unsigned int objectIndex, unsigned int variableIndex) noexcept
+{
+    return readObjectList->baseObjects.at(objectIndex).clientLocals.at(variableIndex).variableType;
+}
+
+int ObjectFunctions::GetClientLocalIntValue(unsigned int objectIndex, unsigned int variableIndex) noexcept
+{
+    return readObjectList->baseObjects.at(objectIndex).clientLocals.at(variableIndex).intValue;
+}
+
+double ObjectFunctions::GetClientLocalFloatValue(unsigned int objectIndex, unsigned int variableIndex) noexcept
+{
+    return readObjectList->baseObjects.at(objectIndex).clientLocals.at(variableIndex).floatValue;
 }
 
 unsigned int ObjectFunctions::GetContainerChangesSize(unsigned int objectIndex) noexcept
@@ -599,16 +614,6 @@ void ObjectFunctions::SetObjectDoorDestinationRotation(double x, double z) noexc
     tempObject.destinationPosition.rot[2] = z;
 }
 
-void ObjectFunctions::SetScriptVariableName(const char* varName) noexcept
-{
-    tempObject.clientVariable.id = varName;
-}
-
-void ObjectFunctions::SetScriptVariableShortValue(int shortVal) noexcept
-{
-    tempObject.clientVariable.intValue = shortVal;
-}
-
 void ObjectFunctions::SetPlayerAsObject(unsigned short pid) noexcept
 {
     Player *player;
@@ -653,6 +658,26 @@ void ObjectFunctions::AddObject() noexcept
     writeObjectList.baseObjects.push_back(tempObject);
 
     tempObject = emptyObject;
+}
+
+void ObjectFunctions::AddClientLocalInteger(int internalIndex, int intValue, unsigned int variableType) noexcept
+{
+    ClientVariable clientLocal;
+    clientLocal.internalIndex = internalIndex;
+    clientLocal.intValue = intValue;
+    clientLocal.variableType = variableType;
+
+    tempObject.clientLocals.push_back(clientLocal);
+}
+
+void ObjectFunctions::AddClientLocalFloat(int internalIndex, double floatValue) noexcept
+{
+    ClientVariable clientLocal;
+    clientLocal.internalIndex = internalIndex;
+    clientLocal.floatValue = floatValue;
+    clientLocal.variableType = mwmp::VARIABLE_TYPE::FLOAT;
+
+    tempObject.clientLocals.push_back(clientLocal);
 }
 
 void ObjectFunctions::AddContainerItem() noexcept
@@ -827,17 +852,15 @@ void ObjectFunctions::SendVideoPlay(bool sendToOtherPlayers, bool skipAttachedPl
         packet->Send(true);
 }
 
-void ObjectFunctions::SendScriptGlobalShort(bool sendToOtherPlayers, bool skipAttachedPlayer) noexcept
+void ObjectFunctions::SendClientScriptLocal(bool sendToOtherPlayers, bool skipAttachedPlayer) noexcept
 {
-    /*
-    mwmp::ObjectPacket *packet = mwmp::Networking::get().getObjectPacketController()->GetPacket(ID_CLIENT_SCRIPT_GLOBAL);
+    mwmp::ObjectPacket* packet = mwmp::Networking::get().getObjectPacketController()->GetPacket(ID_CLIENT_SCRIPT_LOCAL);
     packet->setObjectList(&writeObjectList);
 
     if (!skipAttachedPlayer)
         packet->Send(false);
     if (sendToOtherPlayers)
         packet->Send(true);
-    */
 }
 
 void ObjectFunctions::SendConsoleCommand(bool sendToOtherPlayers, bool skipAttachedPlayer) noexcept

@@ -72,8 +72,11 @@
     \
     {"GetVideoFilename",                      ObjectFunctions::GetVideoFilename},\
     \
-    {"GetScriptVariableName",                 ObjectFunctions::GetScriptVariableName},\
-    {"GetScriptVariableShortValue",           ObjectFunctions::GetScriptVariableShortValue},\
+    {"GetClientLocalsSize",                   ObjectFunctions::GetClientLocalsSize},\
+    {"GetClientLocalInternalIndex",           ObjectFunctions::GetClientLocalInternalIndex},\
+    {"GetClientLocalVariableType",            ObjectFunctions::GetClientLocalVariableType},\
+    {"GetClientLocalIntValue",                ObjectFunctions::GetClientLocalIntValue},\
+    {"GetClientLocalFloatValue",              ObjectFunctions::GetClientLocalFloatValue},\
     \
     {"GetContainerChangesSize",               ObjectFunctions::GetContainerChangesSize},\
     {"GetContainerItemRefId",                 ObjectFunctions::GetContainerItemRefId},\
@@ -126,9 +129,6 @@
     {"SetObjectDoorDestinationPosition",      ObjectFunctions::SetObjectDoorDestinationPosition},\
     {"SetObjectDoorDestinationRotation",      ObjectFunctions::SetObjectDoorDestinationRotation},\
     \
-    {"SetScriptVariableName",                 ObjectFunctions::SetScriptVariableName},\
-    {"SetScriptVariableShortValue",           ObjectFunctions::SetScriptVariableShortValue},\
-    \
     {"SetPlayerAsObject",                     ObjectFunctions::SetPlayerAsObject},\
     \
     {"SetContainerItemRefId",                 ObjectFunctions::SetContainerItemRefId},\
@@ -140,6 +140,8 @@
     {"SetContainerItemActionCountByIndex",    ObjectFunctions::SetContainerItemActionCountByIndex},\
     \
     {"AddObject",                             ObjectFunctions::AddObject},\
+    {"AddClientLocalInteger",                 ObjectFunctions::AddClientLocalInteger},\
+    {"AddClientLocalFloat",                   ObjectFunctions::AddClientLocalFloat},\
     {"AddContainerItem",                      ObjectFunctions::AddContainerItem},\
     \
     {"SendObjectActivate",                    ObjectFunctions::SendObjectActivate},\
@@ -157,7 +159,7 @@
     {"SendDoorDestination",                   ObjectFunctions::SendDoorDestination},\
     {"SendContainer",                         ObjectFunctions::SendContainer},\
     {"SendVideoPlay",                         ObjectFunctions::SendVideoPlay},\
-    {"SendScriptGlobalShort",                 ObjectFunctions::SendScriptGlobalShort},\
+    {"SendClientScriptLocal",                 ObjectFunctions::SendClientScriptLocal},\
     {"SendConsoleCommand",                    ObjectFunctions::SendConsoleCommand},\
     \
     {"ReadLastObjectList",                    ObjectFunctions::ReadLastObjectList},\
@@ -695,14 +697,60 @@ public:
     */
     static const char *GetVideoFilename(unsigned int index) noexcept;
 
-    static const char *GetScriptVariableName(unsigned int index) noexcept;
-    static int GetScriptVariableShortValue(unsigned int index) noexcept;
+    /**
+    * \brief Get the number of client local variables of the object at a certain index in the
+    * read object list.
+    *
+    * \param index The index of the object.
+    * \return The number of client local variables.
+    */
+    static unsigned int GetClientLocalsSize(unsigned int objectIndex) noexcept;
+
+    /**
+    * \brief Get the internal script index of the client local variable at a certain variableIndex in
+    * the client locals of the object at a certain objectIndex in the read object list.
+    *
+    * \param objectIndex The index of the object.
+    * \param variableIndex The index of the client local.
+    * \return The internal script index.
+    */
+    static unsigned int GetClientLocalInternalIndex(unsigned int objectIndex, unsigned int variableIndex) noexcept;
+
+    /**
+    * \brief Get the type of the client local variable at a certain variableIndex in the client locals
+    * of the object at a certain objectIndex in the read object list.
+    *
+    * \param index The index of the object.
+    * \param variableIndex The index of the client local.
+    * \return The variable type (0 for INTEGER, 1 for LONG, 2 for FLOAT).
+    */
+    static unsigned short GetClientLocalVariableType(unsigned int objectIndex, unsigned int variableIndex) noexcept;
+
+    /**
+    * \brief Get the integer value of the client local variable at a certain variableIndex in the client
+    * locals of the object at a certain objectIndex in the read object list.
+    *
+    * \param index The index of the object.
+    * \param variableIndex The index of the client local.
+    * \return The integer value.
+    */
+    static int GetClientLocalIntValue(unsigned int objectIndex, unsigned int variableIndex) noexcept;
+
+    /**
+    * \brief Get the float value of the client local variable at a certain variableIndex in the client
+    * locals of the object at a certain objectIndex in the read object list.
+    *
+    * \param index The index of the object.
+    * \param variableIndex The index of the client local.
+    * \return The float value.
+    */
+    static double GetClientLocalFloatValue(unsigned int objectIndex, unsigned int variableIndex) noexcept;
 
     /**
     * \brief Get the number of container item indexes of the object at a certain index in the
     * read object list.
     *
-    * \param index The index of the object.
+    * \param objectIndex The index of the object.
     * \return The number of container item indexes.
     */
     static unsigned int GetContainerChangesSize(unsigned int objectIndex) noexcept;
@@ -1116,9 +1164,6 @@ public:
     */
     static void SetObjectDoorDestinationRotation(double x, double z) noexcept;
 
-    static void SetScriptVariableName(const char* varName) noexcept;
-    static void SetScriptVariableShortValue(int shortVal) noexcept;
-
     /**
     * \brief Set a player as the object in the temporary object stored on the server.
     *        Currently only used for ConsoleCommand packets.
@@ -1193,6 +1238,27 @@ public:
     * \return void
     */
     static void AddObject() noexcept;
+
+    /**
+    * \brief Add a client local variable with an integer value to the client locals of the server's
+    * temporary object.
+    *
+    * \param internalIndex The internal script index of the client local.
+    * \param variableType The variable type (0 for SHORT, 1 for LONG).
+    * \param intValue The integer value of the client local.
+    * \return void
+    */
+    static void AddClientLocalInteger(int internalIndex, int intValue, unsigned int variableType) noexcept;
+
+    /**
+    * \brief Add a client local variable with a float value to the client locals of the server's
+    * temporary object.
+    *
+    * \param internalIndex The internal script index of the client local.
+    * \param floatValue The float value of the client local.
+    * \return void
+    */
+    static void AddClientLocalFloat(int internalIndex, double floatValue) noexcept;
 
     /**
     * \brief Add a copy of the server's temporary container item to the container changes of the
@@ -1368,7 +1434,16 @@ public:
     */
     static void SendVideoPlay(bool sendToOtherPlayers, bool skipAttachedPlayer) noexcept;
 
-    static void SendScriptGlobalShort(bool sendToOtherPlayers, bool skipAttachedPlayer) noexcept;
+    /**
+    * \brief Send a ClientScriptLocal packet.
+    *
+    * \param sendToOtherPlayers Whether this packet should be sent to players other than the
+    *                           player attached to the packet (false by default).
+    * \param skipAttachedPlayer Whether the packet should skip being sent to the player attached
+    *                           to the packet (false by default).
+    * \return void
+    */
+    static void SendClientScriptLocal(bool sendToOtherPlayers, bool skipAttachedPlayer) noexcept;
 
     /**
     * \brief Send a ConsoleCommand packet.
