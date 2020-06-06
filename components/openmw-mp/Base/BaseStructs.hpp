@@ -30,7 +30,7 @@ namespace mwmp
     struct ClientVariable
     {
         std::string id;
-        int index;
+        int internalIndex;
 
         char variableType;
 

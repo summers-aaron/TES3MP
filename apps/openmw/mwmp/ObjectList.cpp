@@ -959,22 +959,7 @@ void ObjectList::setClientLocals(MWWorld::CellStore* cellStore)
 {
     for (const auto &baseObject : baseObjects)
     {
-        std::string valueAsString;
-        std::string variableTypeAsString;
-
-        if (baseObject.clientVariable.variableType == mwmp::VARIABLE_TYPE::SHORT || baseObject.clientVariable.variableType == mwmp::VARIABLE_TYPE::LONG)
-        {
-            variableTypeAsString = baseObject.clientVariable.variableType == mwmp::VARIABLE_TYPE::SHORT ? "short" : "long";
-            valueAsString = std::to_string(baseObject.clientVariable.intValue);
-        }
-        else if (baseObject.clientVariable.variableType == mwmp::VARIABLE_TYPE::FLOAT)
-        {
-            variableTypeAsString = "float";
-            valueAsString = std::to_string(baseObject.clientVariable.floatValue);
-        }
-
-        LOG_APPEND(TimedLog::LOG_VERBOSE, "- cellRef: %s %i-%i, index: %i, type %s, value: %s", baseObject.refId.c_str(),
-                   baseObject.refNum, baseObject.mpNum, baseObject.index, variableTypeAsString.c_str(), valueAsString.c_str());
+        LOG_APPEND(TimedLog::LOG_VERBOSE, "- cellRef: %s %i-%i", baseObject.refId.c_str(), baseObject.refNum, baseObject.mpNum);
 
         MWWorld::Ptr ptrFound = cellStore->searchExact(baseObject.refNum, baseObject.mpNum);
 
@@ -983,18 +968,36 @@ void ObjectList::setClientLocals(MWWorld::CellStore* cellStore)
             LOG_APPEND(TimedLog::LOG_VERBOSE, "-- Found %s %i-%i", ptrFound.getCellRef().getRefId().c_str(),
                                ptrFound.getCellRef().getRefNum(), ptrFound.getCellRef().getMpNum());
 
-            if (baseObject.clientVariable.variableType == mwmp::VARIABLE_TYPE::SHORT)
-                ptrFound.getRefData().getLocals().mShorts.at(baseObject.index) = baseObject.clientVariable.intValue;
-            else if (baseObject.clientVariable.variableType == mwmp::VARIABLE_TYPE::LONG)
-                ptrFound.getRefData().getLocals().mLongs.at(baseObject.index) = baseObject.clientVariable.intValue;
-            else if (baseObject.clientVariable.variableType == mwmp::VARIABLE_TYPE::FLOAT)
-                ptrFound.getRefData().getLocals().mFloats.at(baseObject.index) = baseObject.clientVariable.floatValue;
+            for (const auto& clientLocal : baseObject.clientLocals)
+            {
+                std::string valueAsString;
+                std::string variableTypeAsString;
+
+                if (clientLocal.variableType == mwmp::VARIABLE_TYPE::SHORT || clientLocal.variableType == mwmp::VARIABLE_TYPE::LONG)
+                {
+                    variableTypeAsString = clientLocal.variableType == mwmp::VARIABLE_TYPE::SHORT ? "short" : "long";
+                    valueAsString = std::to_string(clientLocal.intValue);
+                }
+                else if (clientLocal.variableType == mwmp::VARIABLE_TYPE::FLOAT)
+                {
+                    variableTypeAsString = "float";
+                    valueAsString = std::to_string(clientLocal.floatValue);
+                }
+
+                if (clientLocal.variableType == mwmp::VARIABLE_TYPE::SHORT)
+                    ptrFound.getRefData().getLocals().mShorts.at(clientLocal.internalIndex) = clientLocal.intValue;
+                else if (clientLocal.variableType == mwmp::VARIABLE_TYPE::LONG)
+                    ptrFound.getRefData().getLocals().mLongs.at(clientLocal.internalIndex) = clientLocal.intValue;
+                else if (clientLocal.variableType == mwmp::VARIABLE_TYPE::FLOAT)
+                    ptrFound.getRefData().getLocals().mFloats.at(clientLocal.internalIndex) = clientLocal.floatValue;
+            }
         }
     }
 }
 
 void ObjectList::setMemberShorts()
 {
+    /*
     for (const auto &baseObject : baseObjects)
     {
         LOG_APPEND(TimedLog::LOG_VERBOSE, "- cellRef: %s, index: %i, shortVal: %i", baseObject.refId.c_str(),
@@ -1016,6 +1019,7 @@ void ObjectList::setMemberShorts()
             ptrFound.getRefData().getLocals().mShorts.at(baseObject.index) = baseObject.shortVal;;
         }
     }
+    */
 }
 
 void ObjectList::playMusic()
@@ -1283,35 +1287,41 @@ void ObjectList::addVideoPlay(std::string filename, bool allowSkipping)
     addBaseObject(baseObject);
 }
 
-void ObjectList::addClientScriptLocal(const MWWorld::Ptr& ptr, int index, int value, mwmp::VARIABLE_TYPE variableType)
+void ObjectList::addClientScriptLocal(const MWWorld::Ptr& ptr, int internalIndex, int value, mwmp::VARIABLE_TYPE variableType)
 {
     cell = *ptr.getCell()->getCell();
 
     mwmp::BaseObject baseObject = getBaseObjectFromPtr(ptr);
-    baseObject.clientVariable.index = index;
-    baseObject.clientVariable.variableType = variableType;
-    baseObject.clientVariable.intValue = value;
+    ClientVariable clientLocal;
+    clientLocal.internalIndex = internalIndex;
+    clientLocal.variableType = variableType;
+    clientLocal.intValue = value;
+    baseObject.clientLocals.push_back(clientLocal);
     addBaseObject(baseObject);
 }
 
-void ObjectList::addClientScriptLocal(const MWWorld::Ptr& ptr, int index, float value)
+void ObjectList::addClientScriptLocal(const MWWorld::Ptr& ptr, int internalIndex, float value)
 {
     cell = *ptr.getCell()->getCell();
 
     mwmp::BaseObject baseObject = getBaseObjectFromPtr(ptr);
-    baseObject.clientVariable.index = index;
-    baseObject.clientVariable.variableType = mwmp::VARIABLE_TYPE::FLOAT;
-    baseObject.clientVariable.floatValue = value;
+    ClientVariable clientLocal;
+    clientLocal.internalIndex = internalIndex;
+    clientLocal.variableType = mwmp::VARIABLE_TYPE::FLOAT;
+    clientLocal.floatValue = value;
+    baseObject.clientLocals.push_back(clientLocal);
     addBaseObject(baseObject);
 }
 
 void ObjectList::addScriptMemberShort(std::string refId, int index, int shortVal)
 {
+    /*
     mwmp::BaseObject baseObject;
     baseObject.refId = refId;
     baseObject.index = index;
     baseObject.shortVal = shortVal;
     addBaseObject(baseObject);
+    */
 }
 
 void ObjectList::sendObjectActivate()
@@ -1438,22 +1448,26 @@ void ObjectList::sendClientScriptLocal()
 
     for (const auto &baseObject : baseObjects)
     {
-        std::string valueAsString;
-        std::string variableTypeAsString;
+        LOG_APPEND(TimedLog::LOG_VERBOSE, "- cellRef: %s %i-%i", baseObject.refId.c_str(), baseObject.refNum, baseObject.mpNum);
 
-        if (baseObject.clientVariable.variableType == mwmp::VARIABLE_TYPE::SHORT || baseObject.clientVariable.variableType == mwmp::VARIABLE_TYPE::LONG)
+        for (const auto& clientLocal : baseObject.clientLocals)
         {
-            variableTypeAsString = baseObject.clientVariable.variableType == mwmp::VARIABLE_TYPE::SHORT ? "short" : "long";
-            valueAsString = std::to_string(baseObject.clientVariable.intValue);
-        }
-        else if (baseObject.clientVariable.variableType == mwmp::VARIABLE_TYPE::FLOAT)
-        {
-            variableTypeAsString = "float";
-            valueAsString = std::to_string(baseObject.clientVariable.floatValue);
-        }
+            std::string valueAsString;
+            std::string variableTypeAsString;
 
-        LOG_APPEND(TimedLog::LOG_VERBOSE, "- cellRef: %s %i-%i, index: %i, type %s, value: %s", baseObject.refId.c_str(),
-            baseObject.refNum, baseObject.mpNum, baseObject.clientVariable.index, variableTypeAsString.c_str(), valueAsString.c_str());
+            if (clientLocal.variableType == mwmp::VARIABLE_TYPE::SHORT || clientLocal.variableType == mwmp::VARIABLE_TYPE::LONG)
+            {
+                variableTypeAsString = clientLocal.variableType == mwmp::VARIABLE_TYPE::SHORT ? "short" : "long";
+                valueAsString = std::to_string(clientLocal.intValue);
+            }
+            else if (clientLocal.variableType == mwmp::VARIABLE_TYPE::FLOAT)
+            {
+                variableTypeAsString = "float";
+                valueAsString = std::to_string(clientLocal.floatValue);
+            }
+
+            LOG_APPEND(TimedLog::LOG_VERBOSE, "- type %s, value: %s", variableTypeAsString.c_str(), valueAsString.c_str());
+        }
     }
 
     mwmp::Main::get().getNetworking()->getObjectPacket(ID_CLIENT_SCRIPT_LOCAL)->setObjectList(this);
@@ -1462,6 +1476,7 @@ void ObjectList::sendClientScriptLocal()
 
 void ObjectList::sendScriptMemberShort()
 {
+    /*
     LOG_MESSAGE_SIMPLE(TimedLog::LOG_VERBOSE, "Sending ID_SCRIPT_MEMBER_SHORT");
 
     for (const auto &baseObject : baseObjects)
@@ -1470,6 +1485,7 @@ void ObjectList::sendScriptMemberShort()
 
     mwmp::Main::get().getNetworking()->getObjectPacket(ID_SCRIPT_MEMBER_SHORT)->setObjectList(this);
     mwmp::Main::get().getNetworking()->getObjectPacket(ID_SCRIPT_MEMBER_SHORT)->Send();
+    */
 }
 
 void ObjectList::sendContainer()

@@ -10,7 +10,7 @@ PacketScriptMemberShort::PacketScriptMemberShort(RakNet::RakPeerInterface *peer)
 
 void PacketScriptMemberShort::Object(BaseObject &baseObject, bool send)
 {
-    RW(baseObject.refId, send);
-    RW(baseObject.index, send);
-    RW(baseObject.shortVal, send);
+    //RW(baseObject.refId, send);
+    //RW(baseObject.index, send);
+    //RW(baseObject.shortVal, send);
 }

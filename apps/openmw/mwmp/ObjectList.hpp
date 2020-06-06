@@ -70,8 +70,8 @@ namespace mwmp
         void addDoorState(const MWWorld::Ptr& ptr, MWWorld::DoorState state);
         void addMusicPlay(std::string filename);
         void addVideoPlay(std::string filename, bool allowSkipping);
-        void addClientScriptLocal(const MWWorld::Ptr& ptr, int index, int value, mwmp::VARIABLE_TYPE variableType);
-        void addClientScriptLocal(const MWWorld::Ptr& ptr, int index, float value);
+        void addClientScriptLocal(const MWWorld::Ptr& ptr, int internalIndex, int value, mwmp::VARIABLE_TYPE variableType);
+        void addClientScriptLocal(const MWWorld::Ptr& ptr, int internalIndex, float value);
         void addScriptMemberShort(std::string refId, int index, int shortVal);
 
         void sendObjectActivate();

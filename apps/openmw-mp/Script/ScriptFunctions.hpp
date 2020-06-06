@@ -213,6 +213,7 @@ public:
             {"OnWorldKillCount",         Callback<unsigned short>()},
             {"OnWorldMap",               Callback<unsigned short>()},
             {"OnWorldWeather",           Callback<unsigned short>()},
+            {"OnClientScriptLocal",      Callback<unsigned short, const char*>()},
             {"OnClientScriptGlobal",     Callback<unsigned short>()},
             {"OnMpNumIncrement",         Callback<int>()},
             {"OnRequestDataFileList",    Callback<>()},

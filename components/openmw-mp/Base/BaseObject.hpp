@@ -63,12 +63,6 @@ namespace mwmp
         std::string animGroup;
         int animMode;
 
-        ClientVariable clientVariable;
-
-        int index;
-        int shortVal;
-        float floatVal;
-
         bool isDisarmed;
         bool droppedByPlayer;
 
@@ -84,6 +78,7 @@ namespace mwmp
 
         bool hasContainer;
 
+        std::vector<ClientVariable> clientLocals;
         std::vector<ContainerItem> containerItems;
         unsigned int containerItemCount;
 
