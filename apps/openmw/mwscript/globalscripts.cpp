@@ -172,7 +172,7 @@ namespace MWScript
                 /*
                     Start of tes3mp addition
 
-                    Mark this InterpreterContext as having a GLOBAL_SCRIPT context,
+                    Mark this InterpreterContext as having a SCRIPT_GLOBAL context,
                     so that packets sent by the Interpreter can have their
                     origin determined by serverside scripts
                 */

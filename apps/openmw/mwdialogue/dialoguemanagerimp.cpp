@@ -258,7 +258,7 @@ namespace MWDialogue
                 /*
                     Start of tes3mp addition
 
-                    Mark this InterpreterContext as having a CONSOLE context,
+                    Mark this InterpreterContext as having a DIALOGUE context,
                     so that packets sent by the Interpreter can have their
                     origin determined by serverside scripts
                 */
