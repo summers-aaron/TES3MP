@@ -26,6 +26,8 @@
 #include <components/interpreter/runtime.hpp>
 #include <components/interpreter/opcodes.hpp>
 
+#include <components/misc/rng.hpp>
+
 #include <components/esm/loadmgef.hpp>
 #include <components/esm/loadcrea.hpp>
 
@@ -92,6 +94,198 @@ namespace MWScript
 {
     namespace Misc
     {
+        class OpMenuMode : public Interpreter::Opcode0
+        {
+            public:
+
+                virtual void execute (Interpreter::Runtime& runtime)
+                {
+                    /*
+                        Start of tes3mp change (major)
+
+                        Being in a menu should not pause scripts in multiplayer, so always return false
+                    */
+                    //runtime.push (MWBase::Environment::get().getWindowManager()->isGuiMode());
+                    runtime.push(false);
+                    /*
+                        End of tes3mp change (major)
+                    */
+                }
+        };
+
+        class OpRandom : public Interpreter::Opcode0
+        {
+            public:
+
+                virtual void execute (Interpreter::Runtime& runtime)
+                {
+                    Interpreter::Type_Integer limit = runtime[0].mInteger;
+                    runtime.pop();
+
+                    if (limit<0)
+                        throw std::runtime_error (
+                            "random: argument out of range (Don't be so negative!)");
+
+                    runtime.push (static_cast<Interpreter::Type_Float>(::Misc::Rng::rollDice(limit))); // [o, limit)
+                }
+        };
+
+        template<class R>
+        class OpStartScript : public Interpreter::Opcode0
+        {
+            public:
+
+                virtual void execute (Interpreter::Runtime& runtime)
+                {
+                    MWWorld::Ptr target = R()(runtime, false);
+                    std::string name = runtime.getStringLiteral (runtime[0].mInteger);
+                    runtime.pop();
+                    MWBase::Environment::get().getScriptManager()->getGlobalScripts().addScript (name, target);
+                }
+        };
+
+        class OpScriptRunning : public Interpreter::Opcode0
+        {
+            public:
+
+                virtual void execute (Interpreter::Runtime& runtime)
+                {
+                    std::string name = runtime.getStringLiteral (runtime[0].mInteger);
+                    runtime.pop();
+                    runtime.push(MWBase::Environment::get().getScriptManager()->getGlobalScripts().isRunning (name));
+                }
+        };
+
+        class OpStopScript : public Interpreter::Opcode0
+        {
+            public:
+
+                virtual void execute (Interpreter::Runtime& runtime)
+                {
+                    std::string name = runtime.getStringLiteral (runtime[0].mInteger);
+                    runtime.pop();
+                    MWBase::Environment::get().getScriptManager()->getGlobalScripts().removeScript (name);
+                }
+        };
+
+        class OpGetSecondsPassed : public Interpreter::Opcode0
+        {
+            public:
+
+                virtual void execute (Interpreter::Runtime& runtime)
+                {
+                    runtime.push (MWBase::Environment::get().getFrameDuration());
+                }
+        };
+
+        template<class R>
+        class OpEnable : public Interpreter::Opcode0
+        {
+            public:
+
+                virtual void execute (Interpreter::Runtime& runtime)
+                {
+                    MWWorld::Ptr ptr = R()(runtime);
+
+                    /*
+                        Start of tes3mp addition
+
+                        Send an ID_OBJECT_STATE packet whenever an object is enabled, as long as
+                        the player is logged in on the server, the object is still disabled, and our last
+                        packet regarding its state did not already attempt to enable it (to prevent
+                        packet spam)
+                    */
+                    if (mwmp::Main::get().getLocalPlayer()->isLoggedIn())
+                    {
+                        if (ptr.isInCell() && !ptr.getRefData().isEnabled() &&
+                            ptr.getRefData().getLastCommunicatedState() != MWWorld::RefData::StateCommunication::Enabled)
+                        {
+                            ptr.getRefData().setLastCommunicatedState(MWWorld::RefData::StateCommunication::Enabled);
+
+                            mwmp::ObjectList* objectList = mwmp::Main::get().getNetworking()->getObjectList();
+                            objectList->reset();
+                            objectList->packetOrigin = ScriptController::getPacketOriginFromContextType(runtime.getContext().getContextType());
+                            objectList->addObjectState(ptr, true);
+                            objectList->sendObjectState();
+                        }
+                    }
+                    /*
+                        End of tes3mp addition
+                    */
+
+                    /*
+                        Start of tes3mp change (major)
+
+                        Disable unilateral state enabling on this client and expect the server's reply to our
+                        packet to do it instead
+                    */
+                    //MWBase::Environment::get().getWorld()->enable (ptr);
+                    /*
+                        End of tes3mp change (major)
+                    */
+                }
+        };
+
+        template<class R>
+        class OpDisable : public Interpreter::Opcode0
+        {
+            public:
+
+                virtual void execute (Interpreter::Runtime& runtime)
+                {
+                    MWWorld::Ptr ptr = R()(runtime);
+
+                    /*
+                        Start of tes3mp addition
+
+                        Send an ID_OBJECT_STATE packet whenever an object should be disabled, as long as
+                        the player is logged in on the server, the object is still enabled, and our last
+                        packet regarding its state did not already attempt to disable it (to prevent
+                        packet spam)
+                    */
+                    if (mwmp::Main::get().getLocalPlayer()->isLoggedIn())
+                    {
+                        if (ptr.isInCell() && ptr.getRefData().isEnabled() &&
+                            ptr.getRefData().getLastCommunicatedState() != MWWorld::RefData::StateCommunication::Disabled)
+                        {
+                            ptr.getRefData().setLastCommunicatedState(MWWorld::RefData::StateCommunication::Disabled);
+
+                            mwmp::ObjectList *objectList = mwmp::Main::get().getNetworking()->getObjectList();
+                            objectList->reset();
+                            objectList->packetOrigin = ScriptController::getPacketOriginFromContextType(runtime.getContext().getContextType());
+                            objectList->addObjectState(ptr, false);
+                            objectList->sendObjectState();
+                        }
+                    }
+                    /*
+                        End of tes3mp addition
+                    */
+
+                    /*
+                        Start of tes3mp change (major)
+
+                        Disable unilateral state disabling on this client and expect the server's reply to our
+                        packet to do it instead
+                    */
+                    //MWBase::Environment::get().getWorld()->disable (ptr);
+                    /*
+                        End of tes3mp change (major)
+                    */
+                }
+        };
+
+        template<class R>
+        class OpGetDisabled : public Interpreter::Opcode0
+        {
+            public:
+
+                virtual void execute (Interpreter::Runtime& runtime)
+                {
+                    MWWorld::Ptr ptr = R()(runtime);
+                    runtime.push (!ptr.getRefData().isEnabled());
+                }
+        };
+
         class OpPlayBink : public Interpreter::Opcode0
         {
         public:
@@ -1575,6 +1769,19 @@ namespace MWScript
 
         void installOpcodes (Interpreter::Interpreter& interpreter)
         {
+            interpreter.installSegment5 (Compiler::Misc::opcodeMenuMode, new OpMenuMode);
+            interpreter.installSegment5 (Compiler::Misc::opcodeRandom, new OpRandom);
+            interpreter.installSegment5 (Compiler::Misc::opcodeScriptRunning, new OpScriptRunning);
+            interpreter.installSegment5 (Compiler::Misc::opcodeStartScript, new OpStartScript<ImplicitRef>);
+            interpreter.installSegment5 (Compiler::Misc::opcodeStartScriptExplicit, new OpStartScript<ExplicitRef>);
+            interpreter.installSegment5 (Compiler::Misc::opcodeStopScript, new OpStopScript);
+            interpreter.installSegment5 (Compiler::Misc::opcodeGetSecondsPassed, new OpGetSecondsPassed);
+            interpreter.installSegment5 (Compiler::Misc::opcodeEnable, new OpEnable<ImplicitRef>);
+            interpreter.installSegment5 (Compiler::Misc::opcodeEnableExplicit, new OpEnable<ExplicitRef>);
+            interpreter.installSegment5 (Compiler::Misc::opcodeDisable, new OpDisable<ImplicitRef>);
+            interpreter.installSegment5 (Compiler::Misc::opcodeDisableExplicit, new OpDisable<ExplicitRef>);
+            interpreter.installSegment5 (Compiler::Misc::opcodeGetDisabled, new OpGetDisabled<ImplicitRef>);
+            interpreter.installSegment5 (Compiler::Misc::opcodeGetDisabledExplicit, new OpGetDisabled<ExplicitRef>);
             interpreter.installSegment5 (Compiler::Misc::opcodeXBox, new OpXBox);
             interpreter.installSegment5 (Compiler::Misc::opcodeOnActivate, new OpOnActivate<ImplicitRef>);
             interpreter.installSegment5 (Compiler::Misc::opcodeOnActivateExplicit, new OpOnActivate<ExplicitRef>);

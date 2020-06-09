@@ -270,6 +270,13 @@ namespace MWMechanics
             virtual bool isRunning(const MWWorld::Ptr& ptr) override;
             virtual bool isSneaking(const MWWorld::Ptr& ptr) override;
 
+            virtual void reportStats(unsigned int frameNumber, osg::Stats& stats) const override;
+
+            virtual int getGreetingTimer(const MWWorld::Ptr& ptr) const override;
+            virtual float getAngleToPlayer(const MWWorld::Ptr& ptr) const override;
+            virtual GreetingState getGreetingState(const MWWorld::Ptr& ptr) const override;
+            virtual bool isTurningToPlayer(const MWWorld::Ptr& ptr) const override;
+
         private:
             bool canCommitCrimeAgainst(const MWWorld::Ptr& victim, const MWWorld::Ptr& attacker);
             bool canReportCrime(const MWWorld::Ptr &actor, const MWWorld::Ptr &victim, std::set<MWWorld::Ptr> &playerFollowers);

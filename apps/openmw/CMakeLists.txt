@@ -15,6 +15,10 @@ set(GAME_HEADER
     engine.hpp
 )
 
+if (BULLET_USE_DOUBLES)
+    add_definitions(-DBT_USE_DOUBLE_PRECISION)
+endif()
+
 source_group(game FILES ${GAME} ${GAME_HEADER})
 
 add_openmw_dir (mwrender
@@ -41,7 +45,7 @@ add_openmw_dir (mwgui
     itemmodel containeritemmodel inventoryitemmodel sortfilteritemmodel itemview
     tradeitemmodel companionitemmodel pickpocketitemmodel controllers savegamedialog
     recharge mode videowidget backgroundimage itemwidget screenfader debugwindow spellmodel spellview
-    draganddrop timeadvancer jailscreen itemchargeview keyboardnavigation
+    draganddrop timeadvancer jailscreen itemchargeview keyboardnavigation textcolours
     )
 
 add_openmw_dir (mwdialogue

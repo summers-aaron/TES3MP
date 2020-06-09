@@ -1,6 +1,7 @@
 #include "engine.hpp"
 
 #include <iomanip>
+#include <fstream>
 
 #include <boost/filesystem/fstream.hpp>
 
@@ -270,7 +271,7 @@ bool OMW::Engine::frame(float frametime)
         osg::Timer_t afterWorldTick = osg::Timer::instance()->tick();
 
         // update GUI
-        mEnvironment.getWindowManager()->onFrame(frametime);
+        mEnvironment.getWindowManager()->update(frametime);
 
         unsigned int frameNumber = mViewer->getFrameStamp()->getFrameNumber();
         osg::Stats* stats = mViewer->getViewerStats();
@@ -292,12 +293,14 @@ bool OMW::Engine::frame(float frametime)
 
         if (stats->collectStats("resource"))
         {
+            stats->setAttribute(frameNumber, "FrameNumber", frameNumber);
+
             mResourceSystem->reportStats(frameNumber, stats);
 
             stats->setAttribute(frameNumber, "WorkQueue", mWorkQueue->getNumItems());
             stats->setAttribute(frameNumber, "WorkThread", mWorkQueue->getNumActiveThreads());
 
-            mEnvironment.getWorld()->getNavigator()->reportStats(frameNumber, *stats);
+            mEnvironment.reportStats(frameNumber, *stats);
         }
 
     }
@@ -891,6 +894,14 @@ void OMW::Engine::go()
         mEnvironment.getWindowManager()->executeInConsole(mStartupScript);
     }
 
+    std::ofstream stats;
+    if (const auto path = std::getenv("OPENMW_OSG_STATS_FILE"))
+    {
+        stats.open(path, std::ios_base::out);
+        if (!stats)
+            Log(Debug::Warning) << "Failed to open file for stats: " << path;
+    }
+
     // Start the main rendering loop
     osg::Timer frameTimer;
     double simulationTime = 0.0;
@@ -931,6 +942,12 @@ void OMW::Engine::go()
 
             if (!guiActive)
                 simulationTime += dt;
+        }
+
+        if (stats)
+        {
+            const auto frameNumber = mViewer->getFrameStamp()->getFrameNumber();
+            mViewer->getViewerStats()->report(stats, frameNumber);
         }
 
         mEnvironment.limitFrameRate(frameTimer.time_s());

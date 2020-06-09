@@ -94,12 +94,12 @@ namespace MWInput
 
         virtual void executeAction(int action);
 
+        virtual bool controlsDisabled() { return mControlsDisabled; }
+
     private:
         void convertMousePosForMyGUI(int& x, int& y);
 
         void handleGuiArrowKey(int action);
-
-        void updateCursorMode();
 
         void quickKey(int index);
         void showQuickKeysMenu();
@@ -109,7 +109,7 @@ namespace MWInput
 
         SDLUtil::InputWrapper* mInputWrapper;
 
-        bool mGrabCursor;
+        bool mControlsDisabled;
 
         ControlSwitch* mControlSwitch;
 

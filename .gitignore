@@ -32,6 +32,7 @@ cmake-build-*
 ## qt-creator
 CMakeLists.txt.user*
 .vs
+.vscode
 
 ## resources
 data

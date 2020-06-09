@@ -24,7 +24,7 @@ void PacketPlayerSpellsActive::Packet(RakNet::BitStream *newBitstream, bool send
              spell != player->activeSpells.mSpells.end(); ++spell)
         {
             RW(spell->first, true);
-            RW(spell->second.mTimeStamp, true);
+            //RW(spell->second.mTimeStamp, true);
             uint32_t effects = spell->second.mEffects.size();
             RW(effects, true);
 
@@ -39,7 +39,7 @@ void PacketPlayerSpellsActive::Packet(RakNet::BitStream *newBitstream, bool send
             ESM::ActiveSpells::TContainer::value_type spell;
 
             RW(spell.first, false);
-            RW(spell.second.mTimeStamp, false);
+            //RW(spell.second.mTimeStamp, false);
             uint32_t effects;
             RW(effects, false);
 

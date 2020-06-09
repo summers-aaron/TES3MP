@@ -327,13 +327,7 @@ namespace MWBase
                 End of tes3mp addition
             */
 
-            virtual void onFrame (float frameDuration) = 0;
-
-            /// \todo get rid of this stuff. Move it to the respective UI element classes, if needed.
-            virtual std::map<int, MWMechanics::SkillValue > getPlayerSkillValues() = 0;
-            virtual std::map<int, MWMechanics::AttributeValue > getPlayerAttributeValues() = 0;
-            virtual SkillList getPlayerMinorSkills() = 0;
-            virtual SkillList getPlayerMajorSkills() = 0;
+            virtual void update (float duration) = 0;
 
             /**
              * Fetches a GMST string from the store, if there is no setting with the given

@@ -356,13 +356,7 @@ namespace MWGui
         End of tes3mp addition
     */
 
-    virtual void onFrame (float frameDuration);
-
-    /// \todo get rid of this stuff. Move it to the respective UI element classes, if needed.
-    virtual std::map<int, MWMechanics::SkillValue > getPlayerSkillValues();
-    virtual std::map<int, MWMechanics::AttributeValue > getPlayerAttributeValues();
-    virtual SkillList getPlayerMinorSkills();
-    virtual SkillList getPlayerMajorSkills();
+    virtual void update (float duration);
 
     /**
      * Fetches a GMST string from the store, if there is no setting with the given
@@ -503,8 +497,6 @@ namespace MWGui
     MWWorld::Ptr mSelectedEnchantItem;
     MWWorld::Ptr mSelectedWeapon;
 
-    void loadFontDelegate(MyGUI::xml::ElementPtr _node, const std::string& _file, MyGUI::Version _version);
-
     std::vector<WindowModal*> mCurrentModals;
 
     // Markers placed manually by the player. Must be shared between both map views (the HUD map and the map window).
@@ -571,14 +563,6 @@ namespace MWGui
 
     void setCursorVisible(bool visible);
 
-    /// \todo get rid of this stuff. Move it to the respective UI element classes, if needed.
-    // Various stats about player as needed by window manager
-    std::string mPlayerName;
-    std::string mPlayerRaceId;
-    std::map<int, MWMechanics::AttributeValue > mPlayerAttributes;
-    SkillList mPlayerMajorSkills, mPlayerMinorSkills;
-    std::map<int, MWMechanics::SkillValue > mPlayerSkillValues;
-
     MyGUI::Gui *mGui; // Gui
 
     struct GuiModeState
@@ -627,8 +611,6 @@ namespace MWGui
     int mShowOwned;
 
     ToUTF8::FromType mEncoding;
-
-    int mFontHeight;
 
     std::string mVersionDescription;
 

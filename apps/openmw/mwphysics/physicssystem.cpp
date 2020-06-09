@@ -1,6 +1,7 @@
 #include "physicssystem.hpp"
 
 #include <osg/Group>
+#include <osg/Stats>
 
 #include <BulletCollision/CollisionShapes/btConeShape.h>
 #include <BulletCollision/CollisionShapes/btSphereShape.h>
@@ -669,7 +670,7 @@ namespace MWPhysics
             bool cmode = found->second->getCollisionMode();
             cmode = !cmode;
             found->second->enableCollisionMode(cmode);
-            found->second->enableCollisionBody(cmode);
+            // NB: Collision body isn't disabled for vanilla TCL compatibility
             return cmode;
         }
 
@@ -904,5 +905,12 @@ namespace MWPhysics
         HasSphereCollisionCallback callback(bulletPosition, radius, object, mask, group);
         mCollisionWorld->getBroadphase()->aabbTest(aabbMin, aabbMax, callback);
         return callback.getResult();
+    }
+
+    void PhysicsSystem::reportStats(unsigned int frameNumber, osg::Stats& stats) const
+    {
+        stats.setAttribute(frameNumber, "Physics Actors", mActors.size());
+        stats.setAttribute(frameNumber, "Physics Objects", mObjects.size());
+        stats.setAttribute(frameNumber, "Physics HeightFields", mHeightFields.size());
     }
 }

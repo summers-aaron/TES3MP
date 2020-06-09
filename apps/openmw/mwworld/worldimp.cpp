@@ -785,7 +785,10 @@ namespace MWWorld
         Ptr ret = searchPtr(name, activeOnly);
         if (!ret.isEmpty())
             return ret;
-        throw std::runtime_error ("unknown ID: " + name);
+        std::string error = "failed to find an instance of object '" + name + "'";
+        if (activeOnly)
+            error += " in active cells";
+        throw std::runtime_error(error);
     }
 
     Ptr World::searchPtrViaActorId (int actorId)
@@ -4508,5 +4511,11 @@ namespace MWWorld
     bool World::isAreaOccupiedByOtherActor(const osg::Vec3f& position, const float radius, const MWWorld::ConstPtr& ignore) const
     {
         return mPhysics->isAreaOccupiedByOtherActor(position, radius, ignore);
+    }
+
+    void World::reportStats(unsigned int frameNumber, osg::Stats& stats) const
+    {
+        mNavigator->reportStats(frameNumber, stats);
+        mPhysics->reportStats(frameNumber, stats);
     }
 }

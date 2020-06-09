@@ -1,5 +1,7 @@
 #include "mechanicsmanagerimp.hpp"
 
+#include <osg/Stats>
+
 #include <components/misc/rng.hpp>
 
 #include <components/esm/esmwriter.hpp>
@@ -2097,4 +2099,29 @@ namespace MWMechanics
         mActors.cleanupSummonedCreature(caster.getClass().getCreatureStats(caster), creatureActorId);
     }
 
+    void MechanicsManager::reportStats(unsigned int frameNumber, osg::Stats& stats) const
+    {
+        stats.setAttribute(frameNumber, "Mechanics Actors", mActors.size());
+        stats.setAttribute(frameNumber, "Mechanics Objects", mObjects.size());
+    }
+
+    int MechanicsManager::getGreetingTimer(const MWWorld::Ptr &ptr) const
+    {
+        return mActors.getGreetingTimer(ptr);
+    }
+
+    float MechanicsManager::getAngleToPlayer(const MWWorld::Ptr &ptr) const
+    {
+        return mActors.getAngleToPlayer(ptr);
+    }
+
+    GreetingState MechanicsManager::getGreetingState(const MWWorld::Ptr &ptr) const
+    {
+        return mActors.getGreetingState(ptr);
+    }
+
+    bool MechanicsManager::isTurningToPlayer(const MWWorld::Ptr &ptr) const
+    {
+        return mActors.isTurningToPlayer(ptr);
+    }
 }

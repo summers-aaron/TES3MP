@@ -6,15 +6,22 @@
     Bug #3676: NiParticleColorModifier isn't applied properly
     Bug #4774: Guards are ignorant of an invisible player that tries to attack them
     Bug #5108: Savegame bloating due to inefficient fog textures format
+    Bug #5165: Active spells should use real time intead of timestamps
     Bug #5358: ForceGreeting always resets the dialogue window completely
     Bug #5363: Enchantment autocalc not always 0/1
     Bug #5364: Script fails/stops if trying to startscript an unknown script
     Bug #5367: Selecting a spell on an enchanted item per hotkey always plays the equip sound
     Bug #5369: Spawnpoint in the Grazelands doesn't produce oversized creatures
     Bug #5370: Opening an unlocked but trapped door uses the key
+    Bug #5397: NPC greeting does not reset if you leave + reenter area
     Bug #5400: Editor: Verifier checks race of non-skin bodyparts
     Bug #5415: Environment maps in ebony cuirass and HiRez Armors Indoril cuirass don't work
     Bug #5416: Junk non-node records before the root node are not handled gracefully
+    Bug #5424: Creatures do not headtrack player
+    Bug #5425: Poison effect only appears for one frame
+    Bug #5427: GetDistance unknown ID error is misleading
+    Bug #5435: Enemies can't hurt the player when collision is off
+    Bug #5441: Enemies can't push a player character when in critical strike stance
     Feature #5362: Show the soul gems' trapped soul in count dialog
 
 0.46.0
@@ -188,8 +195,8 @@
     Bug #5158: Objects without a name don't fallback to their ID
     Bug #5159: NiMaterialColorController can only control the diffuse color
     Bug #5161: Creature companions can't be activated when they are knocked down
-    Bug #5164: Faction owned items handling is incorrect
     Bug #5163: UserData is not copied during node cloning
+    Bug #5164: Faction owned items handling is incorrect
     Bug #5166: Scripts still should be executed after player's death
     Bug #5167: Player can select and cast spells before magic menu is enabled
     Bug #5168: Force1stPerson and Force3rdPerson commands are not really force view change

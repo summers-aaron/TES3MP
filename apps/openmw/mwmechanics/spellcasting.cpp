@@ -200,6 +200,7 @@ namespace MWMechanics
                     effect.mEffectId = effectIt->mEffectID;
                     effect.mArg = MWMechanics::EffectKey(*effectIt).mArg;
                     effect.mMagnitude = magnitude;
+                    effect.mTimeLeft = 0.f;
 
                     // Avoid applying absorb effects if the caster is the target
                     // We still need the spell to be added
@@ -224,10 +225,15 @@ namespace MWMechanics
                     }
 
                     bool hasDuration = !(magicEffect->mData.mFlags & ESM::MagicEffect::NoDuration);
-                    if (hasDuration && effectIt->mDuration == 0)
+                    effect.mDuration = hasDuration ? static_cast<float>(effectIt->mDuration) : 1.f;
+
+                    bool appliedOnce = magicEffect->mData.mFlags & ESM::MagicEffect::AppliedOnce;
+                    if (!appliedOnce)
+                        effect.mDuration = std::max(1.f, effect.mDuration);
+
+                    if (effect.mDuration == 0)
                     {
                         // We still should add effect to list to allow GetSpellEffects to detect this spell
-                        effect.mDuration = 0.f;
                         appliedLastingEffects.push_back(effect);
 
                         // duration 0 means apply full magnitude instantly
@@ -264,7 +270,7 @@ namespace MWMechanics
                     }
                     else
                     {
-                        effect.mDuration = hasDuration ? static_cast<float>(effectIt->mDuration) : 1.f;
+                        effect.mTimeLeft = effect.mDuration;
 
                         targetEffects.add(MWMechanics::EffectKey(*effectIt), MWMechanics::EffectParam(effect.mMagnitude));
 

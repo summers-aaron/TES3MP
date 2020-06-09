@@ -114,7 +114,7 @@ add_component_dir (compiler
 
 add_component_dir (interpreter
     context controlopcodes genericopcodes installopcodes interpreter localopcodes mathopcodes
-    miscopcodes opcodes runtime scriptopcodes spatialopcodes types defines
+    miscopcodes opcodes runtime types defines
     )
 
 add_component_dir (translation
@@ -368,3 +368,7 @@ endif()
 
 # Make the variable accessible for other subdirectories
 set(COMPONENT_FILES ${COMPONENT_FILES} PARENT_SCOPE)
+
+if (BULLET_USE_DOUBLES)
+    add_definitions(-DBT_USE_DOUBLE_PRECISION)
+endif()
