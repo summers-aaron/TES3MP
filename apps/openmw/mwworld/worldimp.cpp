@@ -82,6 +82,7 @@
 #include "../mwphysics/object.hpp"
 #include "../mwphysics/constants.hpp"
 
+#include "datetimemanager.hpp"
 #include "player.hpp"
 #include "manualref.hpp"
 #include "cellstore.hpp"
@@ -143,33 +144,11 @@ namespace MWWorld
           LoadersContainer mLoaders;
     };
 
-    int World::getDaysPerMonth (int month) const
-    {
-        switch (month)
-        {
-            case 0: return 31;
-            case 1: return 28;
-            case 2: return 31;
-            case 3: return 30;
-            case 4: return 31;
-            case 5: return 30;
-            case 6: return 31;
-            case 7: return 31;
-            case 8: return 30;
-            case 9: return 31;
-            case 10: return 30;
-            case 11: return 31;
-        }
-
-        throw std::runtime_error ("month out of range");
-    }
-
     void World::adjustSky()
     {
         if (mSky && (isCellExterior() || isCellQuasiExterior()))
         {
-            mRendering->skySetDate (mDay->getInteger(), mMonth->getInteger());
-
+            updateSkyDate();
             mRendering->setSkyEnabled(true);
         }
         else
@@ -186,10 +165,11 @@ namespace MWWorld
         const std::string& startCell, const std::string& startupScript,
         const std::string& resourcePath, const std::string& userDataPath)
     : mResourceSystem(resourceSystem), mLocalScripts (mStore),
-      mSky (true), mCells (mStore, mEsm),
-      mGodMode(false), mScriptsEnabled(true), mContentFiles (contentFiles), mUserDataPath(userDataPath),
+      mCells (mStore, mEsm), mSky (true),
+      mGodMode(false), mScriptsEnabled(true), mContentFiles (contentFiles),
+      mUserDataPath(userDataPath), mShouldUpdateNavigator(false),
       mActivationDistanceOverride (activationDistanceOverride),
-      mStartCell (startCell), mDistanceToFacedObject(-1), mTeleportEnabled(true),
+      mStartCell(startCell), mDistanceToFacedObject(-1.f), mTeleportEnabled(true),
       mLevitationEnabled(true), mGoToJail(false), mDaysInPrison(0),
       mPlayerTraveling(false), mPlayerInJail(false), mSpellPreloadTimer(0.f)
     {
@@ -213,6 +193,8 @@ namespace MWWorld
         // insert records that may not be present in all versions of MW
         if (mEsm[0].getFormat() == 0)
             ensureNeededRecords();
+
+        mCurrentDate.reset(new DateTimeManager());
 
         fillGlobalVariables();
 
@@ -248,13 +230,7 @@ namespace MWWorld
     void World::fillGlobalVariables()
     {
         mGlobalVariables.fill (mStore);
-
-        mGameHour = &mGlobalVariables["gamehour"];
-        mDaysPassed = &mGlobalVariables["dayspassed"];
-        mDay = &mGlobalVariables["day"];
-        mMonth = &mGlobalVariables["month"];
-        mYear = &mGlobalVariables["year"];
-        mTimeScale = &mGlobalVariables["timescale"];
+        mCurrentDate->setup(mGlobalVariables);
     }
 
     void World::startNewGame (bool bypass)
@@ -340,6 +316,7 @@ namespace MWWorld
             mPhysics->toggleCollisionMode();
 
         MWBase::Environment::get().getWindowManager()->updatePlayer();
+        mCurrentDate->setup(mGlobalVariables);
     }
 
     void World::clear()
@@ -434,6 +411,7 @@ namespace MWWorld
                 reader.getHNT(mLevitationEnabled, "LEVT");
                 return;
             case ESM::REC_PLAY:
+                mStore.checkPlayer();
                 mPlayer->readRecord(reader, type);
                 if (getPlayerPtr().isInCell())
                 {
@@ -681,26 +659,20 @@ namespace MWWorld
 
     void World::setGlobalInt (const std::string& name, int value)
     {
-        if (name=="gamehour")
-            setHour (value);
-        else if (name=="day")
-            setDay (value);
-        else if (name=="month")
-            setMonth (value);
-        else
-            mGlobalVariables[name].setInteger (value);
+        bool dateUpdated = mCurrentDate->updateGlobalInt(name, value);
+        if (dateUpdated)
+            updateSkyDate();
+
+        mGlobalVariables[name].setInteger (value);
     }
 
     void World::setGlobalFloat (const std::string& name, float value)
     {
-        if (name=="gamehour")
-            setHour (value);
-        else if (name=="day")
-            setDay(static_cast<int>(value));
-        else if (name=="month")
-            setMonth(static_cast<int>(value));
-        else
-            mGlobalVariables[name].setFloat (value);
+        bool dateUpdated = mCurrentDate->updateGlobalFloat(name, value);
+        if (dateUpdated)
+            updateSkyDate();
+
+        mGlobalVariables[name].setFloat(value);
     }
 
     int World::getGlobalInt (const std::string& name) const
@@ -716,6 +688,11 @@ namespace MWWorld
     char World::getGlobalVariableType (const std::string& name) const
     {
         return mGlobalVariables.getType (name);
+    }
+
+    std::string World::getMonthName (int month) const
+    {
+        return mCurrentDate->getMonthName(month);
     }
 
     std::string World::getCellName (const MWWorld::CellStore *cell) const
@@ -1007,169 +984,31 @@ namespace MWWorld
         }
 
         mWeatherManager->advanceTime (hours, incremental);
+        mCurrentDate->advanceTime(hours, mGlobalVariables);
+        updateSkyDate();
 
         if (!incremental)
         {
             mRendering->notifyWorldSpaceChanged();
             mProjectileManager->clear();
         }
-
-        hours += mGameHour->getFloat();
-
-        setHour (hours);
-
-        int days = static_cast<int>(hours / 24);
-
-        if (days>0)
-            mDaysPassed->setInteger (
-                days + mDaysPassed->getInteger());
     }
 
-    void World::setHour (double hour)
+
+    float World::getTimeScaleFactor() const
+
     {
-        if (hour<0)
-            hour = 0;
-
-        int days = static_cast<int>(hour / 24);
-
-        hour = std::fmod (hour, 24);
-
-        mGameHour->setFloat(static_cast<float>(hour));
-
-        if (days>0)
-            setDay (days + mDay->getInteger());
-    }
-
-    void World::setDay (int day)
-    {
-        if (day<1)
-            day = 1;
-
-        int month = mMonth->getInteger();
-
-        while (true)
-        {
-            int days = getDaysPerMonth (month);
-            if (day<=days)
-                break;
-
-            if (month<11)
-            {
-                ++month;
-            }
-            else
-            {
-                month = 0;
-                mYear->setInteger(mYear->getInteger()+1);
-            }
-
-            day -= days;
-        }
-
-        mDay->setInteger(day);
-        mMonth->setInteger(month);
-
-        mRendering->skySetDate(day, month);
-    }
-
-    void World::setMonth (int month)
-    {
-        if (month<0)
-            month = 0;
-
-        int years = month / 12;
-        month = month % 12;
-
-        int days = getDaysPerMonth (month);
-
-        if (mDay->getInteger()>days)
-            mDay->setInteger (days);
-
-        mMonth->setInteger (month);
-
-        if (years>0)
-            mYear->setInteger (years+mYear->getInteger());
-
-        mRendering->skySetDate (mDay->getInteger(), month);
-    }
-
-    /*
-        Start of tes3mp addition
-
-        Make it possible to set the year from elsewhere
-    */
-    void World::setYear(int year)
-    {
-        mYear->setInteger(year);
-    }
-    /*
-        End of tes3mp addition
-    */
-
-    /*
-        Start of tes3mp addition
-
-        Make it possible to set the number of days passed from elsewhere
-    */
-    void World::setDaysPassed(int days)
-    {
-        mDaysPassed->setInteger(days);
-    }
-    /*
-        End of tes3mp addition
-    */
-
-    /*
-        Start of tes3mp addition
-
-        Make it possible to set a custom timeScale from elsewhere
-    */
-    void World::setTimeScale(float timeScale)
-    {
-        mTimeScale->setFloat(timeScale);
-    }
-    /*
-        End of tes3mp addition
-    */
-
-    int World::getDay() const
-    {
-        return mDay->getInteger();
-    }
-
-    int World::getMonth() const
-    {
-        return mMonth->getInteger();
-    }
-
-    int World::getYear() const
-    {
-        return mYear->getInteger();
-    }
-
-    std::string World::getMonthName (int month) const
-    {
-        if (month==-1)
-            month = getMonth();
-
-        const int months = 12;
-
-        if (month<0 || month>=months)
-            return "";
-
-        static const char *monthNames[months] =
-        {
-            "sMonthMorningstar", "sMonthSunsdawn", "sMonthFirstseed", "sMonthRainshand",
-            "sMonthSecondseed", "sMonthMidyear", "sMonthSunsheight", "sMonthLastseed",
-            "sMonthHeartfire", "sMonthFrostfall", "sMonthSunsdusk", "sMonthEveningstar"
-        };
-
-        return mStore.get<ESM::GameSetting>().find (monthNames[month])->mValue.getString();
+        return mCurrentDate->getTimeScaleFactor();
     }
 
     TimeStamp World::getTimeStamp() const
     {
-        return TimeStamp (mGameHour->getFloat(), mDaysPassed->getInteger());
+        return mCurrentDate->getTimeStamp();
+    }
+
+    ESM::EpochTimeStamp World::getEpochTimeStamp() const
+    {
+        return mCurrentDate->getEpochTimeStamp();
     }
 
     bool World::toggleSky()
@@ -1192,11 +1031,6 @@ namespace MWWorld
     void World::setMoonColour (bool red)
     {
         mRendering->skySetMoonColour (red);
-    }
-
-    float World::getTimeScaleFactor() const
-    {
-        return mTimeScale->getFloat();
     }
 
     void World::changeToInteriorCell (const std::string& cellName, const ESM::Position& position, bool adjustPlayerPos, bool changeEvent)
@@ -1241,6 +1075,8 @@ namespace MWWorld
             changeToExteriorCell (position, adjustPlayerPos, changeEvent);
         else
             changeToInteriorCell (cellId.mWorldspace, position, adjustPlayerPos, changeEvent);
+
+        mCurrentDate->setup(mGlobalVariables);
     }
 
     void World::markCellAsUnchanged()
@@ -2042,6 +1878,16 @@ namespace MWWorld
     }
 
     const ESM::ItemLevList *World::createOverrideRecord(const ESM::ItemLevList &record)
+    {
+        return mStore.overrideRecord(record);
+    }
+
+    const ESM::Creature *World::createOverrideRecord(const ESM::Creature &record)
+    {
+        return mStore.overrideRecord(record);
+    }
+
+    const ESM::NPC *World::createOverrideRecord(const ESM::NPC &record)
     {
         return mStore.overrideRecord(record);
     }
@@ -3584,7 +3430,7 @@ namespace MWWorld
             {
                 if (actor != MWMechanics::getPlayer())
                 {
-                    for (const MWMechanics::AiPackage* package : stats.getAiSequence())
+                    for (const auto& package : stats.getAiSequence())
                     {
                         if (package->getTypeId() == MWMechanics::AiPackage::TypeIdCast)
                         {
@@ -4517,5 +4363,11 @@ namespace MWWorld
     {
         mNavigator->reportStats(frameNumber, stats);
         mPhysics->reportStats(frameNumber, stats);
+    }
+
+    void World::updateSkyDate()
+    {
+        ESM::EpochTimeStamp currentDate = mCurrentDate->getEpochTimeStamp();
+        mRendering->skySetDate(currentDate.mDay, currentDate.mMonth);
     }
 }

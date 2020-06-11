@@ -391,8 +391,6 @@ namespace MWWorld
         else
             player.mHasMark = false;
 
-        player.mAutoMove = mAutoMove ? 1 : 0;
-
         for (int i=0; i<ESM::Attribute::Length; ++i)
             mSaveAttributes[i].writeState(player.mSaveAttributes[i]);
         for (int i=0; i<ESM::Skill::Length; ++i)
@@ -486,8 +484,6 @@ namespace MWWorld
             {
                 mMarkedCell = 0;
             }
-
-            mAutoMove = player.mAutoMove!=0;
 
             mForwardBackward = 0;
             mTeleported = false;

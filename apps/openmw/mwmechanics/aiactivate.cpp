@@ -44,11 +44,6 @@ namespace MWMechanics
         End of tes3mp addition
     */
 
-    AiActivate *MWMechanics::AiActivate::clone() const
-    {
-        return new AiActivate(*this);
-    }
-
     bool AiActivate::execute(const MWWorld::Ptr& actor, CharacterController& characterController, AiState& state, float duration)
     {
         /*
@@ -107,11 +102,6 @@ namespace MWMechanics
             */
         }
         return false;
-    }
-
-    int AiActivate::getTypeId() const
-    {
-        return TypeIdActivate;
     }
 
     void AiActivate::writeState(ESM::AiSequence::AiSequence &sequence) const

@@ -85,12 +85,15 @@ void main()
     vec3 matSpec = vec3(diffuseTex.a);
 #else
     float shininess = gl_FrontMaterial.shininess;
-    vec3 matSpec = gl_FrontMaterial.specular.xyz;
+    vec3 matSpec;
     if (colorMode == ColorMode_Specular)
         matSpec = passColor.xyz;
+    else
+        matSpec = gl_FrontMaterial.specular.xyz;
 #endif
 
-    gl_FragData[0].xyz += getSpecular(normalize(viewNormal), normalize(passViewPos), shininess, matSpec) * shadowing;
+    if (matSpec != vec3(0.0))
+        gl_FragData[0].xyz += getSpecular(normalize(viewNormal), normalize(passViewPos), shininess, matSpec) * shadowing;
 
 #if @radialFog
     float fogValue = clamp((euclideanDepth - gl_Fog.start) * gl_Fog.scale, 0.0, 1.0);

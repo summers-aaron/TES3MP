@@ -36,6 +36,7 @@ namespace ESM
     struct Position;
     struct Cell;
     struct Class;
+    struct Creature;
     struct Potion;
     struct Spell;
     struct NPC;
@@ -47,7 +48,7 @@ namespace ESM
     struct EffectList;
     struct CreatureLevList;
     struct ItemLevList;
-    struct Creature;
+    struct TimeStamp;
 }
 
 namespace MWRender
@@ -234,54 +235,14 @@ namespace MWBase
             virtual void advanceTime (double hours, bool incremental = false) = 0;
             ///< Advance in-game time.
 
-            virtual void setHour (double hour) = 0;
-            ///< Set in-game time hour.
-
-            virtual void setMonth (int month) = 0;
-            ///< Set in-game time month.
-
-            virtual void setDay (int day) = 0;
-            ///< Set in-game time day.
-
-            /*
-                Start of tes3mp addition
-
-                Make it possible to set the year from elsewhere
-            */
-            virtual void setYear(int year) = 0;
-            /*
-                End of tes3mp addition
-            */
-
-            /*
-                Start of tes3mp addition
-
-                Make it possible to set the number of days passed from elsewhere
-            */
-            virtual void setDaysPassed(int daysPassed) = 0;
-            /*
-                End of tes3mp addition
-            */
-
-            /*
-                Start of tes3mp addition
-
-                Make it possible to set a custom timeScale from elsewhere
-            */
-            virtual void setTimeScale(float timeScale) = 0;
-            /*
-                End of tes3mp addition
-            */
-
-            virtual int getDay() const = 0;
-            virtual int getMonth() const = 0;
-            virtual int getYear() const = 0;
-
             virtual std::string getMonthName (int month = -1) const = 0;
             ///< Return name of month (-1: current month)
 
             virtual MWWorld::TimeStamp getTimeStamp() const = 0;
-            ///< Return current in-game time stamp.
+            ///< Return current in-game time and number of day since new game start.
+
+            virtual ESM::EpochTimeStamp getEpochTimeStamp() const = 0;
+            ///< Return current in-game date and time.
 
             virtual bool toggleSky() = 0;
             ///< \return Resulting mode
@@ -527,6 +488,14 @@ namespace MWBase
             /// \return pointer to created record
 
             virtual const ESM::ItemLevList *createOverrideRecord (const ESM::ItemLevList& record) = 0;
+            ///< Write this record to the ESM store, allowing it to override a pre-existing record with the same ID.
+            /// \return pointer to created record
+
+            virtual const ESM::Creature *createOverrideRecord (const ESM::Creature& record) = 0;
+            ///< Write this record to the ESM store, allowing it to override a pre-existing record with the same ID.
+            /// \return pointer to created record
+
+            virtual const ESM::NPC *createOverrideRecord (const ESM::NPC& record) = 0;
             ///< Write this record to the ESM store, allowing it to override a pre-existing record with the same ID.
             /// \return pointer to created record
 

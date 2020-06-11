@@ -1,7 +1,7 @@
 #ifndef GAME_MWMECHANICS_AIFOLLOW_H
 #define GAME_MWMECHANICS_AIFOLLOW_H
 
-#include "aipackage.hpp"
+#include "typedaipackage.hpp"
 
 #include <string>
 
@@ -39,7 +39,7 @@ namespace MWMechanics
     /// \brief AiPackage for an actor to follow another actor/the PC
     /** The AI will follow the target until a condition (time, or position) are set. Both can be disabled to cause the actor to follow the other indefinitely
     **/
-    class AiFollow final : public AiPackage
+    class AiFollow final : public TypedAiPackage<AiFollow>
     {
         public:
             AiFollow(const std::string &actorId, float duration, float x, float y, float z);
@@ -53,17 +53,18 @@ namespace MWMechanics
 
             AiFollow(const ESM::AiSequence::AiFollow* follow);
 
-            bool sideWithTarget() const final { return true; }
-            bool followTargetThroughDoors() const final { return true; }
-            bool shouldCancelPreviousAi() const final { return !mCommanded; }
-
-            AiFollow *clone() const final;
-
             bool execute (const MWWorld::Ptr& actor, CharacterController& characterController, AiState& state, float duration) final;
 
-            int getTypeId() const final;
+            static constexpr TypeId getTypeId() { return TypeIdFollow; }
 
-            bool useVariableSpeed() const final { return true; }
+            static constexpr Options makeDefaultOptions()
+            {
+                AiPackage::Options options;
+                options.mUseVariableSpeed = true;
+                options.mSideWithTarget = true;
+                options.mFollowTargetThroughDoors = true;
+                return options;
+            }
 
             /// Returns the actor being followed
             std::string getFollowedActor();
@@ -98,16 +99,15 @@ namespace MWMechanics
         private:
             /// This will make the actor always follow.
             /** Thus ignoring mDuration and mX,mY,mZ (used for summoned creatures). **/
-            bool mAlwaysFollow;
-            bool mCommanded;
-            float mDuration; // Hours
+            const bool mAlwaysFollow;
+            const float mDuration; // Hours
             float mRemainingDuration; // Hours
-            float mX;
-            float mY;
-            float mZ;
-            std::string mCellId;
+            const float mX;
+            const float mY;
+            const float mZ;
+            const std::string mCellId;
             bool mActive; // have we spotted the target?
-            int mFollowIndex;
+            const int mFollowIndex;
 
             static int mFollowIndexCounter;
 

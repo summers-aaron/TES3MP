@@ -1,7 +1,7 @@
 #ifndef GAME_MWMECHANICS_AIESCORT_H
 #define GAME_MWMECHANICS_AIESCORT_H
 
-#include "aipackage.hpp"
+#include "typedaipackage.hpp"
 
 #include <string>
 
@@ -16,7 +16,7 @@ namespace AiSequence
 namespace MWMechanics
 {
     /// \brief AI Package to have an NPC lead the player to a specific point
-    class AiEscort final : public AiPackage
+    class AiEscort final : public TypedAiPackage<AiEscort>
     {
         public:
             /// Implementation of AiEscort
@@ -30,15 +30,17 @@ namespace MWMechanics
 
             AiEscort(const ESM::AiSequence::AiEscort* escort);
 
-            AiEscort *clone() const final;
-
             bool execute (const MWWorld::Ptr& actor, CharacterController& characterController, AiState& state, float duration) final;
 
-            int getTypeId() const final;
+            static constexpr TypeId getTypeId() { return TypeIdEscort; }
 
-            bool useVariableSpeed() const final { return true; }
-
-            bool sideWithTarget() const final { return true; }
+            static constexpr Options makeDefaultOptions()
+            {
+                AiPackage::Options options;
+                options.mUseVariableSpeed = true;
+                options.mSideWithTarget = true;
+                return options;
+            }
 
             void writeState(ESM::AiSequence::AiSequence &sequence) const final;
 
@@ -47,16 +49,16 @@ namespace MWMechanics
             osg::Vec3f getDestination() const final { return osg::Vec3f(mX, mY, mZ); }
 
         private:
-            std::string mCellId;
-            float mX;
-            float mY;
-            float mZ;
-            float mMaxDist;
-            float mDuration; // In hours
+            const std::string mCellId;
+            const float mX;
+            const float mY;
+            const float mZ;
+            float mMaxDist = 450;
+            const float mDuration; // In hours
             float mRemainingDuration; // In hours
 
-            int mCellX;
-            int mCellY;
+            const int mCellX;
+            const int mCellY;
     };
 }
 #endif

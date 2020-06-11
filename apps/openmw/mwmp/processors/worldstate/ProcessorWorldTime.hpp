@@ -20,6 +20,7 @@ namespace mwmp
         {
             MWBase::World *world = MWBase::Environment::get().getWorld();
 
+            /*
             if (worldstate.time.hour != -1)
                 world->setHour(worldstate.time.hour);
             
@@ -37,6 +38,7 @@ namespace mwmp
 
             if (worldstate.time.timeScale != -1)
                 world->setTimeScale(worldstate.time.timeScale);
+            */
         }
     };
 }

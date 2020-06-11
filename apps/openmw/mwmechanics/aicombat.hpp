@@ -1,7 +1,7 @@
 #ifndef GAME_MWMECHANICS_AICOMBAT_H
 #define GAME_MWMECHANICS_AICOMBAT_H
 
-#include "aipackage.hpp"
+#include "typedaipackage.hpp"
 
 #include "../mwworld/cellstore.hpp" // for Doors
 
@@ -91,7 +91,7 @@ namespace MWMechanics
     };
 
     /// \brief Causes the actor to fight another actor
-    class AiCombat final : public AiPackage
+    class AiCombat final : public TypedAiPackage<AiCombat>
     {
         public:
             ///Constructor
@@ -102,21 +102,23 @@ namespace MWMechanics
 
             void init();
 
-            AiCombat *clone() const final;
-
             bool execute (const MWWorld::Ptr& actor, CharacterController& characterController, AiState& state, float duration) final;
 
-            int getTypeId() const final;
+            static constexpr TypeId getTypeId() { return TypeIdCombat; }
 
-            unsigned int getPriority() const final;
+            static constexpr Options makeDefaultOptions()
+            {
+                AiPackage::Options options;
+                options.mPriority = 1;
+                options.mCanCancel = false;
+                options.mShouldCancelPreviousAi = false;
+                return options;
+            }
 
             ///Returns target ID
             MWWorld::Ptr getTarget() const final;
 
             void writeState(ESM::AiSequence::AiSequence &sequence) const final;
-
-            bool canCancel() const final { return false; }
-            bool shouldCancelPreviousAi() const final { return false; }
 
         private:
             /// Returns true if combat should end

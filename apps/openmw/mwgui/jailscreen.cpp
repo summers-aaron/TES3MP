@@ -134,6 +134,12 @@ namespace MWGui
             End of tes3mp change (major)
         */
 
+        // We should not worsen corprus when in prison
+        for (auto& spell : player.getClass().getCreatureStats(player).getCorprusSpells())
+        {
+            spell.second.mNextWorsening += mDays * 24;
+        }
+
         std::set<int> skills;
         for (int day=0; day<mDays; ++day)
         {
@@ -148,14 +154,14 @@ namespace MWGui
                 Disable increases for Security and Sneak when using ignoreJailSkillIncreases
             */
             if (localPlayer->ignoreJailSkillIncreases)
-                value.setBase(std::max(0, value.getBase()-1));
+                value.setBase(std::max(0.f, value.getBase()-1));
             else if (skill == ESM::Skill::Security || skill == ESM::Skill::Sneak)
             /*
                 End of tes3mp change (minor)
             */
-                value.setBase(std::min(100, value.getBase()+1));
+                value.setBase(std::min(100.f, value.getBase() + 1));
             else
-                value.setBase(std::max(0, value.getBase()-1));
+                value.setBase(std::max(0.f, value.getBase()-1));
         }
 
         const MWWorld::Store<ESM::GameSetting>& gmst = MWBase::Environment::get().getWorld()->getStore().get<ESM::GameSetting>();

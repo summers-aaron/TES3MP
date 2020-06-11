@@ -106,7 +106,7 @@ namespace MWScript
                 {
                     MWWorld::Ptr ptr = R()(runtime);
 
-                    Interpreter::Type_Integer value =
+                    Interpreter::Type_Float value =
                         ptr.getClass()
                             .getCreatureStats (ptr)
                             .getAttribute(mIndex)
@@ -129,7 +129,7 @@ namespace MWScript
                 {
                     MWWorld::Ptr ptr = R()(runtime);
 
-                    Interpreter::Type_Integer value = runtime[0].mInteger;
+                    Interpreter::Type_Float value = runtime[0].mFloat;
                     runtime.pop();
 
                     MWMechanics::AttributeValue attribute = ptr.getClass().getCreatureStats(ptr).getAttribute(mIndex);
@@ -151,7 +151,7 @@ namespace MWScript
                 {
                     MWWorld::Ptr ptr = R()(runtime);
 
-                    Interpreter::Type_Integer value = runtime[0].mInteger;
+                    Interpreter::Type_Float value = runtime[0].mFloat;
                     runtime.pop();
 
                     MWMechanics::AttributeValue attribute = ptr.getClass()
@@ -166,9 +166,9 @@ namespace MWScript
                         return;
 
                     if (value < 0)
-                        attribute.setBase(std::max(0, attribute.getBase() + value));
+                        attribute.setBase(std::max(0.f, attribute.getBase() + value));
                     else
-                        attribute.setBase(std::min(100, attribute.getBase() + value));
+                        attribute.setBase(std::min(100.f, attribute.getBase() + value));
 
                     ptr.getClass().getCreatureStats(ptr).setAttribute(mIndex, attribute);
                 }
@@ -356,7 +356,7 @@ namespace MWScript
                 {
                     MWWorld::Ptr ptr = R()(runtime);
 
-                    Interpreter::Type_Integer value = ptr.getClass().getSkill(ptr, mIndex);
+                    Interpreter::Type_Float value = ptr.getClass().getSkill(ptr, mIndex);
 
                     runtime.push (value);
                 }
@@ -375,7 +375,7 @@ namespace MWScript
                 {
                     MWWorld::Ptr ptr = R()(runtime);
 
-                    Interpreter::Type_Integer value = runtime[0].mInteger;
+                    Interpreter::Type_Float value = runtime[0].mFloat;
                     runtime.pop();
 
                     MWMechanics::NpcStats& stats = ptr.getClass().getNpcStats (ptr);
@@ -397,7 +397,7 @@ namespace MWScript
                 {
                     MWWorld::Ptr ptr = R()(runtime);
 
-                    Interpreter::Type_Integer value = runtime[0].mInteger;
+                    Interpreter::Type_Float value = runtime[0].mFloat;
                     runtime.pop();
 
                     MWMechanics::SkillValue &skill = ptr.getClass()
@@ -407,14 +407,14 @@ namespace MWScript
                     if (value == 0)
                         return;
 
-                    if (((skill.getBase() <= 0) && (value < 0))
-                        || ((skill.getBase() >= 100) && (value > 0)))
+                    if (((skill.getBase() <= 0.f) && (value < 0.f))
+                        || ((skill.getBase() >= 100.f) && (value > 0.f)))
                         return;
 
                     if (value < 0)
-                        skill.setBase(std::max(0, skill.getBase() + value));
+                        skill.setBase(std::max(0.f, skill.getBase() + value));
                     else
-                        skill.setBase(std::min(100, skill.getBase() + value));
+                        skill.setBase(std::min(100.f, skill.getBase() + value));
                 }
         };
 
@@ -519,41 +519,48 @@ namespace MWScript
                     std::string id = runtime.getStringLiteral (runtime[0].mInteger);
                     runtime.pop();
 
+                    MWMechanics::CreatureStats& creatureStats = ptr.getClass().getCreatureStats(ptr);
+
                     /*
                         Start of tes3mp change (major)
 
                         Only remove the spell if the target has it
+                    */
+                    MWMechanics::Spells& spells = creatureStats.getSpells();
+
+                    if (!spells.hasSpell(id)) return;
+                    /*
+                        End of tes3mp change (major)
+                    */
+                                        
+                    // The spell may have an instant effect which must be handled before the spell's removal.
+                    for (const auto& effect : creatureStats.getSpells().getMagicEffects())
+                    {
+                        if (effect.second.getMagnitude() <= 0)
+                            continue;
+                        MWMechanics::CastSpell cast(ptr, ptr);
+                        if (cast.applyInstantEffect(ptr, ptr, effect.first, effect.second.getMagnitude()))
+                            creatureStats.getSpells().purgeEffect(effect.first.mId);
+                    }
+
+                    MWBase::Environment::get().getMechanicsManager()->restoreStatsAfterCorprus(ptr, id);
+                    creatureStats.getSpells().remove (id);
+
+                    MWBase::WindowManager* wm = MWBase::Environment::get().getWindowManager();
+
+                    if (ptr == MWMechanics::getPlayer() &&
+                        id == wm->getSelectedSpell())
+                    {
+                        wm->unsetSelectedSpell();
+                    }
+
+                    /*
+                        Start of tes3mp change (major)
 
                         Send an ID_PLAYER_SPELLBOOK packet every time a player loses a spell here
                     */
-                    MWMechanics::CreatureStats& creatureStats = ptr.getClass().getCreatureStats(ptr);
-                    MWMechanics::Spells &spells = creatureStats.getSpells();
-
-                    if (spells.hasSpell(id))
-                    {
-                        // The spell may have an instant effect which must be handled before the spell's removal.
-                        for (const auto& effect : creatureStats.getSpells().getMagicEffects())
-                        {
-                            if (effect.second.getMagnitude() <= 0)
-                                continue;
-                            MWMechanics::CastSpell cast(ptr, ptr);
-                            if (cast.applyInstantEffect(ptr, ptr, effect.first, effect.second.getMagnitude()))
-                                creatureStats.getSpells().purgeEffect(effect.first.mId);
-                        }
-
-                        creatureStats.getSpells().remove (id);
-
-                        if (ptr == MWMechanics::getPlayer())
-                        {
-                            MWBase::WindowManager *wm = MWBase::Environment::get().getWindowManager();
-
-                            if (id == wm->getSelectedSpell())
-                                wm->unsetSelectedSpell();
-
-                            if (mwmp::Main::get().getLocalPlayer()->isLoggedIn())
-                                mwmp::Main::get().getLocalPlayer()->sendSpellChange(id, mwmp::SpellbookChanges::REMOVE);
-                        }
-                    }
+                    if (mwmp::Main::get().getLocalPlayer()->isLoggedIn())
+                        mwmp::Main::get().getLocalPlayer()->sendSpellChange(id, mwmp::SpellbookChanges::REMOVE);
                     /*
                         End of tes3mp change (major)
                     */

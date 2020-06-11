@@ -13,7 +13,16 @@ MISSINGTOOLS=0
 
 command -v 7z >/dev/null 2>&1 || { echo "Error: 7z (7zip) is not on the path."; MISSINGTOOLS=1; }
 command -v cmake >/dev/null 2>&1 || { echo "Error: cmake (CMake) is not on the path."; MISSINGTOOLS=1; }
-command -v python >/dev/null 2>&1 || { echo "Warning: Python is not on the path, automatic Qt installation impossible."; }
+
+MISSINGPYTHON=0
+if ! command -v python >/dev/null 2>&1; then
+	echo "Warning: Python is not on the path, automatic Qt installation impossible."
+	MISSINGPYTHON=1
+elif ! python --version >/dev/null 2>&1; then
+	echo "Warning: Python is (probably) fake stub Python that comes bundled with newer versions of Windows, automatic Qt installation impossible."
+	echo "If you think you have Python installed, try changing the order of your PATH environment variable in Advanced System Settings."
+	MISSINGPYTHON=1
+fi
 
 if [ $MISSINGTOOLS -ne 0 ]; then
 	wrappedExit 1
@@ -745,6 +754,11 @@ fi
 		if [ -d 'Qt/5.15.0' ]; then
 			printf "Exists. "
 		elif [ -z $SKIP_EXTRACT ]; then
+			if [ $MISSINGPYTHON -ne 0 ]; then
+				echo "Can't be automatically installed without Python."
+				wrappedExit 1
+			fi
+
 			pushd "$DEPS" > /dev/null
 			if ! [ -d 'aqt-venv' ]; then
 				echo "  Creating Virtualenv for aqt..."
@@ -988,34 +1002,36 @@ RET=$?
 if [ -z $VERBOSE ]; then
 	if [ $RET -eq 0 ]; then
 		echo Done.
-		if [ -n $ACTIVATE_MSVC ]; then
-			echo
-			echo "Note: you must manually activate MSVC for the shell in which you want to do the build."
-			echo
-			echo "Some scripts have been created in the build directory to do so in an existing shell."
-			echo "Bash: source activate_msvc.sh"
-			echo "CMD: ActivateMSVC.bat"
-			echo "PowerShell: ActivateMSVC.ps1"
-			echo
-			echo "You may find options to launch a Development/Native Tools/Cross Tools shell in your start menu or Visual Studio."
-			echo
-			if [ $(uname -m) == 'x86_64' ]; then
-				if [ $BITS -eq 64 ]; then
-					inheritEnvironments=msvc_x64_x64
-				else
-					inheritEnvironments=msvc_x64
-				fi
-			else
-				if [ $BITS -eq 64 ]; then
-					inheritEnvironments=msvc_x86_x64
-				else
-					inheritEnvironments=msvc_x86
-				fi
-			fi
-			echo "In Visual Studio 15.3 (2017 Update 3) or later, try setting '\"inheritEnvironments\": [ \"$inheritEnvironments\" ]' in CMakeSettings.json to build in the IDE."
-		fi
 	else
 		echo Failed.
 	fi
 fi
+
+if [ -n $ACTIVATE_MSVC ]; then
+	echo
+	echo "Note: you must manually activate MSVC for the shell in which you want to do the build."
+	echo
+	echo "Some scripts have been created in the build directory to do so in an existing shell."
+	echo "Bash: source activate_msvc.sh"
+	echo "CMD: ActivateMSVC.bat"
+	echo "PowerShell: ActivateMSVC.ps1"
+	echo
+	echo "You may find options to launch a Development/Native Tools/Cross Tools shell in your start menu or Visual Studio."
+	echo
+	if [ $(uname -m) == 'x86_64' ]; then
+		if [ $BITS -eq 64 ]; then
+			inheritEnvironments=msvc_x64_x64
+		else
+			inheritEnvironments=msvc_x64
+		fi
+	else
+		if [ $BITS -eq 64 ]; then
+			inheritEnvironments=msvc_x86_x64
+		else
+			inheritEnvironments=msvc_x86
+		fi
+	fi
+	echo "In Visual Studio 15.3 (2017 Update 3) or later, try setting '\"inheritEnvironments\": [ \"$inheritEnvironments\" ]' in CMakeSettings.json to build in the IDE."
+fi
+
 wrappedExit $RET

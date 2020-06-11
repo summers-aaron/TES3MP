@@ -1,7 +1,7 @@
 #ifndef GAME_MWMECHANICS_AIACTIVATE_H
 #define GAME_MWMECHANICS_AIACTIVATE_H
 
-#include "aipackage.hpp"
+#include "typedaipackage.hpp"
 
 /*
     Start of tes3mp addition
@@ -29,7 +29,7 @@ namespace MWMechanics
 {
     /// \brief Causes actor to walk to activatable object and activate it
     /** Will activate when close to object **/
-    class AiActivate final : public AiPackage
+    class AiActivate final : public TypedAiPackage<AiActivate>
     {
         public:
             /// Constructor
@@ -49,14 +49,14 @@ namespace MWMechanics
 
             AiActivate(const ESM::AiSequence::AiActivate* activate);
 
-            AiActivate *clone() const final;
             bool execute (const MWWorld::Ptr& actor, CharacterController& characterController, AiState& state, float duration) final;
-            int getTypeId() const final;
+
+            static constexpr TypeId getTypeId() { return TypeIdActivate; }
 
             void writeState(ESM::AiSequence::AiSequence& sequence) const final;
 
         private:
-            std::string mObjectId;
+            const std::string mObjectId;
 
             /*
                 Start of tes3mp addition
