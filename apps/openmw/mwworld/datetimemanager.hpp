@@ -26,36 +26,6 @@ namespace MWWorld
         void setDay(int day);
         void setMonth(int month);
 
-        /*
-            Start of tes3mp addition
-
-            Make it possible to set the year from elsewhere
-        */
-        void setYear(int year);
-        /*
-            End of tes3mp addition
-        */
-
-        /*
-            Start of tes3mp addition
-
-            Make it possible to set the number of days passed from elsewhere
-        */
-        void setDaysPassed(int daysPassed);
-        /*
-            End of tes3mp addition
-        */
-
-        /*
-            Start of tes3mp addition
-
-            Make it possible to set a custom timeScale from elsewhere
-        */
-        void setTimeScale(float timeScale);
-        /*
-            End of tes3mp addition
-        */
-
     public:
         std::string getMonthName(int month) const;
         TimeStamp getTimeStamp() const;

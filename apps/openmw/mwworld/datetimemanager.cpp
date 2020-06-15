@@ -85,45 +85,6 @@ namespace MWWorld
         mMonth = month;
     }
 
-    /*
-        Start of tes3mp addition
-
-        Make it possible to set the year from elsewhere
-    */
-    void DateTimeManager::setYear(int year)
-    {
-        mYear = year;
-    }
-    /*
-        End of tes3mp addition
-    */
-
-    /*
-        Start of tes3mp addition
-
-        Make it possible to set the number of days passed from elsewhere
-    */
-    void DateTimeManager::setDaysPassed(int days)
-    {
-        mDaysPassed = days;
-    }
-    /*
-        End of tes3mp addition
-    */
-
-    /*
-        Start of tes3mp addition
-
-        Make it possible to set a custom timeScale from elsewhere
-    */
-    void DateTimeManager::setTimeScale(float timeScale)
-    {
-        mTimeScale = timeScale;
-    }
-    /*
-        End of tes3mp addition
-    */
-
     TimeStamp DateTimeManager::getTimeStamp() const
     {
         return TimeStamp(mGameHour, mDaysPassed);
