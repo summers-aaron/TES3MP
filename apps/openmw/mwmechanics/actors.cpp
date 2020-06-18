@@ -2357,6 +2357,17 @@ namespace MWMechanics
                 if (observer == player || observer.getClass().getCreatureStats(observer).isDead())
                     continue;
 
+                /*
+                    Start of tes3mp addition
+
+                    Don't make allied players break each other's sneaking
+                */
+                if (MechanicsHelper::isTeamMember(observer, player))
+                    continue;
+                /*
+                    End of tes3mp addition
+                */
+
                 if (world->getLOS(player, observer))
                 {
                     if (MWBase::Environment::get().getMechanicsManager()->awarenessCheck(player, observer))
