@@ -241,7 +241,7 @@ bool Networking::preInit(RakNet::Packet *packet, RakNet::BitStream &bsIn)
         peer->CloseConnection(packet->systemAddress, true);
     }
 
-    DEBUG_PRINTF("ID_GAME_PREINIT");
+    LOG_MESSAGE_SIMPLE(TimedLog::LOG_INFO, "Received ID_GAME_PREINIT from %s", packet->systemAddress.ToString());
     PacketPreInit::PluginContainer dataFiles;
 
     PacketPreInit packetPreInit(peer);
@@ -251,7 +251,7 @@ bool Networking::preInit(RakNet::Packet *packet, RakNet::BitStream &bsIn)
 
     if (!packetPreInit.isPacketValid() || dataFiles.empty())
     {
-        LOG_APPEND(TimedLog::LOG_ERROR, "Invalid packetPreInit");
+        LOG_APPEND(TimedLog::LOG_ERROR, "- Packet was invalid");
         peer->CloseConnection(packet->systemAddress, false); // close connection without notification
         return false;
     }
@@ -261,7 +261,7 @@ bool Networking::preInit(RakNet::Packet *packet, RakNet::BitStream &bsIn)
     {
         for (int i = 0; dataFile != dataFiles.end(); dataFile++, i++)
         {
-            LOG_APPEND(TimedLog::LOG_VERBOSE, "- %X\t%s", dataFile->second[0], dataFile->first.c_str());
+            LOG_APPEND(TimedLog::LOG_INFO, "- idx: %i\tchecksum: %X\tfile: %s", i, dataFile->second[0], dataFile->first.c_str());
             // Check if the filenames match, ignoring case
             if (Misc::StringUtils::ciEqual(samples[i].first, dataFile->first))
             {
@@ -285,14 +285,14 @@ bool Networking::preInit(RakNet::Packet *packet, RakNet::BitStream &bsIn)
     // If the loop above was broken, then the client's data files do not match the server's
     if (dataFileEnforcementState && dataFile != dataFiles.end())
     {
-        LOG_MESSAGE_SIMPLE(TimedLog::LOG_INFO, "%s was not allowed to connect due to incompatible data files", packet->systemAddress.ToString());
+        LOG_APPEND(TimedLog::LOG_INFO, "- Client was not allowed to connect due to incompatible data files");
         packetPreInit.setChecksums(&samples);
         packetPreInit.Send(packet->systemAddress);
         peer->CloseConnection(packet->systemAddress, true);
     }
     else
     {
-        LOG_MESSAGE_SIMPLE(TimedLog::LOG_INFO, "%s was allowed to connect", packet->systemAddress.ToString());
+        LOG_APPEND(TimedLog::LOG_INFO, "- Client was allowed to connect");
         PacketPreInit::PluginContainer tmp;
         packetPreInit.setChecksums(&tmp);
         packetPreInit.Send(packet->systemAddress);
