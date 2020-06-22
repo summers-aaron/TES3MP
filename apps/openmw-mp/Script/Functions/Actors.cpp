@@ -29,7 +29,11 @@ void ActorFunctions::ReadCellActorList(const char* cellDescription) noexcept
 {
     ESM::Cell esmCell = Utils::getCellFromDescription(cellDescription);
     Cell *serverCell = CellController::get()->getCell(&esmCell);
-    readActorList = serverCell->getActorList();
+
+    if (serverCell != nullptr)
+        readActorList = serverCell->getActorList();
+    else
+        readActorList = {};
 }
 
 void ActorFunctions::ClearActorList() noexcept
@@ -53,6 +57,9 @@ void ActorFunctions::CopyReceivedActorListToStore() noexcept
 
 unsigned int ActorFunctions::GetActorListSize() noexcept
 {
+    if (readActorList == nullptr)
+        return 0;
+
     return readActorList->count;
 }
 
