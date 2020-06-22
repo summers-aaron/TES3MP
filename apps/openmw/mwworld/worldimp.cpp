@@ -265,7 +265,6 @@ namespace MWWorld
         if (bypass && !mStartCell.empty())
         {
             ESM::Position pos;
-
             if (findExteriorPosition (mStartCell, pos))
             {
                 changeToExteriorCell (pos, true);
@@ -415,9 +414,9 @@ namespace MWWorld
                 mPlayer->readRecord(reader, type);
                 if (getPlayerPtr().isInCell())
                 {
-                    mWorldScene->preloadCell(getPlayerPtr().getCell(), true);
                     if (getPlayerPtr().getCell()->isExterior())
                         mWorldScene->preloadTerrain(getPlayerPtr().getRefData().getPosition().asVec3());
+                    mWorldScene->preloadCell(getPlayerPtr().getCell(), true);
                 }
                 break;
             default:
@@ -929,6 +928,13 @@ namespace MWWorld
 
             if(mWorldScene->getActiveCells().find (reference.getCell()) != mWorldScene->getActiveCells().end() && reference.getRefData().getCount())
                 mWorldScene->addObjectToScene (reference);
+
+            if (reference.getCellRef().getRefNum().hasContentFile())
+            {
+                int type = mStore.find(Misc::StringUtils::lowerCase(reference.getCellRef().getRefId()));
+                if (mRendering->pagingEnableObject(type, reference, true))
+                    mWorldScene->reloadTerrain();
+            }
         }
     }
 
@@ -953,20 +959,27 @@ namespace MWWorld
 
     void World::disable (const Ptr& reference)
     {
+        if (!reference.getRefData().isEnabled())
+            return;
+
         // disable is a no-op for items in containers
         if (!reference.isInCell())
             return;
 
-        if (reference.getRefData().isEnabled())
+        if (reference == getPlayerPtr())
+            throw std::runtime_error("can not disable player object");
+
+        reference.getRefData().disable();
+
+        if (reference.getCellRef().getRefNum().hasContentFile())
         {
-            if (reference == getPlayerPtr())
-                throw std::runtime_error("can not disable player object");
-
-            reference.getRefData().disable();
-
-            if(mWorldScene->getActiveCells().find (reference.getCell())!=mWorldScene->getActiveCells().end() && reference.getRefData().getCount())
-                mWorldScene->removeObjectFromScene (reference);
+            int type = mStore.find(Misc::StringUtils::lowerCase(reference.getCellRef().getRefId()));
+            if (mRendering->pagingEnableObject(type, reference, false))
+                mWorldScene->reloadTerrain();
         }
+
+        if(mWorldScene->getActiveCells().find (reference.getCell())!=mWorldScene->getActiveCells().end() && reference.getRefData().getCount())
+            mWorldScene->removeObjectFromScene (reference);
     }
 
     void World::advanceTime (double hours, bool incremental)
@@ -1356,19 +1369,20 @@ namespace MWWorld
         }
         if (haveToMove && newPtr.getRefData().getBaseNode())
         {
-            mRendering->moveObject(newPtr, vec);
+            mWorldScene->updateObjectPosition(newPtr, vec, movePhysics);
             if (movePhysics)
             {
-                mPhysics->updatePosition(newPtr);
-                mPhysics->updatePtr(ptr, newPtr);
-
-                if (const auto object = mPhysics->getObject(newPtr))
+                if (const auto object = mPhysics->getObject(ptr))
                     updateNavigatorObject(object);
             }
         }
+
         if (isPlayer)
-        {
             mWorldScene->playerMoved(vec);
+        else
+        {
+            mRendering->pagingBlacklistObject(mStore.find(ptr.getCellRef().getRefId()), ptr);
+            mWorldScene->removeFromPagedRefs(newPtr);
         }
 
         return newPtr;
@@ -1399,9 +1413,15 @@ namespace MWWorld
         if (mPhysics->getActor(ptr))
             mNavigator->removeAgent(getPathfindingHalfExtents(ptr));
 
-        ptr.getCellRef().setScale(scale);
+        if (scale != ptr.getCellRef().getScale())
+        {
+            ptr.getCellRef().setScale(scale);
+            mRendering->pagingBlacklistObject(mStore.find(ptr.getCellRef().getRefId()), ptr);
+            mWorldScene->removeFromPagedRefs(ptr);
+        }
 
-        mWorldScene->updateObjectScale(ptr);
+        if(ptr.getRefData().getBaseNode() != 0)
+            mWorldScene->updateObjectScale(ptr);
 
         if (mPhysics->getActor(ptr))
             mNavigator->addAgent(getPathfindingHalfExtents(ptr));
@@ -1444,6 +1464,9 @@ namespace MWWorld
         }
 
         ptr.getRefData().setPosition(pos);
+
+        mRendering->pagingBlacklistObject(mStore.find(ptr.getCellRef().getRefId()), ptr);
+        mWorldScene->removeFromPagedRefs(ptr);
 
         if(ptr.getRefData().getBaseNode() != 0)
         {
@@ -1753,7 +1776,7 @@ namespace MWWorld
                 if(ptr != getPlayerPtr() )
                 {
                     MWMechanics::AiSequence& seq = ptr.getClass().getCreatureStats(ptr).getAiSequence();
-                    if(seq.getTypeId() != MWMechanics::AiPackage::TypeIdAvoidDoor) //Only add it once
+                    if(seq.getTypeId() != MWMechanics::AiPackageTypeId::AvoidDoor) //Only add it once
                         seq.stack(MWMechanics::AiAvoidDoor(door),ptr);
                 }
 
@@ -2109,8 +2132,15 @@ namespace MWWorld
             // retrieve object dimensions so we know where to place the floating label
             if (!object.isEmpty ())
             {
-                osg::Vec4f screenBounds = mRendering->getScreenBounds(object);
-
+                osg::BoundingBox bb = mPhysics->getBoundingBox(object);
+                if (!bb.valid() && object.getRefData().getBaseNode())
+                {
+                    osg::ComputeBoundsVisitor computeBoundsVisitor;
+                    computeBoundsVisitor.setTraversalMask(~(MWRender::Mask_ParticleSystem|MWRender::Mask_Effect));
+                    object.getRefData().getBaseNode()->accept(computeBoundsVisitor);
+                    bb = computeBoundsVisitor.getBoundingBox();
+                }
+                osg::Vec4f screenBounds = mRendering->getScreenBounds(bb);
                 MWBase::Environment::get().getWindowManager()->setFocusObjectScreenCoords(
                     screenBounds.x(), screenBounds.y(), screenBounds.z(), screenBounds.w());
             }
@@ -2140,6 +2170,14 @@ namespace MWWorld
             rayToObject = mRendering->castCameraToViewportRay(0.5f, 0.5f, maxDistance, ignorePlayer);
 
         facedObject = rayToObject.mHitObject;
+        if (facedObject.isEmpty() && rayToObject.mHitRefnum.hasContentFile())
+        {
+            for (CellStore* cellstore : mWorldScene->getActiveCells())
+            {
+                facedObject = cellstore->searchViaRefNum(rayToObject.mHitRefnum);
+                if (!facedObject.isEmpty()) break;
+            }
+        }
         if (rayToObject.mHit)
             mDistanceToFacedObject = (rayToObject.mRatio * maxDistance) - camDist;
         else
@@ -3432,7 +3470,7 @@ namespace MWWorld
                 {
                     for (const auto& package : stats.getAiSequence())
                     {
-                        if (package->getTypeId() == MWMechanics::AiPackage::TypeIdCast)
+                        if (package->getTypeId() == MWMechanics::AiPackageTypeId::Cast)
                         {
                             target = package->getTarget();
                             break;
@@ -4060,6 +4098,8 @@ namespace MWWorld
     std::string World::exportSceneGraph(const Ptr &ptr)
     {
         std::string file = mUserDataPath + "/openmw.osgt";
+        mRendering->pagingBlacklistObject(mStore.find(ptr.getCellRef().getRefId()), ptr);
+        mWorldScene->removeFromPagedRefs(ptr);
         mRendering->exportSceneGraph(ptr, file, "Ascii");
         return file;
     }

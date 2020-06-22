@@ -38,7 +38,6 @@ ${ANALYZE} cmake .. \
     -DBUILD_MASTER=ON \
     -DBUILD_UNITTESTS=1 \
     -DUSE_SYSTEM_TINYXML=1 \
-    -DDESIRED_QT_VERSION=5 \
     -DCMAKE_INSTALL_PREFIX=/usr \
     -DBINDIR=/usr/games \
     -DCMAKE_BUILD_TYPE="None" \
