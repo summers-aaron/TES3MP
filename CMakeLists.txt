@@ -154,7 +154,7 @@ include_directories(${RakNet_INCLUDES})
 find_package(OpenGL REQUIRED)
 
 if (USE_QT)
-    find_package(Qt5Core 5.12 REQUIRED)
+    find_package(Qt5Core 5.9 REQUIRED) # Temporary adjustment for TES3MP CI
     find_package(Qt5Widgets REQUIRED)
     find_package(Qt5Network REQUIRED)
     find_package(Qt5OpenGL REQUIRED)
