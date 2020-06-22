@@ -32,7 +32,7 @@ const char *CharClassFunctions::GetClassDesc(unsigned short pid) noexcept
     return player->charClass.mDescription.c_str();
 }
 
-int CharClassFunctions::GetClassMajorAttribute(unsigned short pid, unsigned char slot) noexcept
+int CharClassFunctions::GetClassMajorAttribute(unsigned short pid, unsigned char slot)
 {
     Player *player;
     GET_PLAYER(pid, player, 0);
@@ -51,7 +51,7 @@ int CharClassFunctions::GetClassSpecialization(unsigned short pid) noexcept
     return player->charClass.mData.mSpecialization;
 }
 
-int CharClassFunctions::GetClassMajorSkill(unsigned short pid, unsigned char slot) noexcept
+int CharClassFunctions::GetClassMajorSkill(unsigned short pid, unsigned char slot)
 {
     Player *player;
     GET_PLAYER(pid, player, 0);
@@ -62,7 +62,7 @@ int CharClassFunctions::GetClassMajorSkill(unsigned short pid, unsigned char slo
     return player->charClass.mData.mSkills[slot][1];
 }
 
-int CharClassFunctions::GetClassMinorSkill(unsigned short pid, unsigned char slot) noexcept
+int CharClassFunctions::GetClassMinorSkill(unsigned short pid, unsigned char slot)
 {
     Player *player;
     GET_PLAYER(pid, player, 0);
@@ -103,7 +103,7 @@ void CharClassFunctions::SetClassDesc(unsigned short pid, const char *desc) noex
 
     player->charClass.mDescription = desc;
 }
-void CharClassFunctions::SetClassMajorAttribute(unsigned short pid, unsigned char slot, int attrId) noexcept
+void CharClassFunctions::SetClassMajorAttribute(unsigned short pid, unsigned char slot, int attrId)
 {
     Player *player;
     GET_PLAYER(pid, player,);
@@ -121,7 +121,7 @@ void CharClassFunctions::SetClassSpecialization(unsigned short pid, int spec) no
 
     player->charClass.mData.mSpecialization = spec;
 }
-void CharClassFunctions::SetClassMajorSkill(unsigned short pid, unsigned char slot, int skillId) noexcept
+void CharClassFunctions::SetClassMajorSkill(unsigned short pid, unsigned char slot, int skillId)
 {
     Player *player;
     GET_PLAYER(pid, player,);
@@ -131,7 +131,7 @@ void CharClassFunctions::SetClassMajorSkill(unsigned short pid, unsigned char sl
 
     player->charClass.mData.mSkills[slot][1] = skillId;
 }
-void CharClassFunctions::SetClassMinorSkill(unsigned short pid, unsigned char slot, int skillId) noexcept
+void CharClassFunctions::SetClassMinorSkill(unsigned short pid, unsigned char slot, int skillId)
 {
     Player *player;
     GET_PLAYER(pid, player,);

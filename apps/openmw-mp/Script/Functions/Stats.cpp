@@ -327,7 +327,7 @@ void StatsFunctions::SetIsMale(unsigned short pid, int state) noexcept
     Player *player;
     GET_PLAYER(pid, player,);
 
-    player->npc.setIsMale(state == true);
+    player->npc.setIsMale(state > 0 ? true : false);
 }
 
 void StatsFunctions::SetBirthsign(unsigned short pid, const char *sign) noexcept

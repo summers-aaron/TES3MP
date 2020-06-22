@@ -59,7 +59,7 @@ public:
     * \param slot The slot of the major attribute (0 or 1).
     * \return The ID of the major attribute.
     */
-    static int GetClassMajorAttribute(unsigned short pid, unsigned char slot) noexcept;
+    static int GetClassMajorAttribute(unsigned short pid, unsigned char slot);
 
     /**
     * \brief Get the specialization ID of the custom class used by a player.
@@ -76,7 +76,7 @@ public:
     * \param slot The slot of the major skill (0 to 4).
     * \return The ID of the major skill.
     */
-    static int GetClassMajorSkill(unsigned short pid, unsigned char slot) noexcept;
+    static int GetClassMajorSkill(unsigned short pid, unsigned char slot);
 
     /**
     * \brief Get the ID of one of the five minor skills of a custom class used by a player.
@@ -85,7 +85,7 @@ public:
     * \param slot The slot of the minor skill (0 to 4).
     * \return The ID of the minor skill.
     */
-    static int GetClassMinorSkill(unsigned short pid, unsigned char slot) noexcept;
+    static int GetClassMinorSkill(unsigned short pid, unsigned char slot);
 
     /**
     * \brief Check whether the player is using a default class instead of a custom one.
@@ -132,7 +132,7 @@ public:
     * \param attrId The ID to use for the attribute.
     * \return void
     */
-    static void SetClassMajorAttribute(unsigned short pid, unsigned char slot, int attrId) noexcept;
+    static void SetClassMajorAttribute(unsigned short pid, unsigned char slot, int attrId);
 
     /**
     * \brief Set the specialization of the custom class used by a player.
@@ -151,7 +151,7 @@ public:
      * \param skillId The ID to use for the skill.
      * \return void
      */
-    static void SetClassMajorSkill(unsigned short pid, unsigned char slot, int skillId) noexcept;
+    static void SetClassMajorSkill(unsigned short pid, unsigned char slot, int skillId);
 
     /**
     * \brief Set the ID of one of the five minor skills of the custom class used by a player.
@@ -161,7 +161,7 @@ public:
     * \param skillId The ID to use for the skill.
     * \return void
     */
-    static void SetClassMinorSkill(unsigned short pid, unsigned char slot, int skillId) noexcept;
+    static void SetClassMinorSkill(unsigned short pid, unsigned char slot, int skillId);
 
     /**
     * \brief Send a PlayerCharClass packet about a player.
