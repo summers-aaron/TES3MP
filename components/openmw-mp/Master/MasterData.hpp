@@ -57,17 +57,17 @@ struct QueryData
     const char *GetVersion() const { return rules.at("version").str.c_str(); }
     void SetVersion(const char *version) { rules["version"].str = version; }
 
-    int GetPlayers() const { return rules.at("players").val; }
+    int GetPlayers() const { return (int) rules.at("players").val; }
     void SetPlayers(int value) { rules["players"].val = value; }
 
-    int GetMaxPlayers() const { return rules.at("maxPlayers").val; }
+    int GetMaxPlayers() const { return (int) rules.at("maxPlayers").val; }
     void SetMaxPlayers(int value) { rules["maxPlayers"].val = value; }
 
     const char *GetGameMode() const { return rules.at("gamemode").str.c_str(); }
     void SetGameMode(const char *str) { rules["gamemode"].str = str; }
 
     void SetPassword(int value) { rules["passw"].val = value; };
-    int GetPassword() const { return rules.at("passw").val; }
+    int GetPassword() const { return (int) rules.at("passw").val; }
 
 
     std::vector<std::string> players;
