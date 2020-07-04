@@ -497,13 +497,6 @@ if [ -z $SKIP_DOWNLOAD ]; then
 			"OSG-3.6.5-msvc${MSVC_REAL_YEAR}-win${BITS}-sym.7z"
 	fi
 
-	# Qt
-	if [ -z $APPVEYOR ]; then
-		download "AQt installer" \
-			"https://files.pythonhosted.org/packages/f3/bb/aee972f08deecca31bfc46b5aedfad1ce6c7f3aaf1288d685e4a914b53ac/aqtinstall-0.8-py2.py3-none-any.whl" \
-			"aqtinstall-0.8-py2.py3-none-any.whl"
-	fi
-
 	# SDL2
 	download "SDL 2.0.12" \
 		"https://www.libsdl.org/release/SDL2-devel-2.0.12-VC.zip" \
@@ -511,11 +504,11 @@ if [ -z $SKIP_DOWNLOAD ]; then
 
 	# Google test and mock
 	if [ ! -z $TEST_FRAMEWORK ]; then
-		echo "Google test 1.8.1..."
+		echo "Google test 1.10.0..."
 		if [ -d googletest ]; then
 			printf "  Google test exists, skipping."
 		else
-			git clone -b release-1.8.1 https://github.com/google/googletest.git
+			git clone -b release-1.10.0 https://github.com/google/googletest.git
 		fi
 	fi
 fi
@@ -732,9 +725,16 @@ fi
 	fi
 	if [ -z $APPVEYOR ]; then
 		cd $DEPS_INSTALL
-		QT_SDK="$(real_pwd)/Qt/5.15.0/msvc${MSVC_REAL_YEAR}${SUFFIX}"
 
-		if [ -d 'Qt/5.15.0' ]; then
+		qt_version="5.15.0"
+		if [ "win${BITS}_msvc${MSVC_REAL_YEAR}${SUFFIX}" == "win64_msvc2017_64" ]; then
+			echo "This combination of options is known not to work. Falling back to Qt 5.14.2."
+			qt_version="5.14.2"
+		fi
+
+		QT_SDK="$(real_pwd)/Qt/${qt_version}/msvc${MSVC_REAL_YEAR}${SUFFIX}"
+
+		if [ -d "Qt/${qt_version}" ]; then
 			printf "Exists. "
 		elif [ -z $SKIP_EXTRACT ]; then
 			if [ $MISSINGPYTHON -ne 0 ]; then
@@ -745,20 +745,20 @@ fi
 			pushd "$DEPS" > /dev/null
 			if ! [ -d 'aqt-venv' ]; then
 				echo "  Creating Virtualenv for aqt..."
-				eval python -m venv aqt-venv $STRIP
+				run_cmd python -m venv aqt-venv
 			fi
 			if [ -d 'aqt-venv/bin' ]; then
 				VENV_BIN_DIR='bin'
 			elif [ -d 'aqt-venv/Scripts' ]; then
 				VENV_BIN_DIR='Scripts'
 			else
-				echo "Error: Failed to create virtualenv."
-				exit 1
+				echo "Error: Failed to create virtualenv in expected location."
+				wrappedExit 1
 			fi
 
 			if ! [ -e "aqt-venv/${VENV_BIN_DIR}/aqt" ]; then
 				echo "  Installing aqt wheel into virtualenv..."
-				eval "aqt-venv/${VENV_BIN_DIR}/pip" install aqtinstall-0.8-py2.py3-none-any.whl $STRIP
+				run_cmd "aqt-venv/${VENV_BIN_DIR}/pip" install aqtinstall==0.9.2
 			fi
 			popd > /dev/null
 
@@ -767,7 +767,7 @@ fi
 			mkdir Qt
 			cd Qt
 
-			eval "${DEPS}/aqt-venv/${VENV_BIN_DIR}/aqt" install 5.15.0 windows desktop "win${BITS}_msvc${MSVC_REAL_YEAR}${SUFFIX}" $STRIP
+			run_cmd "${DEPS}/aqt-venv/${VENV_BIN_DIR}/aqt" install $qt_version windows desktop "win${BITS}_msvc${MSVC_REAL_YEAR}${SUFFIX}"
 
 			printf "  Cleaning up extraneous data... "
 			rm -rf Qt/{aqtinstall.log,Tools}
@@ -820,7 +820,7 @@ cd $DEPS
 echo
 # Google Test and Google Mock
 if [ ! -z $TEST_FRAMEWORK ]; then
-	printf "Google test 1.8.1 ..."
+	printf "Google test 1.10.0 ..."
 
 	cd googletest
 	if [ ! -d build ]; then

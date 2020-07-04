@@ -368,7 +368,6 @@ namespace MWGui
             if (klass)
             {
                 mPlayerClass = *klass;
-                MWBase::Environment::get().getWindowManager()->setPlayerClass(mPlayerClass);
             }
             MWBase::Environment::get().getWindowManager()->removeDialog(mPickClassDialog);
             mPickClassDialog = 0;
@@ -434,7 +433,6 @@ namespace MWGui
                 End of tes3mp change (major)
             */
 
-            MWBase::Environment::get().getWindowManager()->setValue("name", mPlayerName);
             MWBase::Environment::get().getMechanicsManager()->setPlayerName(mPlayerName);
             MWBase::Environment::get().getWindowManager()->removeDialog(mNameDialog);
             mNameDialog = 0;
@@ -537,7 +535,6 @@ namespace MWGui
 
             MWBase::Environment::get().getMechanicsManager()->setPlayerClass(klass);
             mPlayerClass = klass;
-            MWBase::Environment::get().getWindowManager()->setPlayerClass(klass);
 
             // Do not delete dialog, so that choices are remembered in case we want to go back and adjust them later
             mCreateClassDialog->setVisible(false);
@@ -734,7 +731,6 @@ namespace MWGui
             MWBase::Environment::get().getWorld()->getStore().get<ESM::Class>().find(mGenerateClass);
 
         mPlayerClass = *klass;
-        MWBase::Environment::get().getWindowManager()->setPlayerClass(mPlayerClass);
 
         updatePlayerHealth();
     }

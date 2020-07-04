@@ -1102,7 +1102,6 @@ void LocalPlayer::setClass()
     {
         charClass.mData.mIsPlayable = 0x1;
         MWBase::Environment::get().getMechanicsManager()->setPlayerClass(charClass);
-        MWBase::Environment::get().getWindowManager()->setPlayerClass(charClass);
     }
     else
     {
@@ -1111,7 +1110,6 @@ void LocalPlayer::setClass()
         if (existingCharClass)
         {
             MWBase::Environment::get().getMechanicsManager()->setPlayerClass(charClass.mId);
-            MWBase::Environment::get().getWindowManager()->setPlayerClass(charClass);
         }
         else
             LOG_APPEND(TimedLog::LOG_INFO, "- Ignored invalid default class %s", charClass.mId.c_str());
