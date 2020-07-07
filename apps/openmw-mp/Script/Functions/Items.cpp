@@ -22,6 +22,14 @@ int ItemFunctions::GetEquipmentSize() noexcept
     return MWWorld::InventoryStore::Slots;
 }
 
+unsigned int ItemFunctions::GetEquipmentChangesSize(unsigned short pid) noexcept
+{
+    Player* player;
+    GET_PLAYER(pid, player, 0);
+
+    return player->equipmentIndexChanges.size();
+}
+
 unsigned int ItemFunctions::GetInventoryChangesSize(unsigned short pid) noexcept
 {
     Player *player;
@@ -94,6 +102,15 @@ bool ItemFunctions::HasItemEquipped(unsigned short pid, const char* refId)
         if (Misc::StringUtils::ciEqual(player->equipmentItems[slot].refId, refId))
             return true;
     return false;
+}
+
+int ItemFunctions::GetEquipmentChangesSlot(unsigned short pid, unsigned int changeIndex) noexcept
+{
+    Player* player;
+    GET_PLAYER(pid, player, 0);
+
+
+    return player->equipmentIndexChanges[changeIndex];
 }
 
 const char *ItemFunctions::GetEquipmentItemRefId(unsigned short pid, unsigned short slot) noexcept

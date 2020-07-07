@@ -5,6 +5,7 @@
     {"ClearInventoryChanges",                 ItemFunctions::ClearInventoryChanges},\
     \
     {"GetEquipmentSize",                      ItemFunctions::GetEquipmentSize},\
+    {"GetEquipmentChangesSize",               ItemFunctions::GetEquipmentChangesSize},\
     {"GetInventoryChangesSize",               ItemFunctions::GetInventoryChangesSize},\
     {"GetInventoryChangesAction",             ItemFunctions::GetInventoryChangesAction},\
     \
@@ -17,6 +18,7 @@
     \
     {"HasItemEquipped",                       ItemFunctions::HasItemEquipped},\
     \
+    {"GetEquipmentChangesSlot",                ItemFunctions::GetEquipmentChangesSlot},\
     {"GetEquipmentItemRefId",                 ItemFunctions::GetEquipmentItemRefId},\
     {"GetEquipmentItemCount",                 ItemFunctions::GetEquipmentItemCount},\
     {"GetEquipmentItemCharge",                ItemFunctions::GetEquipmentItemCharge},\
@@ -63,6 +65,14 @@ public:
     * \return The number of slots.
     */
     static int GetEquipmentSize() noexcept;
+
+    /**
+    * \brief Get the number of indexes in a player's latest equipment changes.
+    *
+    * \param pid The player ID whose equipment changes should be used.
+    * \return The number of indexes.
+    */
+    static unsigned int GetEquipmentChangesSize(unsigned short pid) noexcept;
 
     /**
     * \brief Get the number of indexes in a player's latest inventory changes.
@@ -134,6 +144,16 @@ public:
     * \return Whether the player has the item equipped.
     */
     static bool HasItemEquipped(unsigned short pid, const char* refId);
+
+    /**
+    * \brief Get the slot used for the equipment item at a specific index in the most recent
+    * equipment changes.
+    *
+    * \param pid The player ID.
+    * \param changeIndex The index of the equipment change.
+    * \return The slot.
+    */
+    static int GetEquipmentChangesSlot(unsigned short pid, unsigned int changeIndex) noexcept;
 
     /**
     * \brief Get the refId of the item in a certain slot of the equipment of a player.
