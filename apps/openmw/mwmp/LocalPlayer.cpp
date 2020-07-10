@@ -712,6 +712,23 @@ void LocalPlayer::addSpells()
             LOG_APPEND(TimedLog::LOG_INFO, "- Ignored addition of invalid spell %s", spell.mId.c_str());
 }
 
+void LocalPlayer::addSpellsActive()
+{
+    MWWorld::Ptr ptrPlayer = getPlayerPtr();
+    MWMechanics::ActiveSpells& activeSpells = ptrPlayer.getClass().getCreatureStats(ptrPlayer).getActiveSpells();
+
+    for (const auto& activeSpell : spellsActiveChanges.activeSpells)
+    {
+        // Only add spells that are ensured to exist
+        if (MWBase::Environment::get().getWorld()->getStore().get<ESM::Spell>().search(activeSpell.id))
+        {
+            activeSpells.addSpell(activeSpell.id, false, activeSpell.params.mEffects, activeSpell.params.mDisplayName, 1);
+        }
+        else
+            LOG_APPEND(TimedLog::LOG_INFO, "- Ignored addition of invalid spell %s", activeSpell.id.c_str());
+    }
+}
+
 void LocalPlayer::addJournalItems()
 {
     for (const auto &journalItem : journalChanges)
@@ -800,6 +817,17 @@ void LocalPlayer::removeSpells()
         ptrSpells.remove(spell.mId);
         if (spell.mId == wm->getSelectedSpell())
             wm->unsetSelectedSpell();
+    }
+}
+
+void LocalPlayer::removeSpellsActive()
+{
+    MWWorld::Ptr ptrPlayer = getPlayerPtr();
+    MWMechanics::ActiveSpells& activeSpells = ptrPlayer.getClass().getCreatureStats(ptrPlayer).getActiveSpells();
+ 
+    for (const auto& activeSpell : spellsActiveChanges.activeSpells)
+    {
+        activeSpells.removeEffects(activeSpell.id);
     }
 }
 
@@ -1210,6 +1238,16 @@ void LocalPlayer::setSpellbook()
     addSpells();
 }
 
+void LocalPlayer::setSpellsActive()
+{
+    MWWorld::Ptr ptrPlayer = getPlayerPtr();
+    MWMechanics::ActiveSpells& activeSpells = ptrPlayer.getClass().getCreatureStats(ptrPlayer).getActiveSpells();
+    activeSpells.clear();
+
+    // Proceed by adding spells active
+    addSpellsActive();
+}
+
 void LocalPlayer::setQuickKeys()
 {
     MWWorld::Ptr ptrPlayer = getPlayerPtr();
@@ -1520,6 +1558,63 @@ void LocalPlayer::sendSpellChange(std::string id, unsigned int action)
     spellbookChanges.action = action;
     getNetworking()->getPlayerPacket(ID_PLAYER_SPELLBOOK)->setPlayer(this);
     getNetworking()->getPlayerPacket(ID_PLAYER_SPELLBOOK)->Send();
+}
+
+void LocalPlayer::sendSpellsActive()
+{
+    MWWorld::Ptr ptrPlayer = getPlayerPtr();
+    MWMechanics::ActiveSpells& activeSpells = ptrPlayer.getClass().getCreatureStats(ptrPlayer).getActiveSpells();
+
+    spellsActiveChanges.activeSpells.clear();
+
+    // Send spells in spellbook, while ignoring abilities, powers, etc.
+    for (const auto& ptrSpell : activeSpells)
+    {
+        mwmp::ActiveSpell packetSpell;
+        packetSpell.id = ptrSpell.first;
+        packetSpell.params.mDisplayName = ptrSpell.second.mDisplayName;
+        packetSpell.params.mEffects = ptrSpell.second.mEffects;
+        spellsActiveChanges.activeSpells.push_back(packetSpell);
+    }
+
+    spellsActiveChanges.action = mwmp::SpellsActiveChanges::SET;
+    getNetworking()->getPlayerPacket(ID_PLAYER_SPELLS_ACTIVE)->setPlayer(this);
+    getNetworking()->getPlayerPacket(ID_PLAYER_SPELLS_ACTIVE)->Send();
+}
+
+void LocalPlayer::sendSpellsActiveAddition(const std::string id, ESM::ActiveSpells::ActiveSpellParams params)
+{
+    // Skip any bugged spells that somehow have clientside-only dynamic IDs
+    if (id.find("$dynamic") != string::npos)
+        return;
+
+    spellsActiveChanges.activeSpells.clear();
+
+    mwmp::ActiveSpell spell;
+    spell.id = id;
+    spell.params = params;
+    spellsActiveChanges.activeSpells.push_back(spell);
+
+    spellsActiveChanges.action = mwmp::SpellsActiveChanges::ADD;
+    getNetworking()->getPlayerPacket(ID_PLAYER_SPELLS_ACTIVE)->setPlayer(this);
+    getNetworking()->getPlayerPacket(ID_PLAYER_SPELLS_ACTIVE)->Send();
+}
+
+void LocalPlayer::sendSpellsActiveRemoval(const std::string id)
+{
+    // Skip any bugged spells that somehow have clientside-only dynamic IDs
+    if (id.find("$dynamic") != string::npos)
+        return;
+
+    spellsActiveChanges.activeSpells.clear();
+
+    mwmp::ActiveSpell spell;
+    spell.id = id;
+    spellsActiveChanges.activeSpells.push_back(spell);
+
+    spellsActiveChanges.action = mwmp::SpellsActiveChanges::REMOVE;
+    getNetworking()->getPlayerPacket(ID_PLAYER_SPELLS_ACTIVE)->setPlayer(this);
+    getNetworking()->getPlayerPacket(ID_PLAYER_SPELLS_ACTIVE)->Send();
 }
 
 void LocalPlayer::sendQuickKey(unsigned short slot, int type, const std::string& itemId)

@@ -5,6 +5,20 @@
 
 #include <components/esm/loadmgef.hpp>
 
+/*
+    Start of tes3mp addition
+
+    Include additional headers for multiplayer purposes
+*/
+#include "../mwmechanics/actorutil.hpp"
+#include "../mwmechanics/creaturestats.hpp"
+#include "../mwworld/class.hpp"
+#include "../mwmp/Main.hpp"
+#include "../mwmp/LocalPlayer.hpp"
+/*
+    End of tes3mp addition
+*/
+
 #include "../mwbase/environment.hpp"
 #include "../mwbase/world.hpp"
 
@@ -24,6 +38,16 @@ namespace MWMechanics
             {
                 if (!timeToExpire (iter))
                 {
+                    /*
+                        Start of tes3mp addition
+
+                        Whenever a player loses an active spell, send an ID_PLAYER_SPELLS_ACTIVE packet to the server with it
+                    */
+                    mwmp::Main::get().getLocalPlayer()->sendSpellsActiveRemoval(iter->first);
+                    /*
+                        End of tes3mp addition
+                    */
+
                     mSpells.erase (iter++);
                     rebuild = true;
                 }
@@ -163,6 +187,24 @@ namespace MWMechanics
             mergeEffects(params.mEffects, it->second.mEffects);
             it->second = params;
         }
+
+        /*
+            Start of tes3mp addition
+
+            Whenever a player gains an active spell, send an ID_PLAYER_SPELLS_ACTIVE packet to the server with it
+        */
+        ESM::ActiveSpells::ActiveSpellParams esmParams;
+        esmParams.mEffects = effects;
+        esmParams.mDisplayName = displayName;
+        esmParams.mCasterActorId = casterActorId;
+
+        if (this == &MWMechanics::getPlayer().getClass().getCreatureStats(MWMechanics::getPlayer()).getActiveSpells())
+        {
+            mwmp::Main::get().getLocalPlayer()->sendSpellsActiveAddition(id, esmParams);
+        }
+        /*
+            End of tes3mp addition
+        */
 
         mSpellsChanged = true;
     }

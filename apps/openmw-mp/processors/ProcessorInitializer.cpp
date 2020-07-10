@@ -37,6 +37,7 @@
 #include "player/ProcessorPlayerSkill.hpp"
 #include "player/ProcessorPlayerSpeech.hpp"
 #include "player/ProcessorPlayerSpellbook.hpp"
+#include "player/ProcessorPlayerSpellsActive.hpp"
 #include "player/ProcessorPlayerStatsDynamic.hpp"
 #include "player/ProcessorPlayerTopic.hpp"
 #include "ActorProcessor.hpp"
@@ -120,6 +121,7 @@ void ProcessorInitializer()
     PlayerProcessor::AddProcessor(new ProcessorPlayerSkill());
     PlayerProcessor::AddProcessor(new ProcessorPlayerSpeech());
     PlayerProcessor::AddProcessor(new ProcessorPlayerSpellbook());
+    PlayerProcessor::AddProcessor(new ProcessorPlayerSpellsActive());
     PlayerProcessor::AddProcessor(new ProcessorPlayerStatsDynamic());
     PlayerProcessor::AddProcessor(new ProcessorPlayerTopic());
 

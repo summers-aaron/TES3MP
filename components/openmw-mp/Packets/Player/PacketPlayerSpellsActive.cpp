@@ -12,43 +12,51 @@ void PacketPlayerSpellsActive::Packet(RakNet::BitStream *newBitstream, bool send
 {
     PlayerPacket::Packet(newBitstream, send);
 
-    uint32_t spells = 0;
+    RW(player->spellsActiveChanges.action, send);
+
+    uint32_t count;
 
     if (send)
-        spells = player->activeSpells.mSpells.size();
+        count = static_cast<uint32_t>(player->spellsActiveChanges.activeSpells.size());
 
-    RW(spells, send);
+    RW(count, send);
 
-    if (send)
-        for (ESM::ActiveSpells::TContainer::const_iterator spell = player->activeSpells.mSpells.begin();
-             spell != player->activeSpells.mSpells.end(); ++spell)
+    if (!send)
+    {
+        player->spellsActiveChanges.activeSpells.clear();
+        player->spellsActiveChanges.activeSpells.resize(count);
+    }
+
+    for (auto&& activeSpell : player->spellsActiveChanges.activeSpells)
+    {
+        RW(activeSpell.id, send, true);
+        RW(activeSpell.params.mDisplayName, send, true);
+
+        uint32_t effectCount;
+
+        if (send)
+            effectCount = static_cast<uint32_t>(activeSpell.params.mEffects.size());
+
+        RW(effectCount, send);
+
+        if (effectCount > maxEffects)
         {
-            RW(spell->first, true);
-            //RW(spell->second.mTimeStamp, true);
-            uint32_t effects = spell->second.mEffects.size();
-            RW(effects, true);
-
-            for (std::vector<ESM::ActiveEffect>::const_iterator effect = spell->second.mEffects.begin();
-                 effect != spell->second.mEffects.end(); ++effect)
-                RW(effect, true);
-
+            return;
         }
-    else
-        for (uint32_t i = 0; i < spells; i++)
+
+        if (!send)
         {
-            ESM::ActiveSpells::TContainer::value_type spell;
-
-            RW(spell.first, false);
-            //RW(spell.second.mTimeStamp, false);
-            uint32_t effects;
-            RW(effects, false);
-
-            ESM::ActiveEffect effect;
-            for (uint32_t j = 0; j < effects; j++)
-            {
-                RW(effect, false);
-                spell.second.mEffects.push_back(effect);
-            }
-            player->activeSpells.mSpells.insert(spell);
+            activeSpell.params.mEffects.clear();
+            activeSpell.params.mEffects.resize(effectCount);
         }
+
+        for (auto&& effect : activeSpell.params.mEffects)
+        {
+            RW(effect.mEffectId, send);
+            RW(effect.mArg, send);
+            RW(effect.mMagnitude, send);
+            RW(effect.mDuration, send);
+            RW(effect.mTimeLeft, send);
+        }
+    }
 }

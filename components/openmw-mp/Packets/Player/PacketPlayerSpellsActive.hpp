@@ -11,6 +11,9 @@ namespace mwmp
         PacketPlayerSpellsActive(RakNet::RakPeerInterface *peer);
 
         virtual void Packet(RakNet::BitStream *newBitstream, bool send);
+
+    protected:
+        static const int maxEffects = 20;
     };
 }
 

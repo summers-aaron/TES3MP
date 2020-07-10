@@ -75,6 +75,12 @@ namespace mwmp
         int type;
     };
 
+    struct ActiveSpell
+    {
+        std::string id;
+        ESM::ActiveSpells::ActiveSpellParams params;
+    };
+
     struct CellState
     {
         ESM::Cell cell;
@@ -117,6 +123,18 @@ namespace mwmp
     struct SpellbookChanges
     {
         std::vector<ESM::Spell> spells;
+        enum ACTION_TYPE
+        {
+            SET = 0,
+            ADD,
+            REMOVE
+        };
+        int action; // 0 - Clear and set in entirety, 1 - Add spell, 2 - Remove spell
+    };
+
+    struct SpellsActiveChanges
+    {
+        std::vector<ActiveSpell> activeSpells;
         enum ACTION_TYPE
         {
             SET = 0,
@@ -208,6 +226,7 @@ namespace mwmp
 
         InventoryChanges inventoryChanges;
         SpellbookChanges spellbookChanges;
+        SpellsActiveChanges spellsActiveChanges;
         std::vector<QuickKey> quickKeyChanges;
         std::vector<JournalItem> journalChanges;
         FactionChanges factionChanges;
@@ -215,7 +234,6 @@ namespace mwmp
         std::vector<Book> bookChanges;
         std::vector<CellState> cellStateChanges;
 
-        ESM::ActiveSpells activeSpells;
         std::vector<RakNet::RakNetGUID> alliedPlayers;
         CurrentContainer currentContainer;
 

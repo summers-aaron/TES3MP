@@ -173,6 +173,7 @@ public:
             {"OnPlayerFaction",          Callback<unsigned short>()},
             {"OnPlayerShapeshift",       Callback<unsigned short>()},
             {"OnPlayerSpellbook",        Callback<unsigned short>()},
+            {"OnPlayerSpellsActive",     Callback<unsigned short>()},
             {"OnPlayerQuickKeys",        Callback<unsigned short>()},
             {"OnPlayerTopic",            Callback<unsigned short>()},
             {"OnPlayerDisposition",      Callback<unsigned short>()},

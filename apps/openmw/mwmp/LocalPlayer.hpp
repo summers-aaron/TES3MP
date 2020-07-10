@@ -45,11 +45,13 @@ namespace mwmp
 
         void addItems();
         void addSpells();
+        void addSpellsActive();
         void addJournalItems();
         void addTopics();
 
         void removeItems();
         void removeSpells();
+        void removeSpellsActive();
 
         void resurrect();
 
@@ -70,6 +72,7 @@ namespace mwmp
         void setEquipment();
         void setInventory();
         void setSpellbook();
+        void setSpellsActive();
         void setQuickKeys();
         void setFactions();
         void setBooks();
@@ -86,6 +89,9 @@ namespace mwmp
         void sendStoredItemRemovals();
         void sendSpellbook();
         void sendSpellChange(std::string id, unsigned int action);
+        void sendSpellsActive();
+        void sendSpellsActiveAddition(const std::string id, ESM::ActiveSpells::ActiveSpellParams params);
+        void sendSpellsActiveRemoval(const std::string id);
         void sendQuickKey(unsigned short slot, int type, const std::string& itemId = "");
         void sendJournalEntry(const std::string& quest, int index, const MWWorld::Ptr& actor);
         void sendJournalIndex(const std::string& quest, int index);
