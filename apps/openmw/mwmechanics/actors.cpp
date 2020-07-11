@@ -2160,6 +2160,7 @@ namespace MWMechanics
             }
             else if (killResult == CharacterController::Result_DeathAnimJustFinished)
             {
+                bool isPlayer = iter->first == getPlayer();
                 notifyDied(iter->first);
 
                 // Reset magic effects and recalculate derived effects
@@ -2167,16 +2168,8 @@ namespace MWMechanics
                 stats.modifyMagicEffects(MWMechanics::MagicEffects());
                 stats.getActiveSpells().clear();
 
-                /*
-                    Start of tes3mp change (major)
-
-                    Don't clear spells for dying players and actors because it doesn't really make
-                    any sense
-                */
-                //stats.getSpells().clear();
-                /*
-                    End of tes3mp change (major)
-                */
+                if (!isPlayer)
+                    stats.getSpells().clear();
 
                 // Make sure spell effects are removed
                 purgeSpellEffects(stats.getActorId());
@@ -2186,7 +2179,7 @@ namespace MWMechanics
                 if (iter->first.getClass().isNpc())
                     calculateNpcStatModifiers(iter->first, 0);
 
-                if( iter->first == getPlayer())
+                if (isPlayer)
                 {
                     //player's death animation is over
 
