@@ -19,8 +19,6 @@ namespace mwmp
 
             ptrCellStore = Main::get().getCellController()->getCellStore(objectList.cell);
 
-            if (!ptrCellStore) return;
-
             objectList.runConsoleCommands(ptrCellStore);
         }
     };

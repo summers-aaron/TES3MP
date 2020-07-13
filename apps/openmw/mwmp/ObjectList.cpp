@@ -934,7 +934,8 @@ void ObjectList::runConsoleCommands(MWWorld::CellStore* cellStore)
                     }
                 }
             }
-            else
+            // Only require a valid cellStore if running on cell objects
+            else if (cellStore)
             {
                 LOG_APPEND(TimedLog::LOG_VERBOSE, "-- Running on object %s %i-%i", baseObject.refId.c_str(), baseObject.refNum, baseObject.mpNum);
 
