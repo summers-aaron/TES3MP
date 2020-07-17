@@ -860,6 +860,26 @@ namespace MWGui
                     window->onFrame(frameDuration);
         }
 
+        /*
+            Start of tes3mp addition
+
+            Fix crashes caused by messageboxes that never have their modals erased elsewhere, working around
+            one of the main GUI-related problems that arise in an unpaused environment
+        */
+        for (auto modalIterator = mCurrentModals.begin(); modalIterator != mCurrentModals.end();) {
+            if ((*modalIterator)->mMainWidget == 0)
+            {
+                mCurrentModals.erase(modalIterator);
+            }
+            else
+            {
+                ++modalIterator;
+            }
+        }
+        /*
+            End of tes3mp addition
+        */
+
         // Make sure message boxes are always in front
         // This is an awful workaround for a series of awfully interwoven issues that couldn't be worked around
         // in a better way because of an impressive number of even more awfully interwoven issues.
