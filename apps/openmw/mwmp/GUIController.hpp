@@ -52,6 +52,8 @@ namespace mwmp
 
         void update(float dt);
 
+        void processCustomMessageBoxInput(int pressedButton);
+
         void WM_UpdateVisible(MWGui::GuiMode mode);
 
         void updatePlayersMarkers(MWGui::LocalMapBase *localMapBase);
@@ -68,7 +70,6 @@ namespace mwmp
         int keyChatMode;
 
         long id;
-        bool calledInteractiveMessage;
         TextInputDialog *mInputBox;
         GUIDialogList *mListBox;
         void onInputBoxDone(MWGui::WindowBase* parWindow);

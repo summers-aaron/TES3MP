@@ -728,9 +728,20 @@ namespace MWGui
         popGuiMode();
     }
 
-    void WindowManager::interactiveMessageBox(const std::string &message, const std::vector<std::string> &buttons, bool block)
+    /*
+        Start of tes3mp change (major)
+
+        Add a hasServerOrigin boolean to the list of arguments so those messageboxes
+        can be differentiated from client-only ones
+
+        Use the hasServerOrigin argument when creating an interactive message box
+    */
+    void WindowManager::interactiveMessageBox(const std::string &message, const std::vector<std::string> &buttons, bool block, bool hasServerOrigin)
     {
-        mMessageBoxManager->createInteractiveMessageBox(message, buttons);
+        mMessageBoxManager->createInteractiveMessageBox(message, buttons, hasServerOrigin);
+    /*
+        End of tes3mp change (major)
+    */
         updateVisible();
 
         if (block)
@@ -787,19 +798,6 @@ namespace MWGui
     {
         return mMessageBoxManager->readPressedButton();
     }
-
-    /*
-        Start of tes3mp addition
-
-        Allow the reading of a pressed button without resetting it
-    */
-    int WindowManager::readPressedButton(bool reset)
-    {
-        return mMessageBoxManager->readPressedButton(reset);
-    }
-    /*
-        End of tes3mp addition
-    */
 
     std::string WindowManager::getGameSettingString(const std::string &id, const std::string &default_)
     {

@@ -295,21 +295,20 @@ namespace MWBase
             virtual void messageBox (const std::string& message, enum MWGui::ShowInDialogueMode showInDialogueMode = MWGui::ShowInDialogueMode_IfPossible) = 0;
             virtual void staticMessageBox(const std::string& message) = 0;
             virtual void removeStaticMessageBox() = 0;
+            /*
+                Start of tes3mp change (major)
+
+                Add a hasServerOrigin boolean to the list of arguments so those messageboxes
+                can be differentiated from client-only ones
+            */
             virtual void interactiveMessageBox (const std::string& message,
-                                                const std::vector<std::string>& buttons = std::vector<std::string>(), bool block=false) = 0;
+                                                const std::vector<std::string>& buttons = std::vector<std::string>(), bool block=false, bool hasServerOrigin=false) = 0;
+            /*
+                End of tes3mp change (major)
+            */
 
             /// returns the index of the pressed button or -1 if no button was pressed (->MessageBoxmanager->InteractiveMessageBox)
             virtual int readPressedButton() = 0;
-
-            /*
-                Start of tes3mp addition
-
-                Allow the reading of a pressed button without resetting it
-            */
-            virtual int readPressedButton(bool reset) = 0;
-            /*
-                End of tes3mp addition
-            */
 
             virtual void update (float duration) = 0;
 

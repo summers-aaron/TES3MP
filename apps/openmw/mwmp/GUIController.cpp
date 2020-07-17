@@ -41,7 +41,6 @@ mwmp::GUIController::GUIController(): mInputBox(0), mListBox(0)
     mChat = nullptr;
     keySay = SDL_SCANCODE_Y;
     keyChatMode = SDL_SCANCODE_F2;
-    calledInteractiveMessage = false;
 }
 
 mwmp::GUIController::~GUIController()
@@ -145,10 +144,9 @@ std::vector<std::string> splitString(const std::string &str, char delim = ';')
 
 void mwmp::GUIController::showCustomMessageBox(const BasePlayer::GUIMessageBox &guiMessageBox)
 {
-    MWBase::WindowManager *windowManager = MWBase::Environment::get().getWindowManager();
+    MWBase::WindowManager* windowManager = MWBase::Environment::get().getWindowManager();
     std::vector<std::string> buttons = splitString(guiMessageBox.buttons);
-    windowManager->interactiveMessageBox(guiMessageBox.label, buttons);
-    calledInteractiveMessage = true;
+    windowManager->interactiveMessageBox(guiMessageBox.label, buttons, false, true);
 }
 
 void mwmp::GUIController::showInputBox(const BasePlayer::GUIMessageBox &guiMessageBox)
@@ -222,23 +220,18 @@ void mwmp::GUIController::update(float dt)
 {
     if (mChat != nullptr)
         mChat->update(dt);
+}
 
-    // Make sure we read the pressed button without resetting it, because it may also get
-    // checked somewhere else
-    int pressedButton = MWBase::Environment::get().getWindowManager()->readPressedButton(false);
+void mwmp::GUIController::processCustomMessageBoxInput(int pressedButton)
+{
+    LOG_MESSAGE_SIMPLE(TimedLog::LOG_VERBOSE, "Pressed: %d", pressedButton);
 
-    if (pressedButton != -1 && calledInteractiveMessage)
-    {
-        LOG_MESSAGE_SIMPLE(TimedLog::LOG_VERBOSE, "Pressed: %d", pressedButton);
-        calledInteractiveMessage = false;
+    LocalPlayer* localPlayer = Main::get().getLocalPlayer();
+    localPlayer->guiMessageBox.data = MyGUI::utility::toString(pressedButton);
 
-        LocalPlayer *localPlayer = Main::get().getLocalPlayer();
-        localPlayer->guiMessageBox.data = MyGUI::utility::toString(pressedButton);
-
-        PlayerPacket *playerPacket = Main::get().getNetworking()->getPlayerPacket(ID_GUI_MESSAGEBOX);
-        playerPacket->setPlayer(Main::get().getLocalPlayer());
-        playerPacket->Send();
-    }
+    PlayerPacket* playerPacket = Main::get().getNetworking()->getPlayerPacket(ID_GUI_MESSAGEBOX);
+    playerPacket->setPlayer(Main::get().getLocalPlayer());
+    playerPacket->Send();
 }
 
 void mwmp::GUIController::WM_UpdateVisible(MWGui::GuiMode mode)
