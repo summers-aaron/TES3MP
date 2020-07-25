@@ -10,6 +10,7 @@
 
 #include "../mwbase/windowmanager.hpp"
 #include "../mwbase/environment.hpp"
+#include "../mwbase/world.hpp"
 
 #include "../mwworld/esmstore.hpp"
 
@@ -102,6 +103,8 @@ namespace MWInput
         mMouseManager->update(dt);
         mSensorManager->update(dt);
         mActionManager->update(dt, controllerMove);
+
+        MWBase::Environment::get().getWorld()->applyDeferredPreviewRotationToPlayer(dt);
     }
 
     void InputManager::setDragDrop(bool dragDrop)

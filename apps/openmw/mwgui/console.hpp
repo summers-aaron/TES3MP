@@ -70,6 +70,8 @@ namespace MWGui
 
             void executeFile (const std::string& path);
 
+            void updateSelectedObjectPtr(const MWWorld::Ptr& currentPtr, const MWWorld::Ptr& newPtr);
+
             void clear();
 
             virtual void resetReference ();

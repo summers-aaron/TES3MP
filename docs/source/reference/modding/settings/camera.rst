@@ -150,3 +150,51 @@ Recommened values: 30 -10 for the right shoulder, -30 -10 for the left shoulder.
 
 This setting can only be configured by editing the settings configuration file.
 
+auto switch shoulder
+--------------------
+
+:Type:		boolean
+:Range:		True/False
+:Default:	True
+
+This setting makes difference only in third person mode if 'view over shoulder' is enabled.
+When player is close to an obstacle, automatically switches camera to the shoulder that is farther away from the obstacle.
+
+This setting can only be configured by editing the settings configuration file.
+
+zoom out when move coef
+-----------------------
+
+:Type:		floating point
+:Range:		Any
+:Default:	20
+
+This setting makes difference only in third person mode if 'view over shoulder' is enabled.
+Slightly pulls camera away (or closer in case of negative value) when the character moves. To disable set it to zero.
+
+This setting can only be configured by editing the settings configuration file.
+
+preview if stand still
+----------------------
+
+:Type:		boolean
+:Range:		True/False
+:Default:	False
+
+If enabled then the character rotation is not synchonized with the camera rotation while the character doesn't move and not in combat mode.
+
+This setting can only be configured by editing the settings configuration file.
+
+deferred preview rotation
+-------------------------
+
+:Type:		boolean
+:Range:		True/False
+:Default:	True
+
+Makes difference only in third person mode.
+If enabled then the character smoothly rotates to the view direction after exiting preview or vanity mode.
+If disabled then the camera rotates rather than the character.
+
+This setting can only be configured by editing the settings configuration file.
+

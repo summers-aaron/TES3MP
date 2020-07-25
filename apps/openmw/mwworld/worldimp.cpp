@@ -1062,6 +1062,7 @@ namespace MWWorld
         removeContainerScripts(getPlayerPtr());
         mWorldScene->changeToInteriorCell(cellName, position, adjustPlayerPos, changeEvent);
         addContainerScripts(getPlayerPtr(), getPlayerPtr().getCell());
+        mRendering->getCamera()->instantTransition();
     }
 
     void World::changeToExteriorCell (const ESM::Position& position, bool adjustPlayerPos, bool changeEvent)
@@ -1077,6 +1078,7 @@ namespace MWWorld
         removeContainerScripts(getPlayerPtr());
         mWorldScene->changeToExteriorCell(position, adjustPlayerPos, changeEvent);
         addContainerScripts(getPlayerPtr(), getPlayerPtr().getCell());
+        mRendering->getCamera()->instantTransition();
     }
 
     void World::changeToCell (const ESM::CellId& cellId, const ESM::Position& position, bool adjustPlayerPos, bool changeEvent)
@@ -1335,7 +1337,6 @@ namespace MWWorld
                     mRendering->updatePtr(ptr, newPtr);
                     MWBase::Environment::get().getSoundManager()->updatePtr (ptr, newPtr);
                     mPhysics->updatePtr(ptr, newPtr);
-                    MWBase::Environment::get().getScriptManager()->getGlobalScripts().updatePtrs(ptr, newPtr);
 
                     MWBase::MechanicsManager *mechMgr = MWBase::Environment::get().getMechanicsManager();
                     mechMgr->updateCell(ptr, newPtr);
@@ -1366,6 +1367,9 @@ namespace MWWorld
                     End of tes3mp addition
                 */
             }
+
+            MWBase::Environment::get().getWindowManager()->updateConsoleObjectPtr(ptr, newPtr);
+            MWBase::Environment::get().getScriptManager()->getGlobalScripts().updatePtrs(ptr, newPtr);
         }
         if (haveToMove && newPtr.getRefData().getBaseNode())
         {
@@ -2105,7 +2109,7 @@ namespace MWWorld
             std::string enchantId = selectedEnchantItem.getClass().getEnchantment(selectedEnchantItem);
             if (!enchantId.empty())
             {
-                const ESM::Enchantment* ench = mStore.get<ESM::Enchantment>().search(selectedEnchantItem.getClass().getEnchantment(selectedEnchantItem));
+                const ESM::Enchantment* ench = mStore.get<ESM::Enchantment>().search(enchantId);
                 if (ench)
                     preloadEffects(&ench->mEffects);
             }
@@ -2654,6 +2658,16 @@ namespace MWWorld
     bool World::toggleVanityMode(bool enable)
     {
         return mRendering->toggleVanityMode(enable);
+    }
+
+    void World::disableDeferredPreviewRotation()
+    {
+        mRendering->getCamera()->disableDeferredPreviewRotation();
+    }
+
+    void World::applyDeferredPreviewRotationToPlayer(float dt)
+    {
+        mRendering->getCamera()->applyDeferredPreviewRotationToPlayer(dt);
     }
 
     void World::allowVanityMode(bool allow)
