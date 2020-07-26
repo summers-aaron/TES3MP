@@ -63,7 +63,7 @@ bool AiPursue::execute (const MWWorld::Ptr& actor, CharacterController& characte
         Start of tes3mp addition
 
         Because multiplayer does not pause the game, prevent infinite arrest loops by ignoring
-        players already engaged in dialogue
+        players already engaged in dialogue while retaining the AiPursue package
 
         Additionally, do not arrest players who are currently jailed
     */
@@ -72,7 +72,7 @@ bool AiPursue::execute (const MWWorld::Ptr& actor, CharacterController& characte
         if (MWBase::Environment::get().getWindowManager()->containsMode(MWGui::GM_Dialogue) ||
             MWBase::Environment::get().getWindowManager()->containsMode(MWGui::GM_Jail))
         {
-            return true;
+            return false;
         }
     }
     /*
