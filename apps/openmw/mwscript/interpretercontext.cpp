@@ -45,14 +45,14 @@ namespace MWScript
     /*
         Start of tes3mp addition
 
-        Used for setting and checking the type of this InterpreterContext
+        Used for tracking and checking the type of this InterpreterContext
     */
     unsigned short InterpreterContext::getContextType() const
     {
         return mContextType;
     }
 
-    void InterpreterContext::setContextType(unsigned short contextType)
+    void InterpreterContext::trackContextType(unsigned short contextType)
     {
         mContextType = contextType;
     }

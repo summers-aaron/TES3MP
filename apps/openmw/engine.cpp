@@ -251,7 +251,7 @@ void OMW::Engine::executeLocalScripts()
             so that packets sent by the Interpreter can have their
             origin determined by serverside scripts
         */
-        interpreterContext.setContextType(Interpreter::Context::SCRIPT_LOCAL);
+        interpreterContext.trackContextType(Interpreter::Context::SCRIPT_LOCAL);
         /*
             End of tes3mp addition
         */

@@ -262,7 +262,7 @@ namespace MWDialogue
                     so that packets sent by the Interpreter can have their
                     origin determined by serverside scripts
                 */
-                interpreterContext.setContextType(Interpreter::Context::DIALOGUE);
+                interpreterContext.trackContextType(Interpreter::Context::DIALOGUE);
                 /*
                     End of tes3mp addition
                 */

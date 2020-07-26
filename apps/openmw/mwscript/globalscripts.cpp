@@ -178,7 +178,7 @@ namespace MWScript
                     so that packets sent by the Interpreter can have their
                     origin determined by serverside scripts
                 */
-                context.setContextType(Interpreter::Context::SCRIPT_GLOBAL);
+                context.trackContextType(Interpreter::Context::SCRIPT_GLOBAL);
                 /*
                     End of tes3mp addition
                 */

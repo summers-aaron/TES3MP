@@ -109,10 +109,10 @@ namespace Interpreter
             /*
                 Start of tes3mp addition
 
-                Used for setting and checking the type of this Context
+                Used for tracking and checking the type of this Context
             */
             virtual unsigned short getContextType() const = 0;
-            virtual void setContextType(unsigned short interpreterType) = 0;
+            virtual void trackContextType(unsigned short interpreterType) = 0;
             /*
                 End of tes3mp addition
             */

@@ -71,13 +71,13 @@ namespace MWScript
             /*
                 Start of tes3mp addition
 
-                Used for setting and checking the type of this InterpreterContext
+                Used for tracking and checking the type of this InterpreterContext
             */
             unsigned short mContextType;
 
             virtual unsigned short getContextType() const;
 
-            virtual void setContextType(unsigned short contextType);
+            virtual void trackContextType(unsigned short contextType);
             /*
                 End of tes3mp addition
             */
