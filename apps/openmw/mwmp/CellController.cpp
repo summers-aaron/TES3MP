@@ -1,3 +1,4 @@
+#include <components/detournavigator/navigator.hpp>
 #include <components/esm/cellid.hpp>
 #include <components/openmw-mp/TimedLog.hpp>
 #include <components/openmw-mp/Utils.hpp>
@@ -31,12 +32,14 @@ CellController::~CellController()
 
 void CellController::updateLocal(bool forceUpdate)
 {
+    MWBase::World* world = MWBase::Environment::get().getWorld();
+
     // Loop through Cells, deleting inactive ones and updating LocalActors in active ones
     for (auto it = cellsInitialized.begin(); it != cellsInitialized.end();)
     {
         mwmp::Cell *mpCell = it->second;
 
-        if (!MWBase::Environment::get().getWorld()->isCellActive(*mpCell->getCellStore()->getCell()))
+        if (!world->isCellActive(*mpCell->getCellStore()->getCell()))
         {
             mpCell->uninitializeLocalActors();
             mpCell->uninitializeDedicatedActors();
@@ -50,18 +53,27 @@ void CellController::updateLocal(bool forceUpdate)
         }
     }
 
-    // Loop through Cells and initialize new LocalActors for eligible ones
+    // If there are cellsInitialized remaining, loop through them and initialize new LocalActors for eligible ones
+    // 
     //
     // Note: This cannot be combined with the above loop because initializing LocalActors in a Cell before they are
     //       deleted from their previous one can make their records stay deleted
-    for (auto &cell : cellsInitialized)
+    if (cellsInitialized.size() > 0)
     {
-        mwmp::Cell *mpCell = cell.second;
-        if (mpCell->shouldInitializeActors == true)
+        for (auto& cell : cellsInitialized)
         {
-            mpCell->shouldInitializeActors = false;
-            mpCell->initializeLocalActors();
+            mwmp::Cell* mpCell = cell.second;
+            if (mpCell->shouldInitializeActors == true)
+            {
+                mpCell->shouldInitializeActors = false;
+                mpCell->initializeLocalActors();
+            }
         }
+    }
+    // Otherwise, disable the DetourNavigator for advanced pathfinding for the time being
+    else
+    {
+        world->getNavigator()->setUpdatesEnabled(false);
     }
 }
 

@@ -3,6 +3,7 @@
 
 
 #include "../ActorProcessor.hpp"
+#include <components/detournavigator/navigator.hpp>
 #include "apps/openmw/mwmp/Main.hpp"
 #include "apps/openmw/mwmp/CellController.hpp"
 
@@ -34,6 +35,11 @@ namespace mwmp
                     cell->uninitializeDedicatedActors();
                     cell->initializeLocalActors();
                     cell->updateLocal(true);
+
+                    // Enable updates for DetourNavigator for advanced pathfinding
+                    MWBase::World* world = MWBase::Environment::get().getWorld();
+                    world->getNavigator()->setUpdatesEnabled(true);
+                    world->getNavigator()->update(world->getPlayerPtr().getRefData().getPosition().asVec3());
                 }
                 else
                 {
