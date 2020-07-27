@@ -174,11 +174,13 @@ namespace MWScript
                 /*
                     Start of tes3mp addition
 
-                    Mark this InterpreterContext as having a SCRIPT_GLOBAL context,
-                    so that packets sent by the Interpreter can have their
+                    Mark this InterpreterContext as having a SCRIPT_GLOBAL context
+                    and as currently running the script with this name, so that
+                    packets sent by the Interpreter can have their
                     origin determined by serverside scripts
                 */
                 context.trackContextType(Interpreter::Context::SCRIPT_GLOBAL);
+                context.trackCurrentScriptName(script.first);
                 /*
                     End of tes3mp addition
                 */

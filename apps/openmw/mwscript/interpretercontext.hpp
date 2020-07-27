@@ -71,13 +71,19 @@ namespace MWScript
             /*
                 Start of tes3mp addition
 
-                Used for tracking and checking the type of this InterpreterContext
+                Used for tracking and checking the type of this InterpreterContext, as well as
+                its current script
             */
             unsigned short mContextType;
+            std::string mCurrentScriptName = "";
 
             virtual unsigned short getContextType() const;
 
+            virtual std::string getCurrentScriptName() const;
+
             virtual void trackContextType(unsigned short contextType);
+
+            virtual void trackCurrentScriptName(const std::string& name);
             /*
                 End of tes3mp addition
             */

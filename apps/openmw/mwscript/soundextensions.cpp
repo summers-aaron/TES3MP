@@ -90,6 +90,7 @@ namespace MWScript
                     mwmp::ObjectList *objectList = mwmp::Main::get().getNetworking()->getObjectList();
                     objectList->reset();
                     objectList->packetOrigin = ScriptController::getPacketOriginFromContextType(runtime.getContext().getContextType());
+                    objectList->originClientScript = runtime.getContext().getCurrentScriptName();
                     objectList->addMusicPlay(sound);
                     objectList->sendMusicPlay();
                     /*

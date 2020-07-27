@@ -232,8 +232,6 @@ public:
     /**
     * \brief Get the client script that the read object list originated from.
     *
-    * Note: This is not yet implemented.
-    *
     * \return The ID of the client script.
     */
     static const char *GetObjectListClientScript() noexcept;

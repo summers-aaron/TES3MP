@@ -247,11 +247,13 @@ void OMW::Engine::executeLocalScripts()
         /*
             Start of tes3mp addition
 
-            Mark this InterpreterContext as having a SCRIPT_LOCAL context,
-            so that packets sent by the Interpreter can have their
+            Mark this InterpreterContext as having a SCRIPT_LOCAL context
+            and as currently running the script with this name, so that
+            packets sent by the Interpreter can have their
             origin determined by serverside scripts
         */
         interpreterContext.trackContextType(Interpreter::Context::SCRIPT_LOCAL);
+        interpreterContext.trackCurrentScriptName(script.first);
         /*
             End of tes3mp addition
         */

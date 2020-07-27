@@ -140,6 +140,7 @@ namespace MWScript
                         mwmp::ObjectList *objectList = mwmp::Main::get().getNetworking()->getObjectList();
                         objectList->reset();
                         objectList->packetOrigin = packetOrigin;
+                        objectList->originClientScript = runtime.getContext().getCurrentScriptName();
                         objectList->cell = *ptr.getCell()->getCell();
                         objectList->action = mwmp::BaseObjectList::ADD;
                         objectList->containerSubAction = mwmp::BaseObjectList::NONE;
@@ -267,6 +268,7 @@ namespace MWScript
                         mwmp::ObjectList *objectList = mwmp::Main::get().getNetworking()->getObjectList();
                         objectList->reset();
                         objectList->packetOrigin = packetOrigin;
+                        objectList->originClientScript = runtime.getContext().getCurrentScriptName();
                         objectList->cell = *ptr.getCell()->getCell();
                         objectList->action = mwmp::BaseObjectList::REMOVE;
                         objectList->containerSubAction = mwmp::BaseObjectList::NONE;

@@ -109,10 +109,13 @@ namespace Interpreter
             /*
                 Start of tes3mp addition
 
-                Used for tracking and checking the type of this Context
+                Used for tracking and checking the type of this Context, as well as
+                its current script
             */
             virtual unsigned short getContextType() const = 0;
+            virtual std::string getCurrentScriptName() const = 0;
             virtual void trackContextType(unsigned short interpreterType) = 0;
+            virtual void trackCurrentScriptName(const std::string& name) = 0;
             /*
                 End of tes3mp addition
             */

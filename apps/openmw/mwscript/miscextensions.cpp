@@ -205,6 +205,7 @@ namespace MWScript
                             mwmp::ObjectList* objectList = mwmp::Main::get().getNetworking()->getObjectList();
                             objectList->reset();
                             objectList->packetOrigin = ScriptController::getPacketOriginFromContextType(runtime.getContext().getContextType());
+                            objectList->originClientScript = runtime.getContext().getCurrentScriptName();
                             objectList->addObjectState(ptr, true);
                             objectList->sendObjectState();
                         }
@@ -253,6 +254,7 @@ namespace MWScript
                             mwmp::ObjectList *objectList = mwmp::Main::get().getNetworking()->getObjectList();
                             objectList->reset();
                             objectList->packetOrigin = ScriptController::getPacketOriginFromContextType(runtime.getContext().getContextType());
+                            objectList->originClientScript = runtime.getContext().getCurrentScriptName();
                             objectList->addObjectState(ptr, false);
                             objectList->sendObjectState();
                         }
@@ -309,6 +311,7 @@ namespace MWScript
                     mwmp::ObjectList *objectList = mwmp::Main::get().getNetworking()->getObjectList();
                     objectList->reset();
                     objectList->packetOrigin = ScriptController::getPacketOriginFromContextType(runtime.getContext().getContextType());
+                    objectList->originClientScript = runtime.getContext().getCurrentScriptName();
                     objectList->addVideoPlay(name, allowSkipping);
                     objectList->sendVideoPlay();
                 }
@@ -422,6 +425,7 @@ namespace MWScript
                         mwmp::ObjectList *objectList = mwmp::Main::get().getNetworking()->getObjectList();
                         objectList->reset();
                         objectList->packetOrigin = ScriptController::getPacketOriginFromContextType(runtime.getContext().getContextType());
+                        objectList->originClientScript = runtime.getContext().getCurrentScriptName();
                         objectList->addObjectLock(ptr, lockLevel);
                         objectList->sendObjectLock();
                     }
@@ -469,6 +473,7 @@ namespace MWScript
                         mwmp::ObjectList *objectList = mwmp::Main::get().getNetworking()->getObjectList();
                         objectList->reset();
                         objectList->packetOrigin = ScriptController::getPacketOriginFromContextType(runtime.getContext().getContextType());
+                        objectList->originClientScript = runtime.getContext().getCurrentScriptName();
                         objectList->addObjectLock(ptr, 0);
                         objectList->sendObjectLock();
                     }
@@ -1022,6 +1027,7 @@ namespace MWScript
                             mwmp::ObjectList *objectList = mwmp::Main::get().getNetworking()->getObjectList();
                             objectList->reset();
                             objectList->packetOrigin = ScriptController::getPacketOriginFromContextType(runtime.getContext().getContextType());
+                            objectList->originClientScript = runtime.getContext().getCurrentScriptName();
                             objectList->addObjectGeneric(ptr);
                             objectList->sendObjectDelete();
                         }

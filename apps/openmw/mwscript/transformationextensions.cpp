@@ -150,6 +150,7 @@ namespace MWScript
                             mwmp::ObjectList *objectList = mwmp::Main::get().getNetworking()->getObjectList();
                             objectList->reset();
                             objectList->packetOrigin = ScriptController::getPacketOriginFromContextType(runtime.getContext().getContextType());
+                            objectList->originClientScript = runtime.getContext().getCurrentScriptName();
                             objectList->addObjectScale(ptr, scale);
                             objectList->sendObjectScale();
                         }
@@ -573,6 +574,7 @@ namespace MWScript
                             mwmp::ObjectList *objectList = mwmp::Main::get().getNetworking()->getObjectList();
                             objectList->reset();
                             objectList->packetOrigin = ScriptController::getPacketOriginFromContextType(runtime.getContext().getContextType());
+                            objectList->originClientScript = runtime.getContext().getCurrentScriptName();
 
                             if (placed.getClass().isActor())
                             {
@@ -658,6 +660,7 @@ namespace MWScript
                         mwmp::ObjectList *objectList = mwmp::Main::get().getNetworking()->getObjectList();
                         objectList->reset();
                         objectList->packetOrigin = ScriptController::getPacketOriginFromContextType(runtime.getContext().getContextType());
+                        objectList->originClientScript = runtime.getContext().getCurrentScriptName();
 
                         if (placed.getClass().isActor())
                         {
@@ -736,6 +739,7 @@ namespace MWScript
                             mwmp::ObjectList *objectList = mwmp::Main::get().getNetworking()->getObjectList();
                             objectList->reset();
                             objectList->packetOrigin = ScriptController::getPacketOriginFromContextType(runtime.getContext().getContextType());
+                            objectList->originClientScript = runtime.getContext().getCurrentScriptName();
 
                             if (ptr.getClass().isActor())
                             {

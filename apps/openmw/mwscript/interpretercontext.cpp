@@ -45,16 +45,27 @@ namespace MWScript
     /*
         Start of tes3mp addition
 
-        Used for tracking and checking the type of this InterpreterContext
+        Used for tracking and checking the type of this InterpreterContext, as well as
+        its current script
     */
     unsigned short InterpreterContext::getContextType() const
     {
         return mContextType;
     }
 
+    std::string InterpreterContext::getCurrentScriptName() const
+    {
+        return mCurrentScriptName;
+    }
+
     void InterpreterContext::trackContextType(unsigned short contextType)
     {
         mContextType = contextType;
+    }
+
+    void InterpreterContext::trackCurrentScriptName(const std::string& name)
+    {
+        mCurrentScriptName = name;
     }
     /*
         End of tes3mp addition
@@ -216,6 +227,7 @@ namespace MWScript
             mwmp::ObjectList *objectList = mwmp::Main::get().getNetworking()->getObjectList();
             objectList->reset();
             objectList->packetOrigin = ScriptController::getPacketOriginFromContextType(getContextType());
+            objectList->originClientScript = getCurrentScriptName();
             objectList->addClientScriptLocal(mReference, index, value, mwmp::VARIABLE_TYPE::SHORT);
             objectList->sendClientScriptLocal();
         }
@@ -252,6 +264,7 @@ namespace MWScript
             mwmp::ObjectList *objectList = mwmp::Main::get().getNetworking()->getObjectList();
             objectList->reset();
             objectList->packetOrigin = ScriptController::getPacketOriginFromContextType(getContextType());
+            objectList->originClientScript = getCurrentScriptName();
             objectList->addClientScriptLocal(mReference, index, value, mwmp::VARIABLE_TYPE::LONG);
             objectList->sendClientScriptLocal();
         }
@@ -294,6 +307,7 @@ namespace MWScript
             mwmp::ObjectList *objectList = mwmp::Main::get().getNetworking()->getObjectList();
             objectList->reset();
             objectList->packetOrigin = ScriptController::getPacketOriginFromContextType(getContextType());
+            objectList->originClientScript = getCurrentScriptName();
             objectList->addClientScriptLocal(mReference, index, value);
             objectList->sendClientScriptLocal();
         }
@@ -683,6 +697,7 @@ namespace MWScript
             mwmp::ObjectList *objectList = mwmp::Main::get().getNetworking()->getObjectList();
             objectList->reset();
             objectList->packetOrigin = ScriptController::getPacketOriginFromContextType(getContextType());
+            objectList->originClientScript = getCurrentScriptName();
             objectList->addScriptMemberShort(id, index, value);
             objectList->sendScriptMemberShort();
         }
