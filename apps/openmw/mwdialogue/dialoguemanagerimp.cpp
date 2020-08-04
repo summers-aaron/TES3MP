@@ -158,6 +158,7 @@ namespace MWDialogue
         mTalkedTo = creatureStats.hasTalkedToPlayer();
 
         mActorKnownTopics.clear();
+        mActorKnownTopicsFlag.clear();
 
         //greeting
         const MWWorld::Store<ESM::Dialogue> &dialogs =
@@ -350,11 +351,11 @@ namespace MWDialogue
                 }
             }
 
+            mLastTopic = topic;
+
             executeScript (info->mResultScript, mActor);
 
             parseText (info->mResponse);
-
-            mLastTopic = topic;
         }
     }
 
@@ -373,6 +374,7 @@ namespace MWDialogue
         updateGlobals();
 
         mActorKnownTopics.clear();
+        mActorKnownTopicsFlag.clear();
 
         const auto& dialogs = MWBase::Environment::get().getWorld()->getStore().get<ESM::Dialogue>();
 

@@ -706,7 +706,6 @@ namespace MWGui
     {
         mHistoryContents.push_back(new Response(text, title, needMargin));
         updateHistory();
-        updateTopics();
     }
 
     void DialogueWindow::addMessageBox(const std::string& text)

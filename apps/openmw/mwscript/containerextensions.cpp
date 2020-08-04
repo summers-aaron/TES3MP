@@ -76,6 +76,13 @@ namespace MWScript
                             || ::Misc::StringUtils::ciEqual(item, "gold_100"))
                         item = "gold_001";
 
+                    // Explicit calls to non-unique actors affect the base record
+                    if(!R::implicit && ptr.getClass().isActor() && MWBase::Environment::get().getWorld()->getStore().getRefCount(ptr.getCellRef().getRefId()) > 1)
+                    {
+                        ptr.getClass().modifyBaseInventory(ptr.getCellRef().getRefId(), item, count);
+                        return;
+                    }
+
                     MWWorld::ContainerStore& store = ptr.getClass().getContainerStore(ptr);
 
                     /*
@@ -111,7 +118,7 @@ namespace MWScript
                     */
 
                     // Spawn a messagebox (only for items added to player's inventory and if player is talking to someone)
-                    if (ptr == MWBase::Environment::get().getWorld()->getPlayerPtr())
+                    if (ptr == MWBase::Environment::get().getWorld ()->getPlayerPtr() )
                     {
                         // The two GMST entries below expand to strings informing the player of what, and how many of it has been added to their inventory
                         std::string msgBox;
@@ -206,6 +213,13 @@ namespace MWScript
                             || ::Misc::StringUtils::ciEqual(item, "gold_025")
                             || ::Misc::StringUtils::ciEqual(item, "gold_100"))
                         item = "gold_001";
+
+                    // Explicit calls to non-unique actors affect the base record
+                    if(!R::implicit && ptr.getClass().isActor() && MWBase::Environment::get().getWorld()->getStore().getRefCount(ptr.getCellRef().getRefId()) > 1)
+                    {
+                        ptr.getClass().modifyBaseInventory(ptr.getCellRef().getRefId(), item, -count);
+                        return;
+                    }
 
                     MWWorld::ContainerStore& store = ptr.getClass().getContainerStore (ptr);
 

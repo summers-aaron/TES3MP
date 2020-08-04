@@ -178,6 +178,11 @@ namespace MWInput
 
         mAttemptJump = false;
     }
+    
+    bool ActionManager::isPreviewModeEnabled()
+    {
+        return MWBase::Environment::get().getWorld()->isPreviewModeEnabled();
+    }
 
     void ActionManager::resetIdleTime()
     {

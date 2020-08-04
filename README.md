@@ -13,7 +13,7 @@ TES3MP is a project adding multiplayer functionality to [OpenMW](https://github.
 * License: GPLv3 (see [LICENSE](https://github.com/TES3MP/openmw-tes3mp/blob/master/LICENSE) for more information)
 
 Font Licenses:
-* DejaVuLGCSansMono.ttf: custom (see [files/mygui/DejaVu Font License.txt](https://github.com/TES3MP/openmw-tes3mp/blob/master/files/mygui/DejaVu%20Font%20License.txt) for more information)
+* DejaVuLGCSansMono.ttf: custom (see [files/mygui/DejaVuFontLicense.txt](https://github.com/TES3MP/openmw-tes3mp/blob/master/files/mygui/DejaVuFontLicense.txt) for more information)
 
 Project status
 --------------
