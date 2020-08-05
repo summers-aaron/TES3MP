@@ -2,6 +2,16 @@
 
 #include <stdexcept>
 
+/*
+    Start of tes3mp addition
+
+    Include additional headers for multiplayer purposes
+*/
+#include <components/openmw-mp/TimedLog.hpp>
+/*
+    End of tes3mp addition
+*/
+
 #include <components/esm/defs.hpp>
 
 #include "../mwbase/environment.hpp"
@@ -61,6 +71,18 @@ namespace MWWorld
 
     MWMechanics::CreatureStats& Class::getCreatureStats (const Ptr& ptr) const
     {
+        /*
+            Start of tes3mp addition
+
+            This is a common error in multiplayer, so additional logging has been added for it
+        */
+        LOG_MESSAGE_SIMPLE(TimedLog::LOG_ERROR, "Attempt at getting creatureStats for %s %i-%i which is a %s!",
+            ptr.getCellRef().getRefId().c_str(), ptr.getCellRef().getRefNum().mIndex, ptr.getCellRef().getMpNum(),
+            ptr.getClass().getTypeName().c_str());
+        /*
+            End of tes3mp addition
+        */
+
         throw std::runtime_error ("class does not have creature stats");
     }
 
