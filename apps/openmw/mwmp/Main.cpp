@@ -45,6 +45,7 @@
 #include "GUIController.hpp"
 #include "CellController.hpp"
 #include "MechanicsHelper.hpp"
+#include "RecordHelper.hpp"
 
 using namespace mwmp;
 using namespace std;
@@ -162,6 +163,7 @@ void Main::postInit()
     const MWBase::Environment &environment = MWBase::Environment::get();
     environment.getStateManager()->newGame(true);
     MWBase::Environment::get().getMechanicsManager()->toggleAI();
+    RecordHelper::createPlaceholderInteriorCell();
 }
 
 bool Main::isInitialized()

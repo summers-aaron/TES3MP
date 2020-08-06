@@ -55,6 +55,11 @@ namespace RecordHelper
 
         return world->getStore().get<RecordType>().search(id);
     }
+
+    void createPlaceholderInteriorCell();
+    const std::string getPlaceholderInteriorCellName();
+
+    const std::string placeholderInteriorCellName = "$Transitional Void";
 }
 
 

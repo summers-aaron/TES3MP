@@ -363,16 +363,11 @@ void RecordHelper::overrideRecord(const mwmp::CellRecord& record)
 
     if (isCurrentCell)
     {
-        // As a temporary solution, move the player to exterior 0, 0, but
-        // fix this once it's possible to override exteriors cells as well
         ESM::Position tempPos;
-        tempPos.pos[0] = 0;
-        tempPos.pos[1] = 0;
-        tempPos.pos[2] = 0;
-
         ESM::Position playerPos = playerPtr.getRefData().getPosition();
 
-        world->changeToExteriorCell(tempPos, true, true);
+        // Move the player to a temporary holding cell
+        world->changeToInteriorCell(getPlaceholderInteriorCellName(), tempPos, true, true);
         world->changeToInteriorCell(recordData.mName, playerPos, true, true);
     }
 }
@@ -1462,7 +1457,8 @@ void RecordHelper::overrideRecord(const mwmp::WeaponRecord& record)
         world->updatePtrsWithRefId(recordData.mId);
 }
 
-void RecordHelper::overrideRecord(const mwmp::SoundRecord& record) {
+void RecordHelper::overrideRecord(const mwmp::SoundRecord& record)
+{
     const ESM::Sound& recordData = record.data;
 
     if (recordData.mId.empty())
@@ -1506,4 +1502,20 @@ void RecordHelper::overrideRecord(const mwmp::SoundRecord& record) {
 
     if (isExistingId)
         world->updatePtrsWithRefId(recordData.mId);
+}
+
+void RecordHelper::createPlaceholderInteriorCell()
+{
+    MWBase::World* world = MWBase::Environment::get().getWorld();
+
+    ESM::Cell placeholderInterior;
+    placeholderInterior.mData.mFlags |= ESM::Cell::Flags::Interior;
+    placeholderInterior.mName = placeholderInteriorCellName;
+
+    world->getModifiableStore().insert(placeholderInterior);
+}
+
+const std::string RecordHelper::getPlaceholderInteriorCellName()
+{
+    return placeholderInteriorCellName;
 }
