@@ -62,13 +62,15 @@ void MWWorld::Cells::clear()
 */
 void MWWorld::Cells::clear(const ESM::Cell& cell)
 {
-    for (auto it = mInteriors.begin(); it != mInteriors.end(); ++it)
+    if (cell.isExterior())
     {
-        if (Misc::StringUtils::ciEqual((*it).first, cell.mName))
-        {
-            mInteriors.erase(it);
-            break;
-        }
+        std::pair <int, int> cellCoordinates;
+        cellCoordinates = std::make_pair(cell.getGridX(), cell.getGridY());
+        mExteriors.erase(cellCoordinates);
+    }
+    else if (mInteriors.count(Misc::StringUtils::lowerCase(cell.mName)) > 0)
+    {
+        mInteriors.erase(Misc::StringUtils::lowerCase(cell.mName));
     }
 }
 /*
