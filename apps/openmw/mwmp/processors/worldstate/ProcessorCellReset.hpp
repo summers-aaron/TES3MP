@@ -21,14 +21,7 @@ namespace mwmp
             CellController* cellController = Main::get().getCellController();
             MWBase::World * world = MWBase::Environment::get().getWorld();
 
-            world->reloadCells(&worldstate.cellsToReset);
-
-            /*for (ESM::Cell cell : worldstate.cellsToReset)
-            {
-                Main::get().getLocalPlayer()->storeCellState(cell, CellState::LOAD);
-            }
-            Main::get().getLocalPlayer()->sendCellStates();
-            Main::get().getLocalPlayer()->clearCellStates();*/
+            //world->reloadCells(&worldstate.cellsToReset);
         }
     };
 }
