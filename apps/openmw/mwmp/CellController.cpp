@@ -103,6 +103,21 @@ void CellController::initializeCell(const ESM::Cell& cell)
     }
 }
 
+void CellController::uninitializeCell(const ESM::Cell& cell)
+{
+    std::string mapIndex = cell.getDescription();
+
+    // If this key doesn't exist, create it
+    if (cellsInitialized.count(mapIndex) > 0)
+    {
+        mwmp::Cell* mpCell = cellsInitialized.at(mapIndex);
+        mpCell->uninitializeLocalActors();
+        mpCell->uninitializeDedicatedActors();
+        delete cellsInitialized.at(mapIndex);
+        cellsInitialized.erase(mapIndex);
+    }
+}
+
 void CellController::readPositions(ActorList& actorList)
 {
     std::string mapIndex = actorList.cell.getDescription();

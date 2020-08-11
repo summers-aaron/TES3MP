@@ -20,6 +20,7 @@ namespace mwmp
         void updateDedicated(float dt);
 
         void initializeCell(const ESM::Cell& cell);
+        void uninitializeCell(const ESM::Cell& cell);
 
         void readPositions(mwmp::ActorList& actorList);
         void readAnimFlags(mwmp::ActorList& actorList);
