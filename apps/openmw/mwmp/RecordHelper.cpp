@@ -4,6 +4,9 @@
 #include "../mwworld/worldimp.hpp"
 
 #include "RecordHelper.hpp"
+#include "Main.hpp"
+#include "CellController.hpp"
+#include "Cell.hpp"
 
 void RecordHelper::overrideRecord(const mwmp::ActivatorRecord& record)
 {
@@ -333,7 +336,18 @@ void RecordHelper::overrideRecord(const mwmp::CellRecord& record)
     }
 
     MWWorld::Ptr playerPtr = world->getPlayerPtr();
-    bool isCurrentCell = Misc::StringUtils::ciEqual(recordData.mName, playerPtr.getCell()->getCell()->mName);
+    ESM::Cell playerCell = *playerPtr.getCell()->getCell();
+    ESM::Position playerPos = playerPtr.getRefData().getPosition();
+
+    bool isActiveCell = world->isCellActive(recordData);
+
+    if (isActiveCell)
+    {
+        mwmp::Main::get().getCellController()->uninitializeCell(recordData);
+
+        // Change to temporary holding interior cell
+        world->changeToInteriorCell(RecordHelper::getPlaceholderInteriorCellName(), playerPos, true, true);
+    }
 
     if (record.baseId.empty())
     {
@@ -361,14 +375,13 @@ void RecordHelper::overrideRecord(const mwmp::CellRecord& record)
         return;
     }
 
-    if (isCurrentCell)
+    // Move the player back to the cell they were in
+    if (isActiveCell)
     {
-        ESM::Position tempPos;
-        ESM::Position playerPos = playerPtr.getRefData().getPosition();
-
-        // Move the player to a temporary holding cell
-        world->changeToInteriorCell(getPlaceholderInteriorCellName(), tempPos, true, true);
-        world->changeToInteriorCell(recordData.mName, playerPos, true, true);
+        if (playerCell.isExterior())
+            world->changeToExteriorCell(playerPos, true, true);
+        else
+            world->changeToInteriorCell(playerCell.mName, playerPos, true, true);
     }
 }
 
