@@ -23,6 +23,8 @@ namespace mwmp
         void setMapExplored();
         void setWeather();
 
+        void resetCells(std::vector<ESM::Cell>* cells);
+
         void sendClientGlobal(std::string varName, int value, mwmp::VARIABLE_TYPE variableType);
         void sendClientGlobal(std::string varName, float value);
         void sendMapExplored(int cellX, int cellY, const std::vector<char>& imageData);

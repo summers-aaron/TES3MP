@@ -21,6 +21,7 @@ namespace mwmp
 
         void initializeCell(const ESM::Cell& cell);
         void uninitializeCell(const ESM::Cell& cell);
+        void uninitializeCells();
 
         void readPositions(mwmp::ActorList& actorList);
         void readAnimFlags(mwmp::ActorList& actorList);

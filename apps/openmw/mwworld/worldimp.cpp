@@ -22,6 +22,7 @@
 #include "../mwmp/LocalActor.hpp"
 #include "../mwmp/DedicatedActor.hpp"
 #include "../mwmp/ObjectList.hpp"
+#include "../mwmp/RecordHelper.hpp"
 #include "../mwmp/CellController.hpp"
 #include "../mwmp/MechanicsHelper.hpp"
 /*
@@ -2921,10 +2922,37 @@ namespace MWWorld
     /*
         Start of tes3mp addition
 
+        Make it possible to unload all active cells from elsewhere
+    */
+    void World::unloadActiveCells()
+    {
+        const Scene::CellStoreCollection& activeCells = mWorldScene->getActiveCells();
+
+        for (auto it = activeCells.begin(); it != activeCells.end(); ++it)
+        {
+            // Ignore a placeholder interior that a player may currently be in
+            if ((*it)->getCell()->isExterior() || !Misc::StringUtils::ciEqual((*it)->getCell()->getDescription(), RecordHelper::getPlaceholderInteriorCellName()))
+            {
+                mWorldScene->unloadCell(it);
+            }
+        }
+    }
+    /*
+        End of tes3mp addition
+    */
+
+    /*
+        Start of tes3mp addition
+
         Clear the CellStore for a specific Cell from elsewhere
     */
     void World::clearCellStore(const ESM::Cell& cell)
     {
+        mwmp::CellController* cellController = mwmp::Main::get().getCellController();
+        MWWorld::CellStore *cellStore = cellController->getCellStore(cell);
+
+        if (cellStore != nullptr)
+            cellStore->clearMovesToCells();
         mCells.clear(cell);
     }
     /*

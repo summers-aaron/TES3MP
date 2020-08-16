@@ -340,6 +340,37 @@ namespace MWWorld
         return MWWorld::Ptr(object.getBase(), cellToMoveTo);
     }
 
+    /*
+        Start of tes3mp addition
+
+        Make it possible to clear the moves to other cells tracked for objects, allowing for
+        on-the-fly cell resets that don't cause crashes
+    */
+    void CellStore::clearMovesToCells()
+    {
+        MWBase::World* world = MWBase::Environment::get().getWorld();
+
+        for (auto &reference : mMovedHere)
+        {
+            MWWorld::CellStore *otherCell = reference.second;
+
+            otherCell->mMovedToAnotherCell.erase(reference.first);
+        }
+
+        for (auto &reference : mMovedToAnotherCell)
+        {
+            MWWorld::CellStore *otherCell = reference.second;
+            
+            otherCell->mMovedHere.erase(reference.first);
+        }
+
+        mMovedHere.empty();
+        mMovedToAnotherCell.empty();
+    }
+    /*
+        End of tes3mp addition
+    */
+
     struct MergeVisitor
     {
         MergeVisitor(std::vector<LiveCellRefBase*>& mergeTo, const std::map<LiveCellRefBase*, MWWorld::CellStore*>& movedHere,

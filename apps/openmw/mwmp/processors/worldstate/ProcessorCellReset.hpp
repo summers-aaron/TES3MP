@@ -21,7 +21,7 @@ namespace mwmp
             CellController* cellController = Main::get().getCellController();
             MWBase::World * world = MWBase::Environment::get().getWorld();
 
-            //world->reloadCells(&worldstate.cellsToReset);
+            mwmp::Main::get().getNetworking()->getWorldstate()->resetCells(&worldstate.cellsToReset);
         }
     };
 }

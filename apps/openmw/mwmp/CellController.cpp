@@ -107,7 +107,7 @@ void CellController::uninitializeCell(const ESM::Cell& cell)
 {
     std::string mapIndex = cell.getDescription();
 
-    // If this key doesn't exist, create it
+    // If this key exists, erase the key-value pair from the map
     if (cellsInitialized.count(mapIndex) > 0)
     {
         mwmp::Cell* mpCell = cellsInitialized.at(mapIndex);
@@ -115,6 +115,22 @@ void CellController::uninitializeCell(const ESM::Cell& cell)
         mpCell->uninitializeDedicatedActors();
         delete cellsInitialized.at(mapIndex);
         cellsInitialized.erase(mapIndex);
+    }
+}
+
+void CellController::uninitializeCells()
+{
+    if (cellsInitialized.size() > 0)
+    {
+        for (auto it = cellsInitialized.cbegin(); it != cellsInitialized.cend(); it++)
+        {
+            mwmp::Cell* mpCell = it->second;
+            mpCell->uninitializeLocalActors();
+            mpCell->uninitializeDedicatedActors();
+            delete it->second;
+        }
+
+        cellsInitialized.clear();
     }
 }
 

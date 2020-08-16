@@ -194,6 +194,17 @@ namespace MWWorld
             /// @return updated MWWorld::Ptr with the new CellStore pointer set.
             MWWorld::Ptr moveTo(const MWWorld::Ptr& object, MWWorld::CellStore* cellToMoveTo);
 
+            /*
+                Start of tes3mp addition
+
+                Make it possible to clear the moves to other cells tracked for objects, allowing for
+                on-the-fly cell resets that don't cause crashes
+            */
+            void clearMovesToCells();
+            /*
+                End of tes3mp addition
+            */
+
             void rest(double hours);
             void recharge(float duration);
 

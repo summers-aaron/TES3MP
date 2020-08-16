@@ -34,6 +34,7 @@ namespace mwmp
 
         static DedicatedPlayer *getPlayer(RakNet::RakNetGUID guid);
         static DedicatedPlayer *getPlayer(const MWWorld::Ptr &ptr);
+        static std::vector<RakNet::RakNetGUID> getPlayersInCell(const ESM::Cell& cell);
 
         static bool isDedicatedPlayer(const MWWorld::Ptr &ptr);
 

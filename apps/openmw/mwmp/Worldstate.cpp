@@ -12,7 +12,10 @@
 #include "Worldstate.hpp"
 #include "Main.hpp"
 #include "Networking.hpp"
+#include "PlayerList.hpp"
+#include "DedicatedPlayer.hpp"
 #include "RecordHelper.hpp"
+#include "CellController.hpp"
 
 using namespace mwmp;
 using namespace std;
@@ -440,6 +443,64 @@ void Worldstate::setWeather()
 
     world->setRegionWeather(weather.region.c_str(), weather.currentWeather, weather.nextWeather,
         weather.queuedWeather, weather.transitionFactor, forceWeather);
+}
+
+void Worldstate::resetCells(std::vector<ESM::Cell>* cells)
+{
+    MWBase::World* world = MWBase::Environment::get().getWorld();
+
+    bool haveUnloadedActiveCells = false;
+    ESM::Cell playerCell = *world->getPlayerPtr().getCell()->getCell();
+    ESM::Position playerPos = world->getPlayerPtr().getRefData().getPosition();
+    std::vector<RakNet::RakNetGUID> playersInCell;
+
+    for (auto cell : *cells)
+    {
+        if (!haveUnloadedActiveCells)
+        {
+            if (world->isCellActive(cell))
+            {
+                playersInCell = mwmp::PlayerList::getPlayersInCell(cell);
+
+                // If there are any DedicatedPlayers in this cell, also move them to the temporary holding interior cell
+                if (!playersInCell.empty())
+                {
+                    for (RakNet::RakNetGUID otherGuid : playersInCell)
+                    {
+                        DedicatedPlayer* dedicatedPlayer = mwmp::PlayerList::getPlayer(otherGuid);
+                        dedicatedPlayer->cell = *world->getInterior(RecordHelper::getPlaceholderInteriorCellName())->getCell();
+                        dedicatedPlayer->setCell();
+                    }
+                }
+
+                // Change to temporary holding interior cell
+                world->changeToInteriorCell(RecordHelper::getPlaceholderInteriorCellName(), playerPos, true, true);
+
+                mwmp::Main::get().getCellController()->uninitializeCells();
+                world->unloadActiveCells();
+
+                haveUnloadedActiveCells = true;
+            }
+        }
+
+        world->clearCellStore(cell);
+
+        for (RakNet::RakNetGUID otherGuid : playersInCell)
+        {
+            DedicatedPlayer* dedicatedPlayer = mwmp::PlayerList::getPlayer(otherGuid);
+            dedicatedPlayer->cell = cell;
+            dedicatedPlayer->setCell();
+        }
+    }
+
+    // Move the player from their temporary holding cell to their previous cell
+    if (haveUnloadedActiveCells)
+    {
+        if (playerCell.isExterior())
+            world->changeToExteriorCell(playerPos, true, true);
+        else
+            world->changeToInteriorCell(playerCell.mName, playerPos, true, true);
+    }
 }
 
 void Worldstate::sendClientGlobal(std::string varName, int value, mwmp::VARIABLE_TYPE variableType)

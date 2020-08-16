@@ -590,6 +590,16 @@ namespace MWBase
             /*
                 Start of tes3mp addition
 
+                Make it possible to unload all active cells from elsewhere
+            */
+            virtual void unloadActiveCells() = 0;
+            /*
+                End of tes3mp addition
+            */
+
+            /*
+                Start of tes3mp addition
+
                 Clear the CellStore for a specific Cell from elsewhere
             */
             virtual void clearCellStore(const ESM::Cell& cell) = 0;
