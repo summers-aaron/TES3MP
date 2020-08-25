@@ -422,10 +422,10 @@ void ActorFunctions::SendActorAuthority() noexcept
 
         mwmp::ActorPacket *actorPacket = mwmp::Networking::get().getActorPacketController()->GetPacket(ID_ACTOR_AUTHORITY);
         actorPacket->setActorList(&writeActorList);
-        actorPacket->Send(writeActorList.guid);
 
-        // Also send this to everyone else who has the cell loaded
-        serverCell->sendToLoaded(actorPacket, &writeActorList);
+        // Always send the packet to everyone on the server, to reduce bugs caused by late-arriving packets
+        actorPacket->Send(false);
+        actorPacket->Send(true);
     }
 }
 
