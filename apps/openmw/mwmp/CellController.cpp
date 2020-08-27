@@ -439,7 +439,21 @@ bool CellController::isSameCell(const ESM::Cell& cell, const ESM::Cell& otherCel
 {
     if (&cell == nullptr || &otherCell == nullptr) return false;
 
-    if (cell.isExterior() && otherCell.isExterior())
+    bool isCellExterior = false;
+    bool isOtherCellExterior = false;
+
+    try
+    {
+        isCellExterior = cell.isExterior();
+        isOtherCellExterior = otherCell.isExterior();
+    }
+    catch (std::exception& e)
+    {
+        LOG_MESSAGE_SIMPLE(TimedLog::LOG_ERROR, "Failed cell comparison");
+        return false;
+    }
+
+    if (isCellExterior && isOtherCellExterior)
     {
         if (cell.mData.mX == otherCell.mData.mX && cell.mData.mY == otherCell.mData.mY)
             return true;
