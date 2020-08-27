@@ -54,11 +54,11 @@ DedicatedPlayer::DedicatedPlayer(RakNet::RakNetGUID guid) : BasePlayer(guid)
 
     attack.instant = false;
 
-    cell.blank();
-    position.pos[0] = position.pos[1] = Main::get().getCellController()->getCellSize() / 2;
-    position.pos[2] = 0;
+    MWBase::World* world = MWBase::Environment::get().getWorld();
+    
+    cell = *world->getInterior(RecordHelper::getPlaceholderInteriorCellName())->getCell();
+    position.pos[0] = position.pos[1] = position.pos[2] = 0;
 
-    MWBase::World *world = MWBase::Environment::get().getWorld();
     npc = *world->getPlayerPtr().get<ESM::NPC>()->mBase;
     npc.mId = "";
     previousRace = npc.mRace;
