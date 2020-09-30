@@ -508,15 +508,30 @@ void ObjectList::spawnObjects(MWWorld::CellStore* cellStore)
                         newPtr.getCellRef().getRefNum(), newPtr.getCellRef().getMpNum(), creatureActorId);
 
                     // Check if this creature is present in the summoner's summoned creature map
-                    std::map<std::pair<int, std::string>, int>& creatureMap = masterCreatureStats.getSummonedCreatureMap();
-                    bool foundSummonedCreature = creatureMap.find(std::make_pair(baseObject.summonEffectId, baseObject.summonSpellId)) != creatureMap.end();
+                    std::map<ESM::SummonKey, int>& creatureMap = masterCreatureStats.getSummonedCreatureMap();
+
+                    bool foundSummonedCreature = false;
+
+                    for (std::map<ESM::SummonKey, int>::iterator it = creatureMap.begin(); it != creatureMap.end(); )
+                    {
+                        if (it->first.mEffectId == baseObject.summonEffectId && it->first.mSourceId == baseObject.summonSpellId)
+                        {
+                            foundSummonedCreature = true;
+                            break;
+                        }
+                    }
 
                     // If it is, update its creatureActorId
                     if (foundSummonedCreature)
+                    {
                         masterCreatureStats.setSummonedCreatureActorId(baseObject.refId, creatureActorId);
+                    }
                     // If not, add it to the summoned creature map
                     else
-                        creatureMap.insert(std::make_pair(std::make_pair(baseObject.summonEffectId, baseObject.summonSpellId), creatureActorId));
+                    {
+                        ESM::SummonKey summonKey(baseObject.summonEffectId, baseObject.summonSpellId, -1);
+                        creatureMap.emplace(summonKey, creatureActorId);
+                    }
 
                     creatureStats.setFriendlyHits(0);
                 }
