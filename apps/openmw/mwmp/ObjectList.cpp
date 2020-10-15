@@ -136,6 +136,10 @@ void ObjectList::addEntireContainer(const MWWorld::Ptr& ptr)
 
     mwmp::BaseObject baseObject = getBaseObjectFromPtr(ptr);
 
+    // If the container store has not been populated with items yet, handle that now
+    if (!containerStore.isResolved())
+        containerStore.resolve();
+
     for (const auto itemPtr : containerStore)
     {
         addContainerItem(baseObject, itemPtr, itemPtr.getRefData().getCount(), itemPtr.getRefData().getCount());
@@ -184,7 +188,10 @@ void ObjectList::editContainers(MWWorld::CellStore* cellStore)
 
             // If we are setting the entire contents, clear the current ones
             if (action == BaseObjectList::SET)
+            {
+                containerStore.setResolved(true);
                 containerStore.clear();
+            }
 
             bool isLocalDrag = isLocalEvent && containerSubAction == BaseObjectList::DRAG;
             bool isLocalTakeAll = isLocalEvent && containerSubAction == BaseObjectList::TAKE_ALL;
@@ -724,7 +731,7 @@ void ObjectList::restockObjects(MWWorld::CellStore* cellStore)
             LOG_APPEND(TimedLog::LOG_VERBOSE, "-- Found %s %i-%i", ptrFound.getCellRef().getRefId().c_str(),
                                ptrFound.getCellRef().getRefNum(), ptrFound.getCellRef().getMpNum());
 
-            ptrFound.getClass().restock(ptrFound);
+            //ptrFound.getClass().restock(ptrFound);
 
             reset();
             packetOrigin = mwmp::PACKET_ORIGIN::CLIENT_GAMEPLAY;
