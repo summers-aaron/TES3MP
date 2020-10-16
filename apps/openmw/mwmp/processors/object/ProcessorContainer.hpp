@@ -31,6 +31,8 @@ namespace mwmp
                 debugMessage += "ADD";
             else if (action == mwmp::BaseObjectList::REMOVE)
                 debugMessage += "REMOVE";
+            else if (action == mwmp::BaseObjectList::REQUEST)
+                debugMessage += "REQUEST";
 
             debugMessage += " and subaction ";
 
