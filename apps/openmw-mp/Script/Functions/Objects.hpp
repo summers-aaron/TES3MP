@@ -91,6 +91,7 @@
     \
     {"SetObjectListCell",                     ObjectFunctions::SetObjectListCell},\
     {"SetObjectListAction",                   ObjectFunctions::SetObjectListAction},\
+    {"SetObjectListContainerSubAction",       ObjectFunctions::SetObjectListContainerSubAction},\
     {"SetObjectListConsoleCommand",           ObjectFunctions::SetObjectListConsoleCommand},\
     \
     {"SetObjectRefId",                        ObjectFunctions::SetObjectRefId},\
@@ -853,6 +854,15 @@ public:
     * \return void
     */
     static void SetObjectListAction(unsigned char action) noexcept;
+
+    /**
+    * \brief Set the container subaction type of the temporary object list stored on the server.
+    *
+    * \param action The action type (0 for NONE, 1 for DRAG, 2 for DROP, 3 for TAKE_ALL,
+    *               4 for REPLY_TO_REQUEST, 5 for RESTOCK_RESULT).
+    * \return void
+    */
+    static void SetObjectListContainerSubAction(unsigned char subAction) noexcept;
 
     /**
     * \brief Set the console command of the temporary object list stored on the server.

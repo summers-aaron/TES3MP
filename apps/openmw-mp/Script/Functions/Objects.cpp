@@ -430,6 +430,11 @@ void ObjectFunctions::SetObjectListAction(unsigned char action) noexcept
     writeObjectList.action = action;
 }
 
+void ObjectFunctions::SetObjectListContainerSubAction(unsigned char containerSubAction) noexcept
+{
+    writeObjectList.containerSubAction = containerSubAction;
+}
+
 void ObjectFunctions::SetObjectListConsoleCommand(const char* consoleCommand) noexcept
 {
     writeObjectList.consoleCommand = consoleCommand;
