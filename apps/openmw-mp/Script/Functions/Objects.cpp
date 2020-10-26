@@ -747,6 +747,17 @@ void ObjectFunctions::SendObjectLock(bool sendToOtherPlayers, bool skipAttachedP
         packet->Send(true);
 }
 
+void ObjectFunctions::SendObjectDialogueChoice(bool sendToOtherPlayers, bool skipAttachedPlayer) noexcept
+{
+    mwmp::ObjectPacket* packet = mwmp::Networking::get().getObjectPacketController()->GetPacket(ID_OBJECT_DIALOGUE_CHOICE);
+    packet->setObjectList(&writeObjectList);
+
+    if (!skipAttachedPlayer)
+        packet->Send(false);
+    if (sendToOtherPlayers)
+        packet->Send(true);
+}
+
 void ObjectFunctions::SendObjectMiscellaneous(bool sendToOtherPlayers, bool skipAttachedPlayer) noexcept
 {
     mwmp::ObjectPacket* packet = mwmp::Networking::get().getObjectPacketController()->GetPacket(ID_OBJECT_MISCELLANEOUS);

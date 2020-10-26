@@ -62,6 +62,7 @@
 #include "object/ProcessorObjectActivate.hpp"
 #include "object/ProcessorObjectAnimPlay.hpp"
 #include "object/ProcessorObjectDelete.hpp"
+#include "object/ProcessorObjectDialogueChoice.hpp"
 #include "object/ProcessorObjectHit.hpp"
 #include "object/ProcessorObjectPlace.hpp"
 #include "object/ProcessorObjectLock.hpp"
@@ -146,6 +147,7 @@ void ProcessorInitializer()
     ObjectProcessor::AddProcessor(new ProcessorObjectActivate());
     ObjectProcessor::AddProcessor(new ProcessorObjectAnimPlay());
     ObjectProcessor::AddProcessor(new ProcessorObjectDelete());
+    ObjectProcessor::AddProcessor(new ProcessorObjectDialogueChoice());
     ObjectProcessor::AddProcessor(new ProcessorObjectHit());
     ObjectProcessor::AddProcessor(new ProcessorObjectLock());
     ObjectProcessor::AddProcessor(new ProcessorObjectMiscellaneous());

@@ -18,6 +18,7 @@
 #include "../mwbase/windowmanager.hpp"
 
 #include "../mwgui/container.hpp"
+#include "../mwgui/dialogue.hpp"
 #include "../mwgui/inventorywindow.hpp"
 #include "../mwgui/windowmanagerimp.hpp"
 
@@ -978,6 +979,46 @@ void ObjectList::runConsoleCommands(MWWorld::CellStore* cellStore)
     }
 }
 
+void ObjectList::makeDialogueChoices(MWWorld::CellStore* cellStore)
+{
+    for (const auto& baseObject : baseObjects)
+    {
+        LOG_APPEND(TimedLog::LOG_VERBOSE, "- cellRef: %s %i-%i", baseObject.refId.c_str(), baseObject.refNum, baseObject.mpNum);
+
+        MWWorld::Ptr ptrFound = cellStore->searchExact(baseObject.refNum, baseObject.mpNum);
+
+        if (ptrFound)
+        {
+            LOG_APPEND(TimedLog::LOG_VERBOSE, "-- Found %s %i-%i", ptrFound.getCellRef().getRefId().c_str(),
+                ptrFound.getCellRef().getRefNum(), ptrFound.getCellRef().getMpNum());
+
+            if (ptrFound.getClass().isActor())
+            {
+                // Ensure the dialogue window has the correct Ptr set for it
+                if (MWBase::Environment::get().getWindowManager()->containsMode(MWGui::GM_Dialogue))
+                {
+                    if (MWBase::Environment::get().getWindowManager()->getDialogueWindow()->getPtr() != ptrFound)
+                    {
+                        MWBase::Environment::get().getWindowManager()->getDialogueWindow()->setPtr(ptrFound);
+                    }
+                }
+                else
+                {
+                    MWBase::Environment::get().getWindowManager()->pushGuiMode(MWGui::GM_Dialogue, ptrFound);
+                }
+                
+                LOG_APPEND(TimedLog::LOG_VERBOSE, "-- Making dialogue choice of %s", baseObject.dialogueChoice);
+                MWBase::Environment::get().getWindowManager()->getDialogueWindow()->onSelectListItem(baseObject.dialogueChoice, baseObject.guiId);
+            }
+            else
+            {
+                LOG_MESSAGE_SIMPLE(TimedLog::LOG_WARN, "Failed to make dialogue choice for %s %i-%i because it is not an actor!",
+                    ptrFound.getCellRef().getRefId().c_str(), ptrFound.getCellRef().getRefNum(), ptrFound.getCellRef().getMpNum());
+            }
+        }
+    }
+}
+
 void ObjectList::setClientLocals(MWWorld::CellStore* cellStore)
 {
     for (const auto &baseObject : baseObjects)
@@ -1226,6 +1267,16 @@ void ObjectList::addObjectLock(const MWWorld::Ptr& ptr, int lockLevel)
     addBaseObject(baseObject);
 }
 
+void ObjectList::addObjectDialogueChoice(const MWWorld::Ptr& ptr, std::string dialogueChoice, int guiId)
+{
+    cell = *ptr.getCell()->getCell();
+
+    mwmp::BaseObject baseObject = getBaseObjectFromPtr(ptr);
+    baseObject.dialogueChoice = dialogueChoice;
+    baseObject.guiId = guiId;
+    addBaseObject(baseObject);
+}
+
 void ObjectList::addObjectMiscellaneous(const MWWorld::Ptr& ptr, unsigned int goldPool, float lastGoldRestockHour, int lastGoldRestockDay)
 {
     cell = *ptr.getCell()->getCell();
@@ -1397,6 +1448,12 @@ void ObjectList::sendObjectLock()
 {
     mwmp::Main::get().getNetworking()->getObjectPacket(ID_OBJECT_LOCK)->setObjectList(this);
     mwmp::Main::get().getNetworking()->getObjectPacket(ID_OBJECT_LOCK)->Send();
+}
+
+void ObjectList::sendObjectDialogueChoice()
+{
+    mwmp::Main::get().getNetworking()->getObjectPacket(ID_OBJECT_DIALOGUE_CHOICE)->setObjectList(this);
+    mwmp::Main::get().getNetworking()->getObjectPacket(ID_OBJECT_DIALOGUE_CHOICE)->Send();
 }
 
 void ObjectList::sendObjectMiscellaneous()

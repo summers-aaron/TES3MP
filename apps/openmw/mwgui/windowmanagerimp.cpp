@@ -1447,6 +1447,16 @@ namespace MWGui
         End of tes3mp addition
     */
 
+    /*
+        Start of tes3mp addition
+
+        Make it possible to get the DialogueWindow from elsewhere
+    */
+    MWGui::DialogueWindow* WindowManager::getDialogueWindow() { return mDialogueWindow; }
+    /*
+        End of tes3mp addition
+    */
+
     void WindowManager::useItem(const MWWorld::Ptr &item, bool bypassBeastRestrictions)
     {
         if (mInventoryWindow)

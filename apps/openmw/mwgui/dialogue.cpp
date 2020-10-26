@@ -18,6 +18,7 @@
 #include "../mwmp/Main.hpp"
 #include "../mwmp/Networking.hpp"
 #include "../mwmp/ObjectList.hpp"
+#include <components/openmw-mp/TimedLog.hpp>
 /*
     End of tes3mp addition
 */
@@ -295,7 +296,16 @@ namespace MWGui
 
         //Topics list
         getWidget(mTopicsList, "TopicsList");
-        mTopicsList->eventItemSelected += MyGUI::newDelegate(this, &DialogueWindow::onSelectListItem);
+        /*
+            Start of tes3mp change (major)
+
+            Instead of running DialogueWindow::onSelectListItem() when clicking a list item, run
+            onSendDialoguePacket() so the server can approve or deny a dialogue choice
+        */
+        mTopicsList->eventItemSelected += MyGUI::newDelegate(this, &DialogueWindow::onSendDialoguePacket);
+        /*
+            End of tes3mp change (major)
+        */
 
         getWidget(mGoodbyeButton, "ByeButton");
         mGoodbyeButton->eventMouseButtonClick += MyGUI::newDelegate(this, &DialogueWindow::onByeClicked);
@@ -372,6 +382,25 @@ namespace MWGui
         }
     }
 
+    /*
+        Start of tes3mp addition
+
+        A different event that should be used in multiplayer when clicking on list items
+        in the dialogue screen, sending DialogueChoice packets to the server so they can
+        be approved or denied
+    */
+    void DialogueWindow::onSendDialoguePacket(const std::string& topic, int id)
+    {
+        mwmp::ObjectList* objectList = mwmp::Main::get().getNetworking()->getObjectList();
+        objectList->reset();
+        objectList->packetOrigin = mwmp::CLIENT_GAMEPLAY;
+        objectList->addObjectDialogueChoice(mPtr, topic, id);
+        objectList->sendObjectDialogueChoice();
+    }
+    /*
+        End of tes3mp addition
+    */
+
     void DialogueWindow::onSelectListItem(const std::string& topic, int id)
     {
         if (mGoodbye ||  MWBase::Environment::get().getDialogueManager()->isInChoice())
@@ -421,6 +450,19 @@ namespace MWGui
         else
             updateTopics();
     }
+
+    /*
+        Start of tes3mp addition
+
+        Make it possible to get the Ptr of the actor involved in the dialogue
+    */
+    MWWorld::Ptr DialogueWindow::getPtr()
+    {
+        return mPtr;
+    }
+    /*
+        End of tes3mp addition
+    */
 
     void DialogueWindow::setPtr(const MWWorld::Ptr& actor)
     {

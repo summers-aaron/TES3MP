@@ -41,6 +41,9 @@ namespace mwmp
         int lockLevel;
         float scale;
 
+        std::string dialogueChoice;
+        int guiId;
+
         std::string soundId;
         float volume;
         float pitch;

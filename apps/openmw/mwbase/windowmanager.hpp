@@ -158,6 +158,16 @@ namespace MWBase
                 End of tes3mp addition
             */
 
+            /*
+                Start of tes3mp addition
+
+                Make it possible to get the DialogueWindow from elsewhere
+            */
+            virtual MWGui::DialogueWindow* getDialogueWindow() = 0;
+            /*
+                End of tes3mp addition
+            */
+
             /// Make the player use an item, while updating GUI state accordingly
             virtual void useItem(const MWWorld::Ptr& item, bool force=false) = 0;
 

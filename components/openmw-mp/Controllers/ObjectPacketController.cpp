@@ -2,6 +2,7 @@
 #include "../Packets/Object/PacketObjectAnimPlay.hpp"
 #include "../Packets/Object/PacketObjectAttach.hpp"
 #include "../Packets/Object/PacketObjectDelete.hpp"
+#include "../Packets/Object/PacketObjectDialogueChoice.hpp"
 #include "../Packets/Object/PacketObjectHit.hpp"
 #include "../Packets/Object/PacketObjectLock.hpp"
 #include "../Packets/Object/PacketObjectMiscellaneous.hpp"
@@ -41,6 +42,7 @@ mwmp::ObjectPacketController::ObjectPacketController(RakNet::RakPeerInterface *p
     AddPacket<PacketObjectAnimPlay>(&packets, peer);
     AddPacket<PacketObjectAttach>(&packets, peer);
     AddPacket<PacketObjectDelete>(&packets, peer);
+    AddPacket<PacketObjectDialogueChoice>(&packets, peer);
     AddPacket<PacketObjectHit>(&packets, peer);
     AddPacket<PacketObjectLock>(&packets, peer);
     AddPacket<PacketObjectMiscellaneous>(&packets, peer);

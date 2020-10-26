@@ -150,6 +150,7 @@
     {"SendObjectSpawn",                       ObjectFunctions::SendObjectSpawn},\
     {"SendObjectDelete",                      ObjectFunctions::SendObjectDelete},\
     {"SendObjectLock",                        ObjectFunctions::SendObjectLock},\
+    {"SendObjectDialogueChoice",              ObjectFunctions::SendObjectDialogueChoice},\
     {"SendObjectMiscellaneous",               ObjectFunctions::SendObjectMiscellaneous},\
     {"SendObjectRestock",                     ObjectFunctions::SendObjectRestock},\
     {"SendObjectTrap",                        ObjectFunctions::SendObjectTrap},\
@@ -1332,6 +1333,16 @@ public:
     * \return void
     */
     static void SendObjectLock(bool sendToOtherPlayers, bool skipAttachedPlayer) noexcept;
+    /**
+    * \brief Send an ObjectDialogueChoice packet.
+    *
+    * \param sendToOtherPlayers Whether this packet should be sent to players other than the
+    *                           player attached to the packet (false by default).
+    * \param skipAttachedPlayer Whether the packet should skip being sent to the player attached
+    *                           to the packet (false by default).
+    * \return void
+    */
+    static void SendObjectDialogueChoice(bool sendToOtherPlayers, bool skipAttachedPlayer) noexcept;
 
     /**
     * \brief Send an ObjectMiscellaneous packet.

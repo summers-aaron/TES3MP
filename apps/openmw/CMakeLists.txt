@@ -134,10 +134,11 @@ add_openmw_dir (mwmp/processors/object BaseObjectProcessor
     ProcessorConsoleCommand ProcessorContainer ProcessorDoorDestination ProcessorDoorState ProcessorMusicPlay
     ProcessorVideoPlay
 
-    ProcessorObjectActivate ProcessorObjectAnimPlay ProcessorObjectAttach ProcessorObjectDelete ProcessorObjectHit
-    ProcessorObjectLock ProcessorObjectMove ProcessorObjectPlace ProcessorObjectRestock ProcessorObjectRotate
-    ProcessorObjectScale ProcessorObjectSound ProcessorObjectSpawn ProcessorObjectState ProcessorObjectTrap
-    ProcessorClientScriptLocal ProcessorScriptMemberShort ProcessorObjectMiscellaneous
+    ProcessorObjectActivate ProcessorObjectAnimPlay ProcessorObjectAttach ProcessorObjectDelete
+    ProcessorObjectDialogueChoice ProcessorObjectHit ProcessorObjectLock ProcessorObjectMove ProcessorObjectPlace
+    ProcessorObjectRestock ProcessorObjectRotate ProcessorObjectScale ProcessorObjectSound ProcessorObjectSpawn
+    ProcessorObjectState ProcessorObjectTrap ProcessorClientScriptLocal ProcessorScriptMemberShort
+    ProcessorObjectMiscellaneous
     )
 
 add_openmw_dir (mwmp/processors/worldstate ProcessorCellReset ProcessorClientScriptGlobal ProcessorClientScriptSettings
