@@ -31,6 +31,7 @@
     {"GetObjectState",                        ObjectFunctions::GetObjectState},\
     {"GetObjectDoorState",                    ObjectFunctions::GetObjectDoorState},\
     {"GetObjectLockLevel",                    ObjectFunctions::GetObjectLockLevel},\
+    {"GetObjectDialogueChoice",               ObjectFunctions::GetObjectDialogueChoice},\
     {"GetObjectGoldPool",                     ObjectFunctions::GetObjectGoldPool},\
     {"GetObjectLastGoldRestockHour",          ObjectFunctions::GetObjectLastGoldRestockHour},\
     {"GetObjectLastGoldRestockDay",           ObjectFunctions::GetObjectLastGoldRestockDay},\
@@ -105,6 +106,7 @@
     {"SetObjectScale",                        ObjectFunctions::SetObjectScale},\
     {"SetObjectState",                        ObjectFunctions::SetObjectState},\
     {"SetObjectLockLevel",                    ObjectFunctions::SetObjectLockLevel},\
+    {"SetObjectDialogueChoice",               ObjectFunctions::SetObjectDialogueChoice},\
     {"SetObjectGoldPool",                     ObjectFunctions::SetObjectGoldPool},\
     {"SetObjectLastGoldRestockHour",          ObjectFunctions::SetObjectLastGoldRestockHour},\
     {"SetObjectLastGoldRestockDay",           ObjectFunctions::SetObjectLastGoldRestockDay},\
@@ -389,6 +391,14 @@ public:
     * \return The lock level.
     */
     static int GetObjectLockLevel(unsigned int index) noexcept;
+
+    /**
+    * \brief Get the dialogue choice for the object at a certain index in the read object list.
+    *
+    * \param index The index of the object.
+    * \return The dialogue choice.
+    */
+    static const char *GetObjectDialogueChoice(unsigned int index) noexcept;
 
     /**
     * \brief Get the gold pool of the object at a certain index in the read object list.
@@ -946,7 +956,7 @@ public:
     /**
     * \brief Set the soul of the temporary object stored on the server.
     *
-    * \param refId The soul.
+    * \param soul The ID of the soul.
     * \return void
     */
     static void SetObjectSoul(const char* soul) noexcept;
@@ -988,6 +998,14 @@ public:
     * \return void
     */
     static void SetObjectLockLevel(int lockLevel) noexcept;
+
+    /**
+    * \brief Set the dialogue choice for the temporary object stored on the server.
+    *
+    * \param dialogueChoice The dialogue choice.
+    * \return void
+    */
+    static void SetObjectDialogueChoice(const char* dialogueChoice) noexcept;
 
     /**
     * \brief Set the gold pool of the temporary object stored on the server.

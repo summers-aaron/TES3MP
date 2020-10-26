@@ -154,6 +154,11 @@ int ObjectFunctions::GetObjectLockLevel(unsigned int index) noexcept
     return readObjectList->baseObjects.at(index).lockLevel;
 }
 
+const char* ObjectFunctions::GetObjectDialogueChoice(unsigned int index) noexcept
+{
+    return readObjectList->baseObjects.at(index).dialogueChoice.c_str();
+}
+
 unsigned int ObjectFunctions::GetObjectGoldPool(unsigned int index) noexcept
 {
     return readObjectList->baseObjects.at(index).goldPool;
@@ -493,6 +498,11 @@ void ObjectFunctions::SetObjectState(bool objectState) noexcept
 void ObjectFunctions::SetObjectLockLevel(int lockLevel) noexcept
 {
     tempObject.lockLevel = lockLevel;
+}
+
+void ObjectFunctions::SetObjectDialogueChoice(const char* dialogueChoice) noexcept
+{
+    tempObject.dialogueChoice = dialogueChoice;
 }
 
 void ObjectFunctions::SetObjectGoldPool(unsigned int goldPool) noexcept
