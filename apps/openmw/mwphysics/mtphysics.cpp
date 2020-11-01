@@ -1,5 +1,5 @@
+#include <BulletCollision/BroadphaseCollision/btDbvtBroadphase.h>
 #include <BulletCollision/CollisionShapes/btCollisionShape.h>
-#include <LinearMath/btThreads.h>
 
 #include "components/debug/debuglog.hpp"
 #include <components/misc/barrier.hpp>
@@ -15,8 +15,6 @@
 #include "mtphysics.hpp"
 #include "object.hpp"
 #include "physicssystem.hpp"
-
-class btIParallelSumBody; // needed to compile with bullet < 2.88
 
 namespace
 {
@@ -122,77 +120,15 @@ namespace
 
     namespace Config
     {
-        /* The purpose of these 2 classes is to make OpenMW works with Bullet compiled with either single or multithread support.
-           At runtime, Bullet resolve the call to btParallelFor() to:
-           - btITaskScheduler::parallelFor() if bullet is multithreaded
-           - btIParallelForBody::forLoop() if bullet is singlethreaded.
-
-           NOTE: From Bullet 2.88, there is a btDefaultTaskScheduler(), that returns NULL if multithreading is not supported.
-           It might be worth considering to simplify the API once OpenMW stops supporting 2.87.
-        */
-
-        template<class ...>
-        using void_t = void;
-
-        /// @brief for Bullet <= 2.87
-        template <class T, class = void>
-        class MultiThreadedBulletImpl : public T
-        {
-            public:
-                MultiThreadedBulletImpl(): T("") {};
-                ~MultiThreadedBulletImpl() override = default;
-                int getMaxNumThreads() const override { return 1; };
-                int getNumThreads() const override { return 1; };
-                void setNumThreads(int numThreads) override {};
-
-                /// @brief will be called by Bullet if threading is supported
-                void parallelFor(int iBegin, int iEnd, int batchsize, const btIParallelForBody& body) override {};
-        };
-
-        /// @brief for Bullet >= 2.88
-        template <class T>
-        class MultiThreadedBulletImpl<T, void_t<decltype(&T::parallelSum)>> : public T
-        {
-            public:
-                MultiThreadedBulletImpl(): T("") {};
-                ~MultiThreadedBulletImpl() override = default;
-                int getMaxNumThreads() const override { return 1; };
-                int getNumThreads() const override { return 1; };
-                void setNumThreads(int numThreads) override {};
-
-                /// @brief will be called by Bullet if threading is supported
-                void parallelFor(int iBegin, int iEnd, int batchsize, const btIParallelForBody& body) override {};
-
-                btScalar parallelSum(int iBegin, int iEnd, int grainSize, const btIParallelSumBody& body) override { return {}; };
-        };
-
-        using MultiThreadedBullet = MultiThreadedBulletImpl<btITaskScheduler>;
-
-        class SingleThreadedBullet : public btIParallelForBody
-        {
-            public:
-                explicit SingleThreadedBullet(bool &threadingSupported): mThreadingSupported(threadingSupported) {};
-                /// @brief will be called by Bullet if threading is NOT supported
-                void forLoop(int iBegin, int iEnd) const override
-                {
-                    mThreadingSupported = false;
-                }
-            private:
-                bool &mThreadingSupported;
-        };
-
         /// @return either the number of thread as configured by the user, or 1 if Bullet doesn't support multithreading
         int computeNumThreads(bool& threadSafeBullet)
         {
             int wantedThread = Settings::Manager::getInt("async num threads", "Physics");
 
-            auto bulletScheduler = std::make_unique<MultiThreadedBullet>();
-            btSetTaskScheduler(bulletScheduler.get());
-            bool threadingSupported = true;
-            btParallelFor(0, 0, 0, SingleThreadedBullet(threadingSupported));
-
-            threadSafeBullet = threadingSupported;
-            if (!threadingSupported && wantedThread > 1)
+            auto broad = std::make_unique<btDbvtBroadphase>();
+            auto maxSupportedThreads = broad->m_rayTestStacks.size();
+            threadSafeBullet = (maxSupportedThreads > 1);
+            if (!threadSafeBullet && wantedThread > 1)
             {
                 Log(Debug::Warning) << "Bullet was not compiled with multithreading support, 1 async thread will be used";
                 return 1;
@@ -206,6 +142,7 @@ namespace MWPhysics
 {
     PhysicsTaskScheduler::PhysicsTaskScheduler(float physicsDt, std::shared_ptr<btCollisionWorld> collisionWorld)
           : mPhysicsDt(physicsDt)
+          , mTimeAccum(0.f)
           , mCollisionWorld(std::move(collisionWorld))
           , mNumJobs(0)
           , mRemainingSteps(0)
@@ -249,7 +186,7 @@ namespace MWPhysics
                 mNewFrame = false;
                 if (mLOSCacheExpiry >= 0)
                 {
-                    std::unique_lock<std::shared_timed_mutex> lock(mLOSCacheMutex);
+                    std::unique_lock lock(mLOSCacheMutex);
                     mLOSCache.erase(
                             std::remove_if(mLOSCache.begin(), mLOSCache.end(),
                                 [](const LOSRequest& req) { return req.mStale; }),
@@ -260,7 +197,7 @@ namespace MWPhysics
 
     PhysicsTaskScheduler::~PhysicsTaskScheduler()
     {
-        std::unique_lock<std::shared_timed_mutex> lock(mSimulationMutex);
+        std::unique_lock lock(mSimulationMutex);
         mQuit = true;
         mNumJobs = 0;
         mRemainingSteps = 0;
@@ -275,7 +212,7 @@ namespace MWPhysics
         // This function run in the main thread.
         // While the mSimulationMutex is held, background physics threads can't run.
 
-        std::unique_lock<std::shared_timed_mutex> lock(mSimulationMutex);
+        std::unique_lock lock(mSimulationMutex);
 
         // start by finishing previous background computation
         if (mNumThreads != 0)
@@ -358,25 +295,25 @@ namespace MWPhysics
 
     void PhysicsTaskScheduler::rayTest(const btVector3& rayFromWorld, const btVector3& rayToWorld, btCollisionWorld::RayResultCallback& resultCallback) const
     {
-        MaybeSharedLock<std::shared_timed_mutex> lock(mCollisionWorldMutex, mThreadSafeBullet);
+        MaybeSharedLock lock(mCollisionWorldMutex, mThreadSafeBullet);
         mCollisionWorld->rayTest(rayFromWorld, rayToWorld, resultCallback);
     }
 
     void PhysicsTaskScheduler::convexSweepTest(const btConvexShape* castShape, const btTransform& from, const btTransform& to, btCollisionWorld::ConvexResultCallback& resultCallback) const
     {
-        MaybeSharedLock<std::shared_timed_mutex> lock(mCollisionWorldMutex, mThreadSafeBullet);
+        MaybeSharedLock lock(mCollisionWorldMutex, mThreadSafeBullet);
         mCollisionWorld->convexSweepTest(castShape, from, to, resultCallback);
     }
 
     void PhysicsTaskScheduler::contactTest(btCollisionObject* colObj, btCollisionWorld::ContactResultCallback& resultCallback)
     {
-        std::shared_lock<std::shared_timed_mutex> lock(mCollisionWorldMutex);
+        std::shared_lock lock(mCollisionWorldMutex);
         mCollisionWorld->contactTest(colObj, resultCallback);
     }
 
-    boost::optional<btVector3> PhysicsTaskScheduler::getHitPoint(const btTransform& from, btCollisionObject* target)
+    std::optional<btVector3> PhysicsTaskScheduler::getHitPoint(const btTransform& from, btCollisionObject* target)
     {
-        MaybeSharedLock<std::shared_timed_mutex> lock(mCollisionWorldMutex, mThreadSafeBullet);
+        MaybeSharedLock lock(mCollisionWorldMutex, mThreadSafeBullet);
         // target the collision object's world origin, this should be the center of the collision object
         btTransform rayTo;
         rayTo.setIdentity();
@@ -387,37 +324,37 @@ namespace MWPhysics
         mCollisionWorld->rayTestSingle(from, rayTo, target, target->getCollisionShape(), target->getWorldTransform(), cb);
         if (!cb.hasHit())
             // didn't hit the target. this could happen if point is already inside the collision box
-            return boost::none;
+            return std::nullopt;
         return {cb.m_hitPointWorld};
     }
 
     void PhysicsTaskScheduler::aabbTest(const btVector3& aabbMin, const btVector3& aabbMax, btBroadphaseAabbCallback& callback)
     {
-        std::shared_lock<std::shared_timed_mutex> lock(mCollisionWorldMutex);
+        std::shared_lock lock(mCollisionWorldMutex);
         mCollisionWorld->getBroadphase()->aabbTest(aabbMin, aabbMax, callback);
     }
 
     void PhysicsTaskScheduler::getAabb(const btCollisionObject* obj, btVector3& min, btVector3& max)
     {
-        std::shared_lock<std::shared_timed_mutex> lock(mCollisionWorldMutex);
+        std::shared_lock lock(mCollisionWorldMutex);
         obj->getCollisionShape()->getAabb(obj->getWorldTransform(), min, max);
     }
 
     void PhysicsTaskScheduler::setCollisionFilterMask(btCollisionObject* collisionObject, int collisionFilterMask)
     {
-        std::unique_lock<std::shared_timed_mutex> lock(mCollisionWorldMutex);
+        std::unique_lock lock(mCollisionWorldMutex);
         collisionObject->getBroadphaseHandle()->m_collisionFilterMask = collisionFilterMask;
     }
 
     void PhysicsTaskScheduler::addCollisionObject(btCollisionObject* collisionObject, int collisionFilterGroup, int collisionFilterMask)
     {
-        std::unique_lock<std::shared_timed_mutex> lock(mCollisionWorldMutex);
+        std::unique_lock lock(mCollisionWorldMutex);
         mCollisionWorld->addCollisionObject(collisionObject, collisionFilterGroup, collisionFilterMask);
     }
 
     void PhysicsTaskScheduler::removeCollisionObject(btCollisionObject* collisionObject)
     {
-        std::unique_lock<std::shared_timed_mutex> lock(mCollisionWorldMutex);
+        std::unique_lock lock(mCollisionWorldMutex);
         mCollisionWorld->removeCollisionObject(collisionObject);
     }
 
@@ -425,19 +362,19 @@ namespace MWPhysics
     {
         if (mDeferAabbUpdate)
         {
-            std::unique_lock<std::mutex> lock(mUpdateAabbMutex);
+            std::unique_lock lock(mUpdateAabbMutex);
             mUpdateAabb.insert(std::move(ptr));
         }
         else
         {
-            std::unique_lock<std::shared_timed_mutex> lock(mCollisionWorldMutex);
+            std::unique_lock lock(mCollisionWorldMutex);
             updatePtrAabb(ptr);
         }
     }
 
     bool PhysicsTaskScheduler::getLineOfSight(const std::weak_ptr<Actor>& actor1, const std::weak_ptr<Actor>& actor2)
     {
-        std::unique_lock<std::shared_timed_mutex> lock(mLOSCacheMutex);
+        std::unique_lock lock(mLOSCacheMutex);
 
         auto actorPtr1 = actor1.lock();
         auto actorPtr2 = actor2.lock();
@@ -459,7 +396,7 @@ namespace MWPhysics
 
     void PhysicsTaskScheduler::refreshLOSCache()
     {
-        std::shared_lock<std::shared_timed_mutex> lock(mLOSCacheMutex);
+        std::shared_lock lock(mLOSCacheMutex);
         int job = 0;
         int numLOS = mLOSCache.size();
         while ((job = mNextLOS.fetch_add(1, std::memory_order_relaxed)) < numLOS)
@@ -478,9 +415,7 @@ namespace MWPhysics
 
     void PhysicsTaskScheduler::updateAabbs()
     {
-        std::unique_lock<std::shared_timed_mutex> lock1(mCollisionWorldMutex, std::defer_lock);
-        std::unique_lock<std::mutex> lock2(mUpdateAabbMutex, std::defer_lock);
-        std::lock(lock1, lock2);
+        std::scoped_lock lock(mCollisionWorldMutex, mUpdateAabbMutex);
         std::for_each(mUpdateAabb.begin(), mUpdateAabb.end(),
             [this](const std::weak_ptr<PtrHolder>& ptr) { updatePtrAabb(ptr); });
         mUpdateAabb.clear();
@@ -505,7 +440,7 @@ namespace MWPhysics
 
     void PhysicsTaskScheduler::worker()
     {
-        std::shared_lock<std::shared_timed_mutex> lock(mSimulationMutex);
+        std::shared_lock lock(mSimulationMutex);
         while (!mQuit)
         {
             if (!mNewFrame)
@@ -515,26 +450,27 @@ namespace MWPhysics
                 mPreStepBarrier->wait();
 
             int job = 0;
-            while ((job = mNextJob.fetch_add(1, std::memory_order_relaxed)) < mNumJobs)
+            while (mRemainingSteps && (job = mNextJob.fetch_add(1, std::memory_order_relaxed)) < mNumJobs)
             {
-                MaybeSharedLock<std::shared_timed_mutex> lockColWorld(mCollisionWorldMutex, mThreadSafeBullet);
+                MaybeSharedLock lockColWorld(mCollisionWorldMutex, mThreadSafeBullet);
                 if(const auto actor = mActorsFrameData[job].mActor.lock())
-                {
-                    if (mRemainingSteps)
-                        MovementSolver::move(mActorsFrameData[job], mPhysicsDt, mCollisionWorld.get(), *mWorldFrameData);
-                    else
-                    {
-                        auto& actorData = mActorsFrameData[job];
-                        handleFall(actorData, mAdvanceSimulation);
-                        mMovementResults[actorData.mPtr] = interpolateMovements(actorData, mTimeAccum, mPhysicsDt);
-                    }
-                }
+                    MovementSolver::move(mActorsFrameData[job], mPhysicsDt, mCollisionWorld.get(), *mWorldFrameData);
             }
 
             mPostStepBarrier->wait();
 
             if (!mRemainingSteps)
             {
+                while ((job = mNextJob.fetch_add(1, std::memory_order_relaxed)) < mNumJobs)
+                {
+                    if(const auto actor = mActorsFrameData[job].mActor.lock())
+                    {
+                        auto& actorData = mActorsFrameData[job];
+                        handleFall(actorData, mAdvanceSimulation);
+                        mMovementResults[actorData.mPtr] = interpolateMovements(actorData, mTimeAccum, mPhysicsDt);
+                    }
+                }
+
                 if (mLOSCacheExpiry >= 0)
                     refreshLOSCache();
                 mPostSimBarrier->wait();
@@ -544,7 +480,7 @@ namespace MWPhysics
 
     void PhysicsTaskScheduler::updateActorsPositions()
     {
-        std::unique_lock<std::shared_timed_mutex> lock(mCollisionWorldMutex);
+        std::unique_lock lock(mCollisionWorldMutex);
         for (auto& actorData : mActorsFrameData)
         {
             if(const auto actor = actorData.mActor.lock())
@@ -562,7 +498,7 @@ namespace MWPhysics
 
     void PhysicsTaskScheduler::udpateActorsAabbs()
     {
-        std::unique_lock<std::shared_timed_mutex> lock(mCollisionWorldMutex);
+        std::unique_lock lock(mCollisionWorldMutex);
         for (const auto& actorData : mActorsFrameData)
             if (actorData.mPositionChanged)
             {
@@ -580,7 +516,7 @@ namespace MWPhysics
         resultCallback.m_collisionFilterGroup = 0xFF;
         resultCallback.m_collisionFilterMask = CollisionType_World|CollisionType_HeightMap|CollisionType_Door;
 
-        MaybeSharedLock<std::shared_timed_mutex> lockColWorld(mCollisionWorldMutex, mThreadSafeBullet);
+        MaybeSharedLock lockColWorld(mCollisionWorldMutex, mThreadSafeBullet);
         mCollisionWorld->rayTest(pos1, pos2, resultCallback);
 
         return !resultCallback.hasHit();

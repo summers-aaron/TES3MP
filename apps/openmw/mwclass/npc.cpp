@@ -270,13 +270,13 @@ namespace MWClass
         MWMechanics::Movement mMovement;
         MWWorld::InventoryStore mInventoryStore;
 
-        virtual MWWorld::CustomData *clone() const;
+        MWWorld::CustomData *clone() const override;
 
-        virtual NpcCustomData& asNpcCustomData()
+        NpcCustomData& asNpcCustomData() override
         {
             return *this;
         }
-        virtual const NpcCustomData& asNpcCustomData() const
+        const NpcCustomData& asNpcCustomData() const override
         {
             return *this;
         }
@@ -448,12 +448,12 @@ namespace MWClass
         const MWWorld::LiveCellRef<ESM::NPC> *npc = ptr.get<ESM::NPC>();
         const ESM::Race* race = MWBase::Environment::get().getWorld()->getStore().get<ESM::Race>().search(npc->mBase->mRace);
         if(race && race->mData.mFlags & ESM::Race::Beast)
-            models.push_back("meshes\\base_animkna.nif");
+            models.emplace_back("meshes\\base_animkna.nif");
 
         // keep these always loaded just in case
-        models.push_back("meshes/xargonian_swimkna.nif");
-        models.push_back("meshes/xbase_anim_female.nif");
-        models.push_back("meshes/xbase_anim.nif");
+        models.emplace_back("meshes/xargonian_swimkna.nif");
+        models.emplace_back("meshes/xbase_anim_female.nif");
+        models.emplace_back("meshes/xbase_anim.nif");
 
         if (!npc->mBase->mModel.empty())
             models.push_back("meshes/"+npc->mBase->mModel);

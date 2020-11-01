@@ -136,6 +136,7 @@ bool Launcher::AdvancedPage::loadSettings()
         loadSettingBool(autoSwitchShoulderCheckBox, "auto switch shoulder", "Camera");
         loadSettingBool(previewIfStandStillCheckBox, "preview if stand still", "Camera");
         loadSettingBool(deferredPreviewRotationCheckBox, "deferred preview rotation", "Camera");
+        loadSettingBool(headBobbingCheckBox, "head bobbing", "Camera");
         defaultShoulderComboBox->setCurrentIndex(
             mEngineSettings.getVector2("view over shoulder offset", "Camera").x() >= 0 ? 0 : 1);
     }
@@ -151,6 +152,7 @@ bool Launcher::AdvancedPage::loadSettings()
         // Match the index with the option (only 0, 1, 2, or 3 are valid). Will default to 0 if invalid.
         if (showOwnedIndex >= 0 && showOwnedIndex <= 3)
             showOwnedComboBox->setCurrentIndex(showOwnedIndex);
+        loadSettingBool(stretchBackgroundCheckBox, "stretch menu background", "GUI");
     }
 
     // Bug fixes
@@ -253,6 +255,7 @@ void Launcher::AdvancedPage::saveSettings()
         saveSettingBool(autoSwitchShoulderCheckBox, "auto switch shoulder", "Camera");
         saveSettingBool(previewIfStandStillCheckBox, "preview if stand still", "Camera");
         saveSettingBool(deferredPreviewRotationCheckBox, "deferred preview rotation", "Camera");
+        saveSettingBool(headBobbingCheckBox, "head bobbing", "Camera");
 
         osg::Vec2f shoulderOffset = mEngineSettings.getVector2("view over shoulder offset", "Camera");
         if (defaultShoulderComboBox->currentIndex() != (shoulderOffset.x() >= 0 ? 0 : 1))
@@ -275,6 +278,7 @@ void Launcher::AdvancedPage::saveSettings()
         int showOwnedCurrentIndex = showOwnedComboBox->currentIndex();
         if (showOwnedCurrentIndex != mEngineSettings.getInt("show owned", "Game"))
             mEngineSettings.setInt("show owned", "Game", showOwnedCurrentIndex);
+        saveSettingBool(stretchBackgroundCheckBox, "stretch menu background", "GUI");
     }
 
     // Bug fixes

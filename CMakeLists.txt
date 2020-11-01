@@ -1,5 +1,7 @@
 project(OpenMW)
 cmake_minimum_required(VERSION 3.1.0)
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # for link time optimization, remove if cmake version is >= 3.9
 if(POLICY CMP0069)
@@ -157,6 +159,8 @@ include_directories(${RakNet_INCLUDES})
 
 # Dependencies
 find_package(OpenGL REQUIRED)
+
+find_package(LZ4 REQUIRED)
 
 if (USE_QT)
     find_package(Qt5Core 5.9 REQUIRED) # Temporary adjustment for TES3MP CI
@@ -323,7 +327,7 @@ endif()
 
 set(Boost_NO_BOOST_CMAKE ON)
 
-find_package(Boost REQUIRED COMPONENTS ${BOOST_COMPONENTS})
+find_package(Boost 1.6.2 REQUIRED COMPONENTS ${BOOST_COMPONENTS})
 
 include_directories("."
     SYSTEM
@@ -414,9 +418,6 @@ if (NOT WIN32 AND NOT APPLE)
         "${OpenMW_BINARY_DIR}/org.openmw.cs.desktop")
 endif()
 
-# CXX Compiler settings
-set(CMAKE_CXX_STANDARD 14)
-
 if(OPENMW_LTO_BUILD)
     if(NOT CMAKE_VERSION VERSION_LESS 3.9)
         include(CheckIPOSupported)
@@ -437,7 +438,7 @@ endif()
 
 
 if (CMAKE_CXX_COMPILER_ID STREQUAL GNU OR CMAKE_CXX_COMPILER_ID STREQUAL Clang)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wundef -Wno-unused-parameter -std=c++14 -pedantic -Wno-long-long")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wundef -Wno-unused-parameter -pedantic -Wno-long-long")
     add_definitions( -DBOOST_NO_CXX11_SCOPED_ENUMS=ON )
 
     if (APPLE)
@@ -453,6 +454,10 @@ if (CMAKE_CXX_COMPILER_ID STREQUAL GNU OR CMAKE_CXX_COMPILER_ID STREQUAL Clang)
 
     if (CMAKE_CXX_COMPILER_ID STREQUAL GNU AND CMAKE_CXX_COMPILER_VERSION VERSION_GREATER 4.6 OR CMAKE_CXX_COMPILER_VERSION VERSION_EQUAL 4.6)
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-unused-but-set-parameter")
+    endif()
+
+    if (CMAKE_CXX_COMPILER_ID STREQUAL GNU AND CMAKE_CXX_COMPILER_VERSION VERSION_GREATER 5.0 OR CMAKE_CXX_COMPILER_VERSION VERSION_EQUAL 5.0)
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wsuggest-override")
     endif()
 elseif (MSVC)
     set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /FORCE:MULTIPLE")
@@ -624,6 +629,10 @@ if (WIN32)
 
     if (BUILD_OPENMW)
         set_target_properties(osg-ffmpeg-videoplayer PROPERTIES COMPILE_FLAGS "${WARNINGS} ${MT_BUILD}")
+    endif()
+    
+    if (MSVC_VERSION GREATER_EQUAL 1915 AND MSVC_VERSION LESS 1920)
+        target_compile_definitions(components INTERFACE _ENABLE_EXTENDED_ALIGNED_STORAGE)
     endif()
 
     if (BUILD_BSATOOL)
@@ -883,9 +892,15 @@ elseif(NOT APPLE)
 
         # Install binaries
         IF(BUILD_OPENMW)
-            # Start of tes3mp change (major)
-            INSTALL(PROGRAMS "${INSTALL_SOURCE}/tes3mp" DESTINATION "${BINDIR}" )
-            # End of tes3mp change (major)
+            IF(ANDROID)
+                # Start of tes3mp change (major)
+                INSTALL(PROGRAMS "${INSTALL_SOURCE}/libtes3mp.so" DESTINATION "${BINDIR}" )
+                # End of tes3mp change (major)
+            ELSE(ANDROID)
+                # Start of tes3mp change (major)
+                INSTALL(PROGRAMS "${INSTALL_SOURCE}/tes3mp" DESTINATION "${BINDIR}" )
+                # End of tes3mp change (major)
+            ENDIF(ANDROID)
         ENDIF(BUILD_OPENMW)
         # Start of tes3mp addition
         IF(BUILD_OPENMW_MP)

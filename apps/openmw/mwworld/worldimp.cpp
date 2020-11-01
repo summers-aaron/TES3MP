@@ -125,7 +125,7 @@ namespace MWWorld
             return mLoaders.insert(std::make_pair(extension, loader)).second;
         }
 
-        void load(const boost::filesystem::path& filepath, int& index)
+        void load(const boost::filesystem::path& filepath, int& index) override
         {
             LoadersContainer::iterator it(mLoaders.find(Misc::StringUtils::lowerCase(filepath.extension().string())));
             if (it != mLoaders.end())
@@ -1929,6 +1929,11 @@ namespace MWWorld
         return mStore.overrideRecord(record);
     }
 
+    const ESM::Container *World::createOverrideRecord(const ESM::Container &record)
+    {
+        return mStore.overrideRecord(record);
+    }
+
     const ESM::NPC *World::createRecord(const ESM::NPC &record)
     {
         bool update = false;
@@ -2438,6 +2443,8 @@ namespace MWWorld
 
     Ptr World::copyObjectToCell(const ConstPtr &object, CellStore* cell, ESM::Position pos, int count, bool adjustPos)
     {
+        if (!cell)
+            throw std::runtime_error("copyObjectToCell(): cannot copy object to null cell");
         if (cell->isExterior())
         {
             int cellX, cellY;
@@ -3577,9 +3584,9 @@ namespace MWWorld
         {
         }
 
-        virtual void visit (MWMechanics::EffectKey key, int /*effectIndex*/,
+        void visit (MWMechanics::EffectKey key, int /*effectIndex*/,
                             const std::string& /*sourceName*/, const std::string& /*sourceId*/, int /*casterActorId*/,
-                            float /*magnitude*/, float /*remainingTime*/ = -1, float /*totalTime*/ = -1)
+                            float /*magnitude*/, float /*remainingTime*/ = -1, float /*totalTime*/ = -1) override
         {
             const ESMStore& store = MWBase::Environment::get().getWorld()->getStore();
             const auto magicEffect = store.get<ESM::MagicEffect>().find(key.mId);
@@ -4378,5 +4385,10 @@ namespace MWWorld
     {
         ESM::EpochTimeStamp currentDate = mCurrentDate->getEpochTimeStamp();
         mRendering->skySetDate(currentDate.mDay, currentDate.mMonth);
+    }
+
+    std::vector<MWWorld::Ptr> World::getAll(const std::string& id)
+    {
+        return mCells.getAll(id);
     }
 }

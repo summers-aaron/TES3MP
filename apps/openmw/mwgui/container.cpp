@@ -268,6 +268,10 @@ namespace MWGui
 
         WindowBase::onClose();
 
+        // Make sure the window was actually closed and not temporarily hidden.
+        if (MWBase::Environment::get().getWindowManager()->containsMode(GM_Container))
+            return;
+
         if (mModel)
             mModel->onClose();
 
@@ -329,6 +333,7 @@ namespace MWGui
 
         // transfer everything into the player's inventory
         ItemModel* playerModel = MWBase::Environment::get().getWindowManager()->getInventoryWindow()->getModel();
+        assert(mModel);
         mModel->update();
 
         // unequip all items to avoid unequipping/reequipping
@@ -374,9 +379,11 @@ namespace MWGui
         {
             MWBase::Environment::get().getWindowManager()->setKeyFocusWidget(mCloseButton);
 
+            // Copy mPtr because onTakeAllButtonClicked closes the window which resets the reference
+            MWWorld::Ptr ptr = mPtr;
             onTakeAllButtonClicked(mTakeButton);
             
-            if (mPtr.getClass().isPersistent(mPtr))
+            if (ptr.getClass().isPersistent(ptr))
                 MWBase::Environment::get().getWindowManager()->messageBox("#{sDisposeCorpseFail}");
             else
             {
@@ -384,41 +391,41 @@ namespace MWGui
                     Start of tes3mp change (major)
 
                     Instead of deleting the corpse on this client, increasing the death count and
-                    running the dead actor's sccript, simply send an ID_OBJECT_DELETE packet to the server
+                    running the dead actor's script, simply send an ID_OBJECT_DELETE packet to the server
                     as a request for the deletion
                 */
 
                 /*
-                MWMechanics::CreatureStats& creatureStats = mPtr.getClass().getCreatureStats(mPtr);
+                MWMechanics::CreatureStats& creatureStats = ptr.getClass().getCreatureStats(ptr);
 
                 // If we dispose corpse before end of death animation, we should update death counter counter manually.
                 // Also we should run actor's script - it may react on actor's death.
                 if (creatureStats.isDead() && !creatureStats.isDeathAnimationFinished())
                 {
                     creatureStats.setDeathAnimationFinished(true);
-                    MWBase::Environment::get().getMechanicsManager()->notifyDied(mPtr);
+                    MWBase::Environment::get().getMechanicsManager()->notifyDied(ptr);
 
-                    const std::string script = mPtr.getClass().getScript(mPtr);
+                    const std::string script = ptr.getClass().getScript(ptr);
                     if (!script.empty() && MWBase::Environment::get().getWorld()->getScriptsEnabled())
                     {
-                        MWScript::InterpreterContext interpreterContext (&mPtr.getRefData().getLocals(), mPtr);
+                        MWScript::InterpreterContext interpreterContext (&ptr.getRefData().getLocals(), ptr);
                         MWBase::Environment::get().getScriptManager()->run (script, interpreterContext);
                     }
 
                     // Clean up summoned creatures as well
                     std::map<ESM::SummonKey, int>& creatureMap = creatureStats.getSummonedCreatureMap();
                     for (const auto& creature : creatureMap)
-                        MWBase::Environment::get().getMechanicsManager()->cleanupSummonedCreature(mPtr, creature.second);
+                        MWBase::Environment::get().getMechanicsManager()->cleanupSummonedCreature(ptr, creature.second);
                     creatureMap.clear();
                 }
 
-                MWBase::Environment::get().getWorld()->deleteObject(mPtr);
+                MWBase::Environment::get().getWorld()->deleteObject(ptr);
                 */
 
                 mwmp::ObjectList *objectList = mwmp::Main::get().getNetworking()->getObjectList();
                 objectList->reset();
                 objectList->packetOrigin = mwmp::CLIENT_GAMEPLAY;
-                objectList->addObjectGeneric(mPtr);
+                objectList->addObjectGeneric(ptr);
                 objectList->sendObjectDelete();
                 /*
                     End of tes3mp change (major)
