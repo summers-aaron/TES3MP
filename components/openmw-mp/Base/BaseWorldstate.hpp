@@ -27,6 +27,7 @@
 #include <components/esm/loadstat.hpp>
 #include <components/esm/loadweap.hpp>
 #include <components/esm/loadsoun.hpp>
+#include <components/esm/variant.hpp>
 
 #include <components/openmw-mp/Base/BaseStructs.hpp>
 
@@ -56,10 +57,11 @@ namespace mwmp
         PROBE,
         REPAIR,
         SCRIPT,
+        SOUND,
         SPELL,
         STATIC,
-        WEAPON,
-        SOUND
+        VARIANT,
+        WEAPON
     };
 
     // When using an existing record as a base, this struct tracks which changes
@@ -292,6 +294,13 @@ namespace mwmp
         BaseOverrides baseOverrides;
     };
 
+    struct SoundRecord
+    {
+        ESM::Sound data;
+        std::string baseId;
+        BaseOverrides baseOverrides;
+    };
+
     struct SpellRecord
     {
         ESM::Spell data;
@@ -306,17 +315,17 @@ namespace mwmp
         BaseOverrides baseOverrides;
     };
 
-    struct WeaponRecord
+    struct VariantRecord
     {
-        ESM::Weapon data;
-        unsigned int quantity = 1;
+        ESM::Variant data;
         std::string baseId;
         BaseOverrides baseOverrides;
     };
 
-    struct SoundRecord
+    struct WeaponRecord
     {
-        ESM::Sound data;
+        ESM::Weapon data;
+        unsigned int quantity = 1;
         std::string baseId;
         BaseOverrides baseOverrides;
     };
@@ -410,6 +419,7 @@ namespace mwmp
         std::vector<SoundRecord> soundRecords;
         std::vector<SpellRecord> spellRecords;
         std::vector<StaticRecord> staticRecords;
+        std::vector<VariantRecord> variantRecords;
         std::vector<WeaponRecord> weaponRecords;
 
         std::vector<ESM::Cell> cellsToReset;

@@ -70,6 +70,8 @@ void PacketRecordDynamic::Packet(RakNet::BitStream *newBitstream, bool send)
             worldstate->recordsCount = Utils::getVectorSize(worldstate->staticRecords);
         else if (worldstate->recordsType == mwmp::RECORD_TYPE::SOUND)
             worldstate->recordsCount = Utils::getVectorSize(worldstate->soundRecords);
+        else if (worldstate->recordsType == mwmp::RECORD_TYPE::VARIANT)
+            worldstate->recordsCount = Utils::getVectorSize(worldstate->variantRecords);
         else
         {
             LOG_MESSAGE_SIMPLE(TimedLog::LOG_ERROR, "Processed invalid ID_RECORD_DYNAMIC packet about unimplemented recordsType %i",
@@ -134,10 +136,12 @@ void PacketRecordDynamic::Packet(RakNet::BitStream *newBitstream, bool send)
             Utils::resetVector(worldstate->repairRecords, worldstate->recordsCount);
         else if (worldstate->recordsType == mwmp::RECORD_TYPE::SCRIPT)
             Utils::resetVector(worldstate->scriptRecords, worldstate->recordsCount);
-        else if (worldstate->recordsType == mwmp::RECORD_TYPE::STATIC)
-            Utils::resetVector(worldstate->staticRecords, worldstate->recordsCount);
         else if (worldstate->recordsType == mwmp::RECORD_TYPE::SOUND)
             Utils::resetVector(worldstate->soundRecords, worldstate->recordsCount);
+        else if (worldstate->recordsType == mwmp::RECORD_TYPE::STATIC)
+            Utils::resetVector(worldstate->staticRecords, worldstate->recordsCount);
+        else if (worldstate->recordsType == mwmp::RECORD_TYPE::VARIANT)
+            Utils::resetVector(worldstate->variantRecords, worldstate->recordsCount);
     }
 
     if (worldstate->recordsType == mwmp::RECORD_TYPE::SPELL)
@@ -854,26 +858,36 @@ void PacketRecordDynamic::Packet(RakNet::BitStream *newBitstream, bool send)
     }
     else if (worldstate->recordsType == mwmp::RECORD_TYPE::SOUND)
     {
-    for (auto&& record : worldstate->soundRecords)
-    {
-        auto& recordData = record.data;
-
-        RW(record.baseId, send, true);
-        RW(recordData.mId, send, true);
-        RW(recordData.mSound, send, true);
-        RW(recordData.mData.mVolume, send);
-        RW(recordData.mData.mMinRange, send);
-        RW(recordData.mData.mMaxRange, send);
-
-        if (!record.baseId.empty())
+        for (auto&& record : worldstate->soundRecords)
         {
-            auto&& overrides = record.baseOverrides;
-            RW(overrides.hasSound, send);
-            RW(overrides.hasVolume, send);
-            RW(overrides.hasMinRange, send);
-            RW(overrides.hasMaxRange, send);
+            auto& recordData = record.data;
+
+            RW(record.baseId, send, true);
+            RW(recordData.mId, send, true);
+            RW(recordData.mSound, send, true);
+            RW(recordData.mData.mVolume, send);
+            RW(recordData.mData.mMinRange, send);
+            RW(recordData.mData.mMaxRange, send);
+
+            if (!record.baseId.empty())
+            {
+                auto&& overrides = record.baseOverrides;
+                RW(overrides.hasSound, send);
+                RW(overrides.hasVolume, send);
+                RW(overrides.hasMinRange, send);
+                RW(overrides.hasMaxRange, send);
+            }
         }
     }
+    // Placeholder
+    else if (worldstate->recordsType == mwmp::RECORD_TYPE::VARIANT)
+    {
+        for (auto&& record : worldstate->variantRecords)
+        {
+            auto& recordData = record.data;
+
+            RW(record.baseId, send, true);
+        }
     }
 }
 
