@@ -176,6 +176,18 @@ void DedicatedPlayer::setBaseInfo()
     previousRace = npc.mRace;
 }
 
+void DedicatedPlayer::setStatsDynamic()
+{
+    MWMechanics::CreatureStats* ptrCreatureStats = &getPtr().getClass().getCreatureStats(getPtr());
+    MWMechanics::DynamicStat<float> value;
+
+    for (int i = 0; i < 3; ++i)
+    {
+        value.readState(creatureStats.mDynamic[i]);
+        ptrCreatureStats->setDynamic(i, value);
+    }
+}
+
 void DedicatedPlayer::setShapeshift()
 {
     MWBase::World *world = MWBase::Environment::get().getWorld();

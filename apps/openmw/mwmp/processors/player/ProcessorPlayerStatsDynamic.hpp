@@ -25,15 +25,7 @@ namespace mwmp
             }
             else if (player != 0)
             {
-                MWWorld::Ptr ptrPlayer = static_cast<DedicatedPlayer*>(player)->getPtr();
-                MWMechanics::CreatureStats *ptrCreatureStats = &ptrPlayer.getClass().getCreatureStats(ptrPlayer);
-                MWMechanics::DynamicStat<float> value;
-
-                for (int i = 0; i < 3; ++i)
-                {
-                    value.readState(player->creatureStats.mDynamic[i]);
-                    ptrCreatureStats->setDynamic(i, value);
-                }
+                static_cast<DedicatedPlayer*>(player)->setStatsDynamic();
             }
         }
     };

@@ -34,6 +34,7 @@ namespace mwmp
 
         void move(float dt);
         void setBaseInfo();
+        void setStatsDynamic();
         void setShapeshift();
         void setAnimFlags();
         void setAttributes();
