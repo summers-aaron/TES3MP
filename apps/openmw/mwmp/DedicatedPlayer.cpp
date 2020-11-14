@@ -459,6 +459,17 @@ void DedicatedPlayer::equipItem(std::string itemId, bool noSound)
     }
 }
 
+void DedicatedPlayer::die()
+{
+    MWMechanics::DynamicStat<float> health;
+    creatureStats.mDead = true;
+    health.readState(creatureStats.mDynamic[0]);
+    health.setCurrent(0);
+    health.writeState(creatureStats.mDynamic[0]);
+
+    ptr.getClass().getCreatureStats(ptr).setHealth(health);
+}
+
 void DedicatedPlayer::resurrect()
 {
     creatureStats.mDead = false;

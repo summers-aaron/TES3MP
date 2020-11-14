@@ -46,6 +46,7 @@ namespace mwmp
         void playSpeech();
 
         void equipItem(std::string itemId, bool noSound = false);
+        void die();
         void resurrect();
 
         void updateMarker();
