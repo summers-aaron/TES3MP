@@ -10,10 +10,12 @@
     Bug #2976 [reopened]: Issues combining settings from the command line and both config files
     Bug #3676: NiParticleColorModifier isn't applied properly
     Bug #3714: Savegame fails to load due to conflict between SpellState and MagicEffects
+    Bug #3789: Crash in visitEffectSources while in battle
     Bug #3862: Random container contents behave differently than vanilla
     Bug #3929: Leveled list merchant containers respawn on barter
     Bug #4021: Attributes and skills are not stored as floats
     Bug #4055: Local scripts don't inherit variables from their base record
+    Bug #4083: Door animation freezes when colliding with actors
     Bug #4623: Corprus implementation is incorrect
     Bug #4631: Setting MSAA level too high doesn't fall back to highest supported level
     Bug #4764: Data race in osg ParticleSystem
