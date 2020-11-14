@@ -17,18 +17,12 @@ namespace mwmp
         virtual void Do(PlayerPacket &packet, BasePlayer *player)
         {
             LOG_MESSAGE_SIMPLE(TimedLog::LOG_INFO, "Received ID_PLAYER_DEATH from server");
+
             if (isLocal())
             {
                 LOG_APPEND(TimedLog::LOG_INFO, "- Packet was about me");
 
-                player->creatureStats.mDead = true;
-
-                MWWorld::Ptr playerPtr = MWBase::Environment::get().getWorld()->getPlayerPtr();
-                MWMechanics::DynamicStat<float> health = playerPtr.getClass().getCreatureStats(playerPtr).getHealth();
-                health.setCurrent(0);
-                playerPtr.getClass().getCreatureStats(playerPtr).setHealth(health);
-                packet.setPlayer(player);
-                packet.Send(serverAddr);
+                static_cast<LocalPlayer*>(player)->die();
             }
             else if (player != 0)
             {

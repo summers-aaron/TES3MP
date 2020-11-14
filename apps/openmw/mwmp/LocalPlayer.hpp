@@ -53,6 +53,7 @@ namespace mwmp
         void removeSpells();
         void removeSpellsActive();
 
+        void die();
         void resurrect();
 
         void closeInventoryWindows();

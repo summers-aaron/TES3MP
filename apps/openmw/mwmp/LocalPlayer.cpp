@@ -831,6 +831,19 @@ void LocalPlayer::removeSpellsActive()
     }
 }
 
+void LocalPlayer::die()
+{
+    creatureStats.mDead = true;
+
+    MWWorld::Ptr playerPtr = MWBase::Environment::get().getWorld()->getPlayerPtr();
+    MWMechanics::DynamicStat<float> health = playerPtr.getClass().getCreatureStats(playerPtr).getHealth();
+    health.setCurrent(0);
+    playerPtr.getClass().getCreatureStats(playerPtr).setHealth(health);
+
+    Main::get().getNetworking()->getPlayerPacket(ID_PLAYER_DEATH)->setPlayer(this);
+    Main::get().getNetworking()->getPlayerPacket(ID_PLAYER_DEATH)->Send();
+}
+
 void LocalPlayer::resurrect()
 {
     creatureStats.mDead = false;
