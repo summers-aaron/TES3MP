@@ -32,18 +32,7 @@ namespace mwmp
             {
                 LOG_APPEND(TimedLog::LOG_INFO, "- Packet was about %s", player->npc.mName.c_str());
 
-                player->creatureStats.mDead = false;
-                if (player->creatureStats.mDynamic[0].mMod < 1)
-                    player->creatureStats.mDynamic[0].mMod = 1;
-                player->creatureStats.mDynamic[0].mCurrent = player->creatureStats.mDynamic[0].mMod;
-
-                MWWorld::Ptr ptr = static_cast<DedicatedPlayer*>(player)->getPtr();
-
-                MWBase::Environment::get().getMechanicsManager()->resurrect(ptr);
-
-                MWMechanics::DynamicStat<float> health;
-                health.readState(player->creatureStats.mDynamic[0]);
-                ptr.getClass().getCreatureStats(ptr).setHealth(health);
+                static_cast<DedicatedPlayer*>(player)->resurrect();
             }
         }
     };

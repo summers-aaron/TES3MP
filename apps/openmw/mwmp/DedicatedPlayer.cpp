@@ -459,6 +459,20 @@ void DedicatedPlayer::equipItem(std::string itemId, bool noSound)
     }
 }
 
+void DedicatedPlayer::resurrect()
+{
+    creatureStats.mDead = false;
+    if (creatureStats.mDynamic[0].mMod < 1)
+        creatureStats.mDynamic[0].mMod = 1;
+    creatureStats.mDynamic[0].mCurrent = creatureStats.mDynamic[0].mMod;
+
+    MWBase::Environment::get().getMechanicsManager()->resurrect(getPtr());
+
+    MWMechanics::DynamicStat<float> health;
+    health.readState(creatureStats.mDynamic[0]);
+    getPtr().getClass().getCreatureStats(getPtr()).setHealth(health);
+}
+
 void DedicatedPlayer::updateMarker()
 {
     if (!markerEnabled)
