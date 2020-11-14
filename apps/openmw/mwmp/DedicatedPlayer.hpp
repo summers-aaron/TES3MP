@@ -35,21 +35,21 @@ namespace mwmp
         void move(float dt);
         void setBaseInfo();
         void setStatsDynamic();
-        void setShapeshift();
         void setAnimFlags();
         void setAttributes();
         void setSkills();
         void setEquipment();
+        void setShapeshift();
         void setCell();
-
-        void updateMarker();
-        void removeMarker();
-        void enableMarker();
 
         void playAnimation();
         void playSpeech();
 
         void equipItem(std::string itemId, bool noSound = false);
+
+        void updateMarker();
+        void removeMarker();
+        void enableMarker();
 
         void createReference(const std::string& recId);
         void deleteReference();

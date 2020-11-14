@@ -188,73 +188,6 @@ void DedicatedPlayer::setStatsDynamic()
     }
 }
 
-void DedicatedPlayer::setShapeshift()
-{
-    MWBase::World *world = MWBase::Environment::get().getWorld();
-
-    bool isNpc = false;
-
-    if (reference)
-        isNpc = ptr.getTypeName() == typeid(ESM::NPC).name();
-
-    if (creatureRefId != previousCreatureRefId || displayCreatureName != previousDisplayCreatureName)
-    {
-        if (!creatureRefId.empty() && RecordHelper::doesRecordIdExist<ESM::Creature>(creatureRefId))
-        {
-            deleteReference();
-
-            const ESM::Creature *tmpCreature = world->getStore().get<ESM::Creature>().search(creatureRefId);
-            creature = *tmpCreature;
-            creature.mScript = "";
-            if (!displayCreatureName)
-                creature.mName = npc.mName;
-            LOG_APPEND(TimedLog::LOG_INFO, "- %s is disguised as %s", npc.mName.c_str(), creatureRefId.c_str());
-
-            // Is this our first time creating a creature record id for this player? If so, keep it around
-            // and reuse it
-            if (creatureRecordId.empty())
-            {
-                creature.mId = creatureRecordId = RecordHelper::createRecord(creature)->mId;
-                LOG_APPEND(TimedLog::LOG_INFO, "- Creating new creature record %s", creatureRecordId.c_str());
-            }
-            else
-            {
-                creature.mId = creatureRecordId;
-                RecordHelper::overrideRecord(creature);
-            }
-
-            LOG_APPEND(TimedLog::LOG_INFO, "- Creating reference for %s", creature.mId.c_str());
-            createReference(creature.mId);
-        }
-        // This player was already a creature, but the new creature refId was empty or
-        // invalid, so we'll turn this player into their NPC self again as a result
-        else if (!isNpc)
-        {
-            if (reference)
-            {
-                deleteReference();
-            }
-
-            RecordHelper::overrideRecord(npc);
-            createReference(npc.mId);
-            reloadPtr();
-        }
-
-        previousCreatureRefId = creatureRefId;
-        previousDisplayCreatureName = displayCreatureName;
-    }
-
-    if (ptr.getTypeName() == typeid(ESM::NPC).name())
-    {
-        MWBase::Environment::get().getMechanicsManager()->setWerewolf(ptr, isWerewolf);
-
-        if (!isWerewolf)
-            setEquipment();
-    }
-
-    MWBase::Environment::get().getWorld()->scaleObject(ptr, scale);
-}
-
 void DedicatedPlayer::setAnimFlags()
 {
     using namespace MWMechanics;
@@ -374,6 +307,73 @@ void DedicatedPlayer::setEquipment()
         hasReceivedInitialEquipment = true;
 }
 
+void DedicatedPlayer::setShapeshift()
+{
+    MWBase::World* world = MWBase::Environment::get().getWorld();
+
+    bool isNpc = false;
+
+    if (reference)
+        isNpc = ptr.getTypeName() == typeid(ESM::NPC).name();
+
+    if (creatureRefId != previousCreatureRefId || displayCreatureName != previousDisplayCreatureName)
+    {
+        if (!creatureRefId.empty() && RecordHelper::doesRecordIdExist<ESM::Creature>(creatureRefId))
+        {
+            deleteReference();
+
+            const ESM::Creature* tmpCreature = world->getStore().get<ESM::Creature>().search(creatureRefId);
+            creature = *tmpCreature;
+            creature.mScript = "";
+            if (!displayCreatureName)
+                creature.mName = npc.mName;
+            LOG_APPEND(TimedLog::LOG_INFO, "- %s is disguised as %s", npc.mName.c_str(), creatureRefId.c_str());
+
+            // Is this our first time creating a creature record id for this player? If so, keep it around
+            // and reuse it
+            if (creatureRecordId.empty())
+            {
+                creature.mId = creatureRecordId = RecordHelper::createRecord(creature)->mId;
+                LOG_APPEND(TimedLog::LOG_INFO, "- Creating new creature record %s", creatureRecordId.c_str());
+            }
+            else
+            {
+                creature.mId = creatureRecordId;
+                RecordHelper::overrideRecord(creature);
+            }
+
+            LOG_APPEND(TimedLog::LOG_INFO, "- Creating reference for %s", creature.mId.c_str());
+            createReference(creature.mId);
+        }
+        // This player was already a creature, but the new creature refId was empty or
+        // invalid, so we'll turn this player into their NPC self again as a result
+        else if (!isNpc)
+        {
+            if (reference)
+            {
+                deleteReference();
+            }
+
+            RecordHelper::overrideRecord(npc);
+            createReference(npc.mId);
+            reloadPtr();
+        }
+
+        previousCreatureRefId = creatureRefId;
+        previousDisplayCreatureName = displayCreatureName;
+    }
+
+    if (ptr.getTypeName() == typeid(ESM::NPC).name())
+    {
+        MWBase::Environment::get().getMechanicsManager()->setWerewolf(ptr, isWerewolf);
+
+        if (!isWerewolf)
+            setEquipment();
+    }
+
+    MWBase::Environment::get().getWorld()->scaleObject(ptr, scale);
+}
+
 void DedicatedPlayer::setCell()
 {
     // Prevent cell update when reference doesn't exist
@@ -431,47 +431,6 @@ void DedicatedPlayer::setCell()
     hasFinishedInitialTeleportation = true;
 }
 
-void DedicatedPlayer::updateMarker()
-{
-    if (!markerEnabled)
-    {
-        return;
-    }
-
-    GUIController *gui = Main::get().getGUIController();
-
-    if (gui->mPlayerMarkers.contains(marker))
-    {
-        gui->mPlayerMarkers.deleteMarker(marker);
-        marker = gui->createMarker(guid);
-        gui->mPlayerMarkers.addMarker(marker);
-    }
-    else
-    {
-        gui->mPlayerMarkers.addMarker(marker, true);
-    }
-}
-
-void DedicatedPlayer::enableMarker()
-{
-    markerEnabled = true;
-    updateMarker();
-}
-
-void DedicatedPlayer::removeMarker()
-{
-    if (!markerEnabled)
-        return;
-
-    markerEnabled = false;
-    GUIController *gui = Main::get().getGUIController();
-
-    if (gui->mPlayerMarkers.contains(marker))
-    {
-        Main::get().getGUIController()->mPlayerMarkers.deleteMarker(marker);
-    }
-}
-
 void DedicatedPlayer::playAnimation()
 {
     MWBase::Environment::get().getMechanicsManager()->playAnimationGroup(getPtr(),
@@ -497,6 +456,47 @@ void DedicatedPlayer::equipItem(std::string itemId, bool noSound)
             action->execute(ptr, noSound);
             break;
         }
+    }
+}
+
+void DedicatedPlayer::updateMarker()
+{
+    if (!markerEnabled)
+    {
+        return;
+    }
+
+    GUIController* gui = Main::get().getGUIController();
+
+    if (gui->mPlayerMarkers.contains(marker))
+    {
+        gui->mPlayerMarkers.deleteMarker(marker);
+        marker = gui->createMarker(guid);
+        gui->mPlayerMarkers.addMarker(marker);
+    }
+    else
+    {
+        gui->mPlayerMarkers.addMarker(marker, true);
+    }
+}
+
+void DedicatedPlayer::enableMarker()
+{
+    markerEnabled = true;
+    updateMarker();
+}
+
+void DedicatedPlayer::removeMarker()
+{
+    if (!markerEnabled)
+        return;
+
+    markerEnabled = false;
+    GUIController* gui = Main::get().getGUIController();
+
+    if (gui->mPlayerMarkers.contains(marker))
+    {
+        Main::get().getGUIController()->mPlayerMarkers.deleteMarker(marker);
     }
 }
 
