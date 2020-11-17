@@ -194,7 +194,7 @@ public:
     * \param effectIndex The index of the effect.
     * \return The arg of the effect.
     */
-    static unsigned int GetSpellsActiveEffectArg(unsigned short pid, unsigned int spellIndex, unsigned int effectIndex) noexcept;
+    static int GetSpellsActiveEffectArg(unsigned short pid, unsigned int spellIndex, unsigned int effectIndex) noexcept;
 
     /**
     * \brief Get the magnitude for an effect index at a spell index in a player's latest spells active changes.

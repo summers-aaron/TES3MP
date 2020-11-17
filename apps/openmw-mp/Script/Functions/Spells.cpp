@@ -170,7 +170,7 @@ unsigned int SpellFunctions::GetSpellsActiveEffectId(unsigned short pid, unsigne
     return player->spellsActiveChanges.activeSpells.at(spellIndex).params.mEffects.at(effectIndex).mEffectId;
 }
 
-unsigned int SpellFunctions::GetSpellsActiveEffectArg(unsigned short pid, unsigned int spellIndex, unsigned int effectIndex) noexcept
+int SpellFunctions::GetSpellsActiveEffectArg(unsigned short pid, unsigned int spellIndex, unsigned int effectIndex) noexcept
 {
     Player* player;
     GET_PLAYER(pid, player, 0);
