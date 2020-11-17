@@ -131,13 +131,14 @@ public:
     *
     * \param pid The player ID whose spells active changes should be used.
     * \param effectId The id of the effect.
-    * \param arg The arg of the effect.
     * \param magnitude The magnitude of the effect.
     * \param duration The duration of the effect.
     * \param timeLeft The timeLeft for the effect.
+    * \param arg The arg of the effect when applicable, e.g. the skill used for Fortify Skill or the attribute
+    *            used for Fortify Attribute.
     * \return void
     */
-    static void AddSpellActiveEffect(unsigned short pid, int effectId, int arg, double magnitude, double duration, double timeLeft) noexcept;
+    static void AddSpellActiveEffect(unsigned short pid, int effectId, double magnitude, double duration, double timeLeft, int arg) noexcept;
 
     /**
     * \brief Get the spell id at a certain index in a player's latest spellbook changes.

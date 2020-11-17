@@ -100,17 +100,17 @@ void SpellFunctions::AddSpellActive(unsigned short pid, const char* spellId, con
     storedActiveEffects.clear();
 }
 
-void SpellFunctions::AddSpellActiveEffect(unsigned short pid, int effectId, int arg, double magnitude, double duration, double timeLeft) noexcept
+void SpellFunctions::AddSpellActiveEffect(unsigned short pid, int effectId, double magnitude, double duration, double timeLeft, int arg) noexcept
 {
     Player* player;
     GET_PLAYER(pid, player, );
 
     ESM::ActiveEffect effect;
     effect.mEffectId = effectId;
-    effect.mArg = arg;
     effect.mMagnitude = magnitude;
     effect.mDuration = duration;
     effect.mTimeLeft = timeLeft;
+    effect.mArg = arg;
 
     storedActiveEffects.push_back(effect);
 }
