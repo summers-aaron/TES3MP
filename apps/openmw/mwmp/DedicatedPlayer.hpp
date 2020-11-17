@@ -49,6 +49,10 @@ namespace mwmp
         void die();
         void resurrect();
 
+        void addSpellsActive();
+        void removeSpellsActive();
+        void setSpellsActive();
+
         void updateMarker();
         void removeMarker();
         void enableMarker();

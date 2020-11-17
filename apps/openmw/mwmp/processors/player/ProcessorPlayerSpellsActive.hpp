@@ -16,24 +16,42 @@ namespace mwmp
 
         virtual void Do(PlayerPacket &packet, BasePlayer *player)
         {
-            if (!isLocal()) return;
+            LOG_MESSAGE_SIMPLE(TimedLog::LOG_INFO, "Received ID_PLAYER_SPELLS_ACTIVE from server");
 
-            LOG_MESSAGE_SIMPLE(TimedLog::LOG_INFO, "Received ID_PLAYER_SPELLS_ACTIVE about LocalPlayer from server");
+            if (isLocal())
+            {
+                LOG_APPEND(TimedLog::LOG_INFO, "- Packet was about me");
 
-            if (isRequest())
-                static_cast<LocalPlayer*>(player)->sendSpellsActive();
+                if (isRequest())
+                    static_cast<LocalPlayer*>(player)->sendSpellsActive();
+                else
+                {
+                    LocalPlayer& localPlayer = static_cast<LocalPlayer&>(*player);
+
+                    int spellsActiveAction = localPlayer.spellsActiveChanges.action;
+
+                    if (spellsActiveAction == SpellsActiveChanges::ADD)
+                        localPlayer.addSpellsActive();
+                    else if (spellsActiveAction == SpellsActiveChanges::REMOVE)
+                        localPlayer.removeSpellsActive();
+                    else // SpellsActiveChanges::SET
+                        localPlayer.setSpellsActive();
+                }
+            }
             else
             {
-                LocalPlayer &localPlayer = static_cast<LocalPlayer&>(*player);
-                
-                int spellsActiveAction = localPlayer.spellsActiveChanges.action;
+                LOG_APPEND(TimedLog::LOG_INFO, "- Packet was about %s", player->npc.mName.c_str());
+
+                DedicatedPlayer& dedicatedPlayer = static_cast<DedicatedPlayer&>(*player);
+
+                int spellsActiveAction = dedicatedPlayer.spellsActiveChanges.action;
 
                 if (spellsActiveAction == SpellsActiveChanges::ADD)
-                    localPlayer.addSpellsActive();
+                    dedicatedPlayer.addSpellsActive();
                 else if (spellsActiveAction == SpellsActiveChanges::REMOVE)
-                    localPlayer.removeSpellsActive();
+                    dedicatedPlayer.removeSpellsActive();
                 else // SpellsActiveChanges::SET
-                    localPlayer.setSpellsActive();
+                    dedicatedPlayer.setSpellsActive();
             }
         }
     };
