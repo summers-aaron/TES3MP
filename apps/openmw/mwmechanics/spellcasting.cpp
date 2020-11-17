@@ -238,7 +238,16 @@ namespace MWMechanics
                     if (!appliedOnce)
                         effect.mDuration = std::max(1.f, effect.mDuration);
 
-                    if (effect.mDuration == 0)
+                    /*
+                        Start of tes3mp change (major)
+
+                        If the target is a DedicatedPlayer, don't apply effects to them unilaterally on this client
+                        and wait for the server's response to the other client to apply the effects for us
+                    */
+                    if (effect.mDuration == 0 && !mwmp::PlayerList::isDedicatedPlayer(target))
+                    /*
+                        End of tes3mp change (major)
+                    */
                     {
                         // We still should add effect to list to allow GetSpellEffects to detect this spell
                         appliedLastingEffects.push_back(effect);
@@ -251,7 +260,7 @@ namespace MWMechanics
                         /*
                             Start of tes3mp addition
 
-                            If the victim was a LocalPlayer or LocalActor who died, record the caster as the killer
+                            If the target was a LocalPlayer or LocalActor who died, record the caster as the killer
                         */
                         if (!wasDead && isDead)
                         {
@@ -275,7 +284,16 @@ namespace MWMechanics
                         if (!wasDead && isDead)
                             MWBase::Environment::get().getMechanicsManager()->actorKilled(target, caster);
                     }
-                    else
+                    /*
+                        Start of tes3mp change (major)
+
+                        If the target is a DedicatedPlayer, don't apply effects to them unilaterally on this client
+                        and wait for the server's response to the other client to apply the effects for us
+                    */
+                    else if (!mwmp::PlayerList::isDedicatedPlayer(target))
+                    /*
+                        End of tes3mp change (major)
+                    */
                     {
                         effect.mTimeLeft = effect.mDuration;
 
