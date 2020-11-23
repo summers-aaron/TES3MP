@@ -395,9 +395,10 @@ void DedicatedPlayer::setCell()
     else
         world->enable(getPtr());
 
-    // Make sure the Ptr's dynamic stats are up-to-date, so it doesn't show up knocked down when
-    // it shouldn't
+    // Make sure the Ptr's dynamic stats and anim flags are up-to-date, so it doesn't show up
+    // knocked down or in a jump loop when it shouldn't
     setStatsDynamic();
+    setAnimFlags();
 
     // Allow this player's reference to move across a cell now that a manual cell
     // update has been called
