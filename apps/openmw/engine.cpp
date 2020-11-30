@@ -106,6 +106,7 @@ namespace
         Script,
         Mechanics,
         Physics,
+        PhysicsWorker,
         World,
         Gui,
 
@@ -135,6 +136,9 @@ namespace
 
     template <>
     const UserStats UserStatsValue<UserStatsType::Physics>::sValue {"Phys", "physics"};
+
+    template <>
+    const UserStats UserStatsValue<UserStatsType::PhysicsWorker>::sValue {" -Async", "physicsworker"};
 
     template <>
     const UserStats UserStatsValue<UserStatsType::World>::sValue {"World", "world"};
@@ -215,6 +219,10 @@ namespace
             profiler.addUserStatsLine(v.mLabel, textColor, barColor, v.mTaken, multiplier,
                                       average, averageInInverseSpace, v.mBegin, v.mEnd, maxValue);
         });
+        // the forEachUserStatsValue loop is "run" at compile time, hence the settings manager is not available.
+        // Unconditionnally add the async physics stats, and then remove it at runtime if necessary
+        if (Settings::Manager::getInt("async num threads", "Physics") == 0)
+            profiler.removeUserStatsLine(" -Async");
     }
 }
 
@@ -409,7 +417,7 @@ bool OMW::Engine::frame(float frametime)
 
             if (mEnvironment.getStateManager()->getState() != MWBase::StateManager::State_NoGame)
             {
-                mEnvironment.getWorld()->updatePhysics(frametime, guiActive);
+                mEnvironment.getWorld()->updatePhysics(frametime, guiActive, frameStart, frameNumber, *stats);
             }
         }
 
@@ -463,7 +471,7 @@ OMW::Engine::Engine(Files::ConfigurationManager& configurationManager)
   , mGrab(true)
   , mExportFonts(false)
   , mRandomSeed(0)
-  , mScriptContext (0)
+  , mScriptContext (nullptr)
   , mFSStrict (false)
   , mScriptBlacklistUse (true)
   , mNewGame (false)

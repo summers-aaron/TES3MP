@@ -10,6 +10,7 @@
 #include <osg/Quat>
 #include <osg/BoundingBox>
 #include <osg/ref_ptr>
+#include <osg/Timer>
 
 #include "../mwworld/ptr.hpp"
 
@@ -50,7 +51,6 @@ class btVector3;
 namespace MWPhysics
 {
     using PtrPositionList = std::map<MWWorld::Ptr, osg::Vec3f>;
-    using CollisionMap = std::map<MWWorld::Ptr, MWWorld::Ptr>;
 
     class HeightField;
     class Object;
@@ -78,14 +78,13 @@ namespace MWPhysics
     struct ActorFrameData
     {
         ActorFrameData(const std::shared_ptr<Actor>& actor, const MWWorld::Ptr character, const MWWorld::Ptr standingOn, bool moveToWaterSurface, osg::Vec3f movement, float slowFall, float waterlevel);
-        void updatePosition();
+        void  updatePosition();
         std::weak_ptr<Actor> mActor;
         Actor* mActorRaw;
         MWWorld::Ptr mPtr;
         MWWorld::Ptr mStandingOn;
         bool mFlying;
         bool mSwimming;
-        bool mPositionChanged;
         bool mWasOnGround;
         bool mWantJump;
         bool mDidJump;
@@ -97,6 +96,7 @@ namespace MWPhysics
         float mOldHeight;
         float mFallHeight;
         osg::Vec3f mMovement;
+        osg::Vec3f mOrigin;
         osg::Vec3f mPosition;
         ESM::Position mRefpos;
     };
@@ -202,7 +202,7 @@ namespace MWPhysics
             void queueObjectMovement(const MWWorld::Ptr &ptr, const osg::Vec3f &velocity);
 
             /// Apply all queued movements, then clear the list.
-            const PtrPositionList& applyQueuedMovement(float dt, bool skipSimulation);
+            const PtrPositionList& applyQueuedMovement(float dt, bool skipSimulation, osg::Timer_t frameStart, unsigned int frameNumber, osg::Stats& stats);
 
             /// Clear the queued movements list without applying.
             void clearQueuedMovement();
@@ -282,13 +282,6 @@ namespace MWPhysics
             HeightFieldMap mHeightFields;
 
             bool mDebugDrawEnabled;
-
-            // Tracks standing collisions happening during a single frame. <actor handle, collided handle>
-            // This will detect standing on an object, but won't detect running e.g. against a wall.
-            CollisionMap mStandingCollisions;
-
-            // replaces all occurrences of 'old' in the map by 'updated', no matter if it's a key or value
-            void updateCollisionMapPtr(CollisionMap& map, const MWWorld::Ptr &old, const MWWorld::Ptr &updated);
 
             using PtrVelocityList = std::vector<std::pair<MWWorld::Ptr, osg::Vec3f>>;
             PtrVelocityList mMovementQueue;

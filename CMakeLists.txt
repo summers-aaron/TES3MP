@@ -267,7 +267,7 @@ if(NOT HAVE_STDINT_H)
 endif()
 
 if(BUILD_OPENMW OR BUILD_OPENCS OR BUILD_OPENMW_MP)
-    find_package(OpenSceneGraph 3.3.4 REQUIRED osgDB osgViewer osgText osgGA osgParticle osgUtil osgFX osgShadow)
+    find_package(OpenSceneGraph 3.3.4 REQUIRED osgDB osgViewer osgText osgGA osgParticle osgUtil osgFX osgShadow osgAnimation)
     include_directories(SYSTEM ${OPENSCENEGRAPH_INCLUDE_DIRS})
     find_package(SDL2 2.0.9 REQUIRED)
 endif()

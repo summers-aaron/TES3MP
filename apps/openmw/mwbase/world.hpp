@@ -10,6 +10,8 @@
 
 #include <components/esm/cellid.hpp>
 
+#include <osg/Timer>
+
 #include "../mwworld/ptr.hpp"
 #include "../mwworld/doorstate.hpp"
 
@@ -188,7 +190,7 @@ namespace MWBase
             virtual char getGlobalVariableType (const std::string& name) const = 0;
             ///< Return ' ', if there is no global variable with this name.
 
-            virtual std::string getCellName (const MWWorld::CellStore *cell = 0) const = 0;
+            virtual std::string getCellName (const MWWorld::CellStore *cell = nullptr) const = 0;
             ///< Return name of the cell.
             ///
             /// \note If cell==0, the cell the player is currently in will be used instead to
@@ -512,7 +514,7 @@ namespace MWBase
             /// \return pointer to created record
 
             virtual void update (float duration, bool paused) = 0;
-            virtual void updatePhysics (float duration, bool paused) = 0;
+            virtual void updatePhysics (float duration, bool paused, osg::Timer_t frameStart, unsigned int frameNumber, osg::Stats& stats) = 0;
 
             virtual void updateWindowManager () = 0;
 

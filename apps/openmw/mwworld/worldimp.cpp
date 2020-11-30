@@ -4,6 +4,7 @@
 
 #include <osg/Group>
 #include <osg/ComputeBoundsVisitor>
+#include <osg/Timer>
 
 #include <BulletCollision/CollisionDispatch/btCollisionWorld.h>
 #include <BulletCollision/CollisionShapes/btCompoundShape.h>
@@ -333,7 +334,7 @@ namespace MWWorld
         if (mPlayer)
         {
             mPlayer->clear();
-            mPlayer->setCell(0);
+            mPlayer->setCell(nullptr);
             mPlayer->getPlayer().getRefData() = RefData();
             mPlayer->set(mStore.get<ESM::NPC>().find ("player"));
         }
@@ -1005,6 +1006,7 @@ namespace MWWorld
         {
             mRendering->notifyWorldSpaceChanged();
             mProjectileManager->clear();
+            mDiscardMovements = true;
         }
     }
 
@@ -1126,7 +1128,7 @@ namespace MWWorld
 
             if (!facedObject.isEmpty() && !facedObject.getClass().allowTelekinesis(facedObject)
                 && mDistanceToFacedObject > getMaxActivationDistance() && !MWBase::Environment::get().getWindowManager()->isGuiMode())
-                return 0;
+                return nullptr;
         }
         return facedObject;
     }
@@ -1329,7 +1331,7 @@ namespace MWWorld
                     haveToMove = false;
 
                     newPtr = currCell->moveTo(ptr, newCell);
-                    newPtr.getRefData().setBaseNode(0);
+                    newPtr.getRefData().setBaseNode(nullptr);
                 }
                 else if (!currCellActive && !newCellActive)
                     newPtr = currCell->moveTo(ptr, newCell);
@@ -1427,7 +1429,7 @@ namespace MWWorld
             mWorldScene->removeFromPagedRefs(ptr);
         }
 
-        if(ptr.getRefData().getBaseNode() != 0)
+        if(ptr.getRefData().getBaseNode() != nullptr)
             mWorldScene->updateObjectScale(ptr);
 
         if (mPhysics->getActor(ptr))
@@ -1475,7 +1477,7 @@ namespace MWWorld
         mRendering->pagingBlacklistObject(mStore.find(ptr.getCellRef().getRefId()), ptr);
         mWorldScene->removeFromPagedRefs(ptr);
 
-        if(ptr.getRefData().getBaseNode() != 0)
+        if(ptr.getRefData().getBaseNode() != nullptr)
         {
             const auto order = flags & MWBase::RotationFlag_inverseOrder
                 ? RotationOrder::inverse : RotationOrder::direct;
@@ -1560,7 +1562,7 @@ namespace MWWorld
 
     void World::rotateWorldObject (const Ptr& ptr, osg::Quat rotate)
     {
-        if(ptr.getRefData().getBaseNode() != 0)
+        if(ptr.getRefData().getBaseNode() != nullptr)
         {
             mRendering->pagingBlacklistObject(mStore.find(ptr.getCellRef().getRefId()), ptr);
             mWorldScene->removeFromPagedRefs(ptr);
@@ -1688,21 +1690,21 @@ namespace MWWorld
         mPhysics->updateAnimatedCollisionShape(ptr);
     }
 
-    void World::doPhysics(float duration)
+    void World::doPhysics(float duration, osg::Timer_t frameStart, unsigned int frameNumber, osg::Stats& stats)
     {
         mPhysics->stepSimulation();
         processDoors(duration);
 
         mProjectileManager->update(duration);
 
-        const auto results = mPhysics->applyQueuedMovement(duration, mDiscardMovements);
+        const auto results = mPhysics->applyQueuedMovement(duration, mDiscardMovements, frameStart, frameNumber, stats);
         mDiscardMovements = false;
 
-        for(const auto& result : results)
+        for(const auto& [actor, position]: results)
         {
             // Handle player last, in case a cell transition occurs
-            if(result.first != getPlayerPtr())
-                moveObjectImp(result.first, result.second.x(), result.second.y(), result.second.z(), false);
+            if(actor != getPlayerPtr())
+                moveObjectImp(actor, position.x(), position.y(), position.z(), false);
         }
 
         const auto player = results.find(getPlayerPtr());
@@ -2029,11 +2031,11 @@ namespace MWWorld
         }
     }
 
-    void World::updatePhysics (float duration, bool paused)
+    void World::updatePhysics (float duration, bool paused, osg::Timer_t frameStart, unsigned int frameNumber, osg::Stats& stats)
     {
         if (!paused)
         {
-            doPhysics (duration);
+            doPhysics (duration, frameStart, frameNumber, stats);
         }
     }
 

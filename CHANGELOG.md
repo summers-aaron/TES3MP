@@ -58,6 +58,7 @@
     Bug #5557: Diagonal movement is noticeably slower with analogue stick
     Bug #5588: Randomly clicking on the journal's right-side page when it's empty shows random topics
     Bug #5603: Setting constant effect cast style doesn't correct effects view
+    Bug #5604: Only one valid NIF root node is loaded from a single file
     Bug #5611: Usable items with "0 Uses" should be used only once
     Bug #5622: Can't properly interact with the console when in pause menu
     Bug #5633: Damage Spells in effect before god mode is enabled continue to hurt the player character and can kill them
@@ -65,6 +66,7 @@
     Bug #5644: Summon effects running on the player during game initialization cause crashes
     Bug #5656: Sneaking characters block hits while standing
     Bug #5661: Region sounds don't play at the right interval
+    Bug #5688: Water shader broken indoors with enable indoor shadows = false
     Feature #390: 3rd person look "over the shoulder"
     Feature #2386: Distant Statics in the form of Object Paging
     Feature #2404: Levelled List can not be placed into a container
@@ -86,6 +88,7 @@
     Feature #5642: Ability to attach arrows to actor skeleton instead of bow mesh
     Feature #5649: Skyrim SE compressed BSA format support
     Feature #5672: Make stretch menu background configuration more accessible
+    Feature #5692: Improve spell/magic item search to factor in magic effect names
     Task #5480: Drop Qt4 support
     Task #5520: Improve cell name autocompleter implementation
 
