@@ -123,6 +123,16 @@ namespace MWGui
         /*
             Start of tes3mp addition
 
+            Make it possible to activate any dialogue choice from elsewhere in the code
+        */
+        void activateDialogueChoice(unsigned char dialogueChoiceType, std::string topic = "");
+        /*
+            End of tes3mp addition
+        */
+
+        /*
+            Start of tes3mp addition
+
             Make it possible to get the Ptr of the actor involved in the dialogue
         */
         MWWorld::Ptr getPtr();
@@ -150,30 +160,7 @@ namespace MWGui
         bool isCompanion(const MWWorld::Ptr& actor);
         bool isCompanion();
 
-        /*
-            Start of tes3mp addition
-
-            A different event that should be used in multiplayer when clicking on list items
-            in the dialogue screen, sending DialogueChoice packets to the server so they can
-            be approved or denied
-        */
-        void onSendDialoguePacket(const std::string& topic, int id);
-        /*
-            End of tes3mp addition
-        */
-
-        /*
-            Start of tes3mp change (major)
-
-            Turn onSelectListItem() into a public function so it can be used elsewhere when
-            receiving ObjectDialogueChoice packets
-        */
-    public:
         void onSelectListItem(const std::string& topic, int id);
-    protected:
-        /*
-            End of tes3mp change (major)
-        */
         void onByeClicked(MyGUI::Widget* _sender);
         void onMouseWheel(MyGUI::Widget* _sender, int _rel);
         void onWindowResize(MyGUI::Window* _sender);

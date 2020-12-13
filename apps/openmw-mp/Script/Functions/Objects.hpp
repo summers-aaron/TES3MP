@@ -31,7 +31,8 @@
     {"GetObjectState",                        ObjectFunctions::GetObjectState},\
     {"GetObjectDoorState",                    ObjectFunctions::GetObjectDoorState},\
     {"GetObjectLockLevel",                    ObjectFunctions::GetObjectLockLevel},\
-    {"GetObjectDialogueChoice",               ObjectFunctions::GetObjectDialogueChoice},\
+    {"GetObjectDialogueChoiceType",           ObjectFunctions::GetObjectDialogueChoiceType},\
+    {"GetObjectDialogueChoiceTopic",          ObjectFunctions::GetObjectDialogueChoiceTopic},\
     {"GetObjectGoldPool",                     ObjectFunctions::GetObjectGoldPool},\
     {"GetObjectLastGoldRestockHour",          ObjectFunctions::GetObjectLastGoldRestockHour},\
     {"GetObjectLastGoldRestockDay",           ObjectFunctions::GetObjectLastGoldRestockDay},\
@@ -106,7 +107,8 @@
     {"SetObjectScale",                        ObjectFunctions::SetObjectScale},\
     {"SetObjectState",                        ObjectFunctions::SetObjectState},\
     {"SetObjectLockLevel",                    ObjectFunctions::SetObjectLockLevel},\
-    {"SetObjectDialogueChoice",               ObjectFunctions::SetObjectDialogueChoice},\
+    {"SetObjectDialogueChoiceType",           ObjectFunctions::SetObjectDialogueChoiceType},\
+    {"SetObjectDialogueChoiceTopic",          ObjectFunctions::SetObjectDialogueChoiceTopic},\
     {"SetObjectGoldPool",                     ObjectFunctions::SetObjectGoldPool},\
     {"SetObjectLastGoldRestockHour",          ObjectFunctions::SetObjectLastGoldRestockHour},\
     {"SetObjectLastGoldRestockDay",           ObjectFunctions::SetObjectLastGoldRestockDay},\
@@ -393,12 +395,20 @@ public:
     static int GetObjectLockLevel(unsigned int index) noexcept;
 
     /**
-    * \brief Get the dialogue choice for the object at a certain index in the read object list.
+    * \brief Get the dialogue choice type for the object at a certain index in the read object list.
     *
     * \param index The index of the object.
-    * \return The dialogue choice.
+    * \return The dialogue choice type.
     */
-    static const char *GetObjectDialogueChoice(unsigned int index) noexcept;
+    static unsigned int GetObjectDialogueChoiceType(unsigned int index) noexcept;
+
+    /**
+    * \brief Get the dialogue choice topic for the object at a certain index in the read object list.
+    *
+    * \param index The index of the object.
+    * \return The dialogue choice topic.
+    */
+    static const char *GetObjectDialogueChoiceTopic(unsigned int index) noexcept;
 
     /**
     * \brief Get the gold pool of the object at a certain index in the read object list.
@@ -1000,12 +1010,20 @@ public:
     static void SetObjectLockLevel(int lockLevel) noexcept;
 
     /**
-    * \brief Set the dialogue choice for the temporary object stored on the server.
+    * \brief Set the dialogue choice type of the temporary object stored on the server.
     *
-    * \param dialogueChoice The dialogue choice.
+    * \param dialogueChoiceType The dialogue choice type.
     * \return void
     */
-    static void SetObjectDialogueChoice(const char* dialogueChoice) noexcept;
+    static void SetObjectDialogueChoiceType(unsigned int dialogueChoiceType) noexcept;
+
+    /**
+    * \brief Set the dialogue choice topic for the temporary object stored on the server.
+    *
+    * \param topic The dialogue choice topic.
+    * \return void
+    */
+    static void SetObjectDialogueChoiceTopic(const char* topic) noexcept;
 
     /**
     * \brief Set the gold pool of the temporary object stored on the server.

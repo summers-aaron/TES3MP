@@ -296,16 +296,7 @@ namespace MWGui
 
         //Topics list
         getWidget(mTopicsList, "TopicsList");
-        /*
-            Start of tes3mp change (major)
-
-            Instead of running DialogueWindow::onSelectListItem() when clicking a list item, run
-            onSendDialoguePacket() so the server can approve or deny a dialogue choice
-        */
-        mTopicsList->eventItemSelected += MyGUI::newDelegate(this, &DialogueWindow::onSendDialoguePacket);
-        /*
-            End of tes3mp change (major)
-        */
+        mTopicsList->eventItemSelected += MyGUI::newDelegate(this, &DialogueWindow::onSelectListItem);
 
         getWidget(mGoodbyeButton, "ByeButton");
         mGoodbyeButton->eventMouseButtonClick += MyGUI::newDelegate(this, &DialogueWindow::onByeClicked);
@@ -382,27 +373,25 @@ namespace MWGui
         }
     }
 
-    /*
-        Start of tes3mp addition
-
-        A different event that should be used in multiplayer when clicking on list items
-        in the dialogue screen, sending DialogueChoice packets to the server so they can
-        be approved or denied
-    */
-    void DialogueWindow::onSendDialoguePacket(const std::string& topic, int id)
+    void DialogueWindow::onSelectListItem(const std::string& topic, int id)
     {
+        /*
+            Start of tes3mp change (major)
+
+            Instead of activating a list item here, send an ObjectDialogueChoice packet to the server
+            and let it decide whether the list item gets activated
+        */
         mwmp::ObjectList* objectList = mwmp::Main::get().getNetworking()->getObjectList();
         objectList->reset();
         objectList->packetOrigin = mwmp::CLIENT_GAMEPLAY;
         objectList->addObjectDialogueChoice(mPtr, topic, id);
         objectList->sendObjectDialogueChoice();
-    }
-    /*
-        End of tes3mp addition
-    */
 
-    void DialogueWindow::onSelectListItem(const std::string& topic, int id)
-    {
+        return;
+        /*
+            End of tes3mp change (major)
+        */
+
         MWBase::DialogueManager* dialogueManager = MWBase::Environment::get().getDialogueManager();
 
         if (mGoodbye || dialogueManager->isInChoice())
@@ -452,6 +441,49 @@ namespace MWGui
         else
             updateTopics();
     }
+
+    /*
+        Start of tes3mp addition
+
+        Make it possible to activate any dialogue choice from elsewhere in the code
+    */
+    void DialogueWindow::activateDialogueChoice(unsigned char dialogueChoiceType, std::string topic)
+    {
+        if (dialogueChoiceType == mwmp::DialogueChoiceType::TOPIC)
+        {
+            // If we're using a translated version of Morrowind, translate this topic from English into our language
+            if (MWBase::Environment::get().getWindowManager()->getTranslationDataStorage().hasTranslation())
+                topic = MWBase::Environment::get().getWindowManager()->getTranslationDataStorage().getLocalizedTopicId(topic);
+
+            onTopicActivated(topic);
+        }
+        else if (dialogueChoiceType == mwmp::DialogueChoiceType::PERSUASION)
+            mPersuasionDialog.setVisible(true);
+        else if (dialogueChoiceType == mwmp::DialogueChoiceType::COMPANION_SHARE)
+            MWBase::Environment::get().getWindowManager()->pushGuiMode(GM_Companion, mPtr);
+        else
+        {
+            MWBase::DialogueManager* dialogueManager = MWBase::Environment::get().getDialogueManager();
+
+            if (dialogueChoiceType == mwmp::DialogueChoiceType::BARTER && !dialogueManager->checkServiceRefused(mCallback.get(), MWBase::DialogueManager::Barter))
+                MWBase::Environment::get().getWindowManager()->pushGuiMode(GM_Barter, mPtr);
+            else if (dialogueChoiceType == mwmp::DialogueChoiceType::SPELLS && !dialogueManager->checkServiceRefused(mCallback.get(), MWBase::DialogueManager::Spells))
+                MWBase::Environment::get().getWindowManager()->pushGuiMode(GM_SpellBuying, mPtr);
+            else if (dialogueChoiceType == mwmp::DialogueChoiceType::TRAVEL && !dialogueManager->checkServiceRefused(mCallback.get(), MWBase::DialogueManager::Travel))
+                MWBase::Environment::get().getWindowManager()->pushGuiMode(GM_Travel, mPtr);
+            else if (dialogueChoiceType == mwmp::DialogueChoiceType::SPELLMAKING && !dialogueManager->checkServiceRefused(mCallback.get(), MWBase::DialogueManager::Spellmaking))
+                MWBase::Environment::get().getWindowManager()->pushGuiMode(GM_SpellCreation, mPtr);
+            else if (dialogueChoiceType == mwmp::DialogueChoiceType::ENCHANTING && !dialogueManager->checkServiceRefused(mCallback.get(), MWBase::DialogueManager::Enchanting))
+                MWBase::Environment::get().getWindowManager()->pushGuiMode(GM_Enchanting, mPtr);
+            else if (dialogueChoiceType == mwmp::DialogueChoiceType::TRAINING && !dialogueManager->checkServiceRefused(mCallback.get(), MWBase::DialogueManager::Training))
+                MWBase::Environment::get().getWindowManager()->pushGuiMode(GM_Training, mPtr);
+            else if (dialogueChoiceType == mwmp::DialogueChoiceType::REPAIR && !dialogueManager->checkServiceRefused(mCallback.get(), MWBase::DialogueManager::Repair))
+                MWBase::Environment::get().getWindowManager()->pushGuiMode(GM_MerchantRepair, mPtr);
+        }
+    }
+    /*
+        End of tes3mp addition
+    */
 
     /*
         Start of tes3mp addition

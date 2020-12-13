@@ -12,6 +12,10 @@ PacketObjectDialogueChoice::PacketObjectDialogueChoice(RakNet::RakPeerInterface 
 void PacketObjectDialogueChoice::Object(BaseObject& baseObject, bool send)
 {
     ObjectPacket::Object(baseObject, send);
-    RW(baseObject.dialogueChoice, send, true);
+    RW(baseObject.dialogueChoiceType, send);
+
+    if (baseObject.dialogueChoiceType == DialogueChoiceType::TOPIC)
+        RW(baseObject.topicId, send, true);
+
     RW(baseObject.guiId, send);
 }

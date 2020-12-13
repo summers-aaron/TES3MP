@@ -10,6 +10,23 @@
 
 namespace mwmp
 {
+    namespace DialogueChoiceType
+    {
+        enum DIALOGUE_CHOICE
+        {
+            TOPIC,
+            PERSUASION,
+            COMPANION_SHARE,
+            BARTER,
+            SPELLS,
+            TRAVEL,
+            SPELLMAKING,
+            ENCHANTING,
+            TRAINING,
+            REPAIR
+        };
+    }
+
     enum PACKET_ORIGIN
     {
         CLIENT_GAMEPLAY = 0,

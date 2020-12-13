@@ -8,6 +8,7 @@
 #include "CellController.hpp"
 #include "RecordHelper.hpp"
 
+#include <components/translation/translation.hpp>
 #include <components/openmw-mp/TimedLog.hpp>
 
 #include "../mwbase/world.hpp"
@@ -1007,8 +1008,8 @@ void ObjectList::makeDialogueChoices(MWWorld::CellStore* cellStore)
                     MWBase::Environment::get().getWindowManager()->pushGuiMode(MWGui::GM_Dialogue, ptrFound);
                 }
                 
-                LOG_APPEND(TimedLog::LOG_VERBOSE, "-- Making dialogue choice of %s", baseObject.dialogueChoice);
-                MWBase::Environment::get().getWindowManager()->getDialogueWindow()->onSelectListItem(baseObject.dialogueChoice, baseObject.guiId);
+                LOG_APPEND(TimedLog::LOG_VERBOSE, "-- Making dialogue choice of type %i", baseObject.dialogueChoiceType);
+                MWBase::Environment::get().getWindowManager()->getDialogueWindow()->activateDialogueChoice(baseObject.dialogueChoiceType, baseObject.topicId);
             }
             else
             {
@@ -1272,7 +1273,40 @@ void ObjectList::addObjectDialogueChoice(const MWWorld::Ptr& ptr, std::string di
     cell = *ptr.getCell()->getCell();
 
     mwmp::BaseObject baseObject = getBaseObjectFromPtr(ptr);
-    baseObject.dialogueChoice = dialogueChoice;
+
+    const MWWorld::Store<ESM::GameSetting>& gmst = MWBase::Environment::get().getWorld()->getStore().get<ESM::GameSetting>();
+
+    // Because the actual text for any of the special dialogue choices can vary according to the game language used,
+    // set the type of dialogue choice by doing a lot of checks
+    if (dialogueChoice == gmst.find("sPersuasion")->mValue.getString())
+        baseObject.dialogueChoiceType = static_cast<int>(DialogueChoiceType::PERSUASION);
+    else if (dialogueChoice == gmst.find("sCompanionShare")->mValue.getString())
+        baseObject.dialogueChoiceType = DialogueChoiceType::COMPANION_SHARE;
+    else if (dialogueChoice == gmst.find("sBarter")->mValue.getString())
+        baseObject.dialogueChoiceType = DialogueChoiceType::BARTER;
+    else if (dialogueChoice == gmst.find("sSpells")->mValue.getString())
+        baseObject.dialogueChoiceType = DialogueChoiceType::SPELLS;
+    else if (dialogueChoice == gmst.find("sTravel")->mValue.getString())
+        baseObject.dialogueChoiceType = DialogueChoiceType::TRAVEL;
+    else if (dialogueChoice == gmst.find("sSpellMakingMenuTitle")->mValue.getString())
+        baseObject.dialogueChoiceType = DialogueChoiceType::SPELLMAKING;
+    else if (dialogueChoice == gmst.find("sEnchanting")->mValue.getString())
+        baseObject.dialogueChoiceType = DialogueChoiceType::ENCHANTING;
+    else if (dialogueChoice == gmst.find("sServiceTrainingTitle")->mValue.getString())
+        baseObject.dialogueChoiceType = DialogueChoiceType::TRAINING;
+    else if (dialogueChoice == gmst.find("sRepair")->mValue.getString())
+        baseObject.dialogueChoiceType = DialogueChoiceType::REPAIR;
+    else
+    {
+        baseObject.dialogueChoiceType = DialogueChoiceType::TOPIC;
+
+        // For translated versions of the game, make sure we translate the topic back into English first
+        if (MWBase::Environment::get().getWindowManager()->getTranslationDataStorage().hasTranslation())
+            baseObject.topicId = MWBase::Environment::get().getWindowManager()->getTranslationDataStorage().topicID(dialogueChoice);
+        else
+            baseObject.topicId = dialogueChoice;
+    }
+
     baseObject.guiId = guiId;
     addBaseObject(baseObject);
 }
