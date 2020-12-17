@@ -381,12 +381,7 @@ namespace MWGui
             Instead of activating a list item here, send an ObjectDialogueChoice packet to the server
             and let it decide whether the list item gets activated
         */
-        mwmp::ObjectList* objectList = mwmp::Main::get().getNetworking()->getObjectList();
-        objectList->reset();
-        objectList->packetOrigin = mwmp::CLIENT_GAMEPLAY;
-        objectList->addObjectDialogueChoice(mPtr, topic, id);
-        objectList->sendObjectDialogueChoice();
-
+        sendDialogueChoicePacket(topic);
         return;
         /*
             End of tes3mp change (major)
@@ -441,6 +436,25 @@ namespace MWGui
         else
             updateTopics();
     }
+
+    /*
+        Start of tes3mp addition
+
+        A different event that should be used in multiplayer when clicking on choices
+        in the dialogue screen, sending DialogueChoice packets to the server so they can
+        be approved or denied
+    */
+    void DialogueWindow::sendDialogueChoicePacket(const std::string& topic)
+    {
+        mwmp::ObjectList* objectList = mwmp::Main::get().getNetworking()->getObjectList();
+        objectList->reset();
+        objectList->packetOrigin = mwmp::CLIENT_GAMEPLAY;
+        objectList->addObjectDialogueChoice(mPtr, topic);
+        objectList->sendObjectDialogueChoice();
+    }
+    /*
+        End of tes3mp addition
+    */
 
     /*
         Start of tes3mp addition
@@ -650,7 +664,18 @@ namespace MWGui
             mTopicsList->addItem(keyword);
 
             Topic* t = new Topic(keyword);
-            t->eventTopicActivated += MyGUI::newDelegate(this, &DialogueWindow::onTopicActivated);
+            /*
+                Start of tes3mp change (major)
+
+                Instead of running DialogueWindow::onSelectListItem() when clicking a highlighted topic, run
+                onSendDialoguePacket() so the server can approve or deny a dialogue choice
+            */
+            //t->eventTopicActivated += MyGUI::newDelegate(this, &DialogueWindow::onTopicActivated);
+            t->eventTopicActivated += MyGUI::newDelegate(this, &DialogueWindow::sendDialogueChoicePacket);
+            /*
+                End of tes3mp change (major)
+            */
+            
             mTopicLinks[topicId] = t;
 
             mKeywordSearch.seed(topicId, intptr_t(t));

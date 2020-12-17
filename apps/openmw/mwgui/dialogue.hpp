@@ -160,6 +160,18 @@ namespace MWGui
         bool isCompanion(const MWWorld::Ptr& actor);
         bool isCompanion();
 
+        /*
+            Start of tes3mp addition
+
+            A different event that should be used in multiplayer when clicking on choices
+            in the dialogue screen, sending DialogueChoice packets to the server so they can
+            be approved or denied
+        */
+        void sendDialogueChoicePacket(const std::string& topic);
+        /*
+            End of tes3mp addition
+        */
+
         void onSelectListItem(const std::string& topic, int id);
         void onByeClicked(MyGUI::Widget* _sender);
         void onMouseWheel(MyGUI::Widget* _sender, int _rel);

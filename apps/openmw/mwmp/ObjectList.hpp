@@ -61,7 +61,7 @@ namespace mwmp
         void addObjectSpawn(const MWWorld::Ptr& ptr);
         void addObjectSpawn(const MWWorld::Ptr& ptr, const MWWorld::Ptr& master, std::string spellId, int effectId, float duration);
         void addObjectLock(const MWWorld::Ptr& ptr, int lockLevel);
-        void addObjectDialogueChoice(const MWWorld::Ptr& ptr, std::string dialogueChoice, int guiId);
+        void addObjectDialogueChoice(const MWWorld::Ptr& ptr, std::string dialogueChoice);
         void addObjectMiscellaneous(const MWWorld::Ptr& ptr, unsigned int goldPool, float lastGoldRestockHour, int lastGoldRestockDay);
         void addObjectTrap(const MWWorld::Ptr& ptr, const ESM::Position& pos, bool isDisarmed);
         void addObjectScale(const MWWorld::Ptr& ptr, float scale);

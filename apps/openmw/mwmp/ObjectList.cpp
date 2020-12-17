@@ -1009,6 +1009,12 @@ void ObjectList::makeDialogueChoices(MWWorld::CellStore* cellStore)
                 }
                 
                 LOG_APPEND(TimedLog::LOG_VERBOSE, "-- Making dialogue choice of type %i", baseObject.dialogueChoiceType);
+
+                if (baseObject.dialogueChoiceType == DialogueChoiceType::TOPIC)
+                {
+                    LOG_APPEND(TimedLog::LOG_VERBOSE, "-- topic was %s", baseObject.topicId.c_str());
+                }
+
                 MWBase::Environment::get().getWindowManager()->getDialogueWindow()->activateDialogueChoice(baseObject.dialogueChoiceType, baseObject.topicId);
             }
             else
@@ -1268,7 +1274,7 @@ void ObjectList::addObjectLock(const MWWorld::Ptr& ptr, int lockLevel)
     addBaseObject(baseObject);
 }
 
-void ObjectList::addObjectDialogueChoice(const MWWorld::Ptr& ptr, std::string dialogueChoice, int guiId)
+void ObjectList::addObjectDialogueChoice(const MWWorld::Ptr& ptr, std::string dialogueChoice)
 {
     cell = *ptr.getCell()->getCell();
 
@@ -1307,7 +1313,6 @@ void ObjectList::addObjectDialogueChoice(const MWWorld::Ptr& ptr, std::string di
             baseObject.topicId = dialogueChoice;
     }
 
-    baseObject.guiId = guiId;
     addBaseObject(baseObject);
 }
 
