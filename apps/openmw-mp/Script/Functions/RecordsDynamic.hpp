@@ -99,6 +99,7 @@
     {"SetRecordAIServices",                     RecordsDynamicFunctions::SetRecordAIServices},\
     \
     {"SetRecordSound",                          RecordsDynamicFunctions::SetRecordSound},\
+    {"SetRecordVolume",                         RecordsDynamicFunctions::SetRecordVolume},\
     {"SetRecordMinRange",                       RecordsDynamicFunctions::SetRecordMinRange},\
     {"SetRecordMaxRange",                       RecordsDynamicFunctions::SetRecordMaxRange},\
     {"SetRecordOpenSound",                      RecordsDynamicFunctions::SetRecordOpenSound},\
