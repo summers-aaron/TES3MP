@@ -13,7 +13,6 @@
     End of tes3mp addition
 */
 
-#include <BulletCollision/CollisionShapes/btCapsuleShape.h>
 #include <BulletCollision/CollisionShapes/btBoxShape.h>
 #include <BulletCollision/CollisionDispatch/btCollisionWorld.h>
 
@@ -27,13 +26,15 @@
 #include "collisiontype.hpp"
 #include "mtphysics.hpp"
 
+#include <cmath>
+
 namespace MWPhysics
 {
 
 
 Actor::Actor(const MWWorld::Ptr& ptr, const Resource::BulletShape* shape, PhysicsTaskScheduler* scheduler)
   : mStandingOnPtr(nullptr), mCanWaterWalk(false), mWalkingOnWater(false)
-  , mCollisionObject(nullptr), mMeshTranslation(shape->mCollisionBoxTranslate), mHalfExtents(shape->mCollisionBoxHalfExtents)
+  , mCollisionObject(nullptr), mMeshTranslation(shape->mCollisionBox.center), mHalfExtents(shape->mCollisionBox.extents)
   , mForce(0.f, 0.f, 0.f), mOnGround(true), mOnSlope(false)
   , mInternalCollisionMode(true)
   , mExternalCollisionMode(true)
@@ -65,17 +66,8 @@ Actor::Actor(const MWWorld::Ptr& ptr, const Resource::BulletShape* shape, Physic
             Log(Debug::Error) << "Error: Failed to calculate bounding box for actor \"" << ptr.getCellRef().getRefId() << "\".";
     }
 
-    // Use capsule shape only if base is square (nonuniform scaling apparently doesn't work on it)
-    if (std::abs(mHalfExtents.x()-mHalfExtents.y())<mHalfExtents.x()*0.05 && mHalfExtents.z() >= mHalfExtents.x())
-    {
-        mShape.reset(new btCapsuleShapeZ(mHalfExtents.x(), 2*mHalfExtents.z() - 2*mHalfExtents.x()));
-        mRotationallyInvariant = true;
-    }
-    else
-    {
-        mShape.reset(new btBoxShape(Misc::Convert::toBullet(mHalfExtents)));
-        mRotationallyInvariant = false;
-    }
+    mShape.reset(new btBoxShape(Misc::Convert::toBullet(mHalfExtents)));
+    mRotationallyInvariant = (mMeshTranslation.x() == 0.0 && mMeshTranslation.y() == 0.0) && std::fabs(mHalfExtents.x() - mHalfExtents.y()) < 2.2;
 
     mConvexShape = static_cast<btConvexShape*>(mShape.get());
 
@@ -83,11 +75,14 @@ Actor::Actor(const MWWorld::Ptr& ptr, const Resource::BulletShape* shape, Physic
     mCollisionObject->setCollisionFlags(btCollisionObject::CF_KINEMATIC_OBJECT);
     mCollisionObject->setActivationState(DISABLE_DEACTIVATION);
     mCollisionObject->setCollisionShape(mShape.get());
-    mCollisionObject->setUserPointer(static_cast<PtrHolder*>(this));
+    mCollisionObject->setUserPointer(this);
 
-    updateRotation();
     updateScale();
-    resetPosition();
+
+    if(!mRotationallyInvariant)
+        updateRotation();
+
+    updatePosition();
     addCollisionMask(getCollisionMask());
 
     /*
@@ -110,6 +105,8 @@ Actor::Actor(const MWWorld::Ptr& ptr, const Resource::BulletShape* shape, Physic
     /*
         End of tes3mp addition
     */
+
+    updateCollisionObjectPosition();
 }
 
 Actor::~Actor()
@@ -152,26 +149,34 @@ int Actor::getCollisionMask() const
     return collisionMask;
 }
 
-void Actor::updatePositionUnsafe()
-{
-    mWorldPosition = mPtr.getRefData().getPosition().asVec3();
-}
-
 void Actor::updatePosition()
 {
     std::scoped_lock lock(mPositionMutex);
-    updatePositionUnsafe();
+    updateWorldPosition();
+    mPreviousPosition = mWorldPosition;
+    mPosition = mWorldPosition;
+    mSimulationPosition = mWorldPosition;
+    mStandingOnPtr = nullptr;
+    mSkipSimulation = true;
+}
+
+void Actor::updateWorldPosition()
+{
+    if (mWorldPosition != mPtr.getRefData().getPosition().asVec3())
+        mWorldPositionChanged = true;
+    mWorldPosition = mPtr.getRefData().getPosition().asVec3();
 }
 
 osg::Vec3f Actor::getWorldPosition() const
 {
-    std::scoped_lock lock(mPositionMutex);
     return mWorldPosition;
 }
 
 void Actor::setSimulationPosition(const osg::Vec3f& position)
 {
-    mSimulationPosition = position;
+    if (!mSkipSimulation)
+        mSimulationPosition = position;
+    mSkipSimulation = false;
 }
 
 osg::Vec3f Actor::getSimulationPosition() const
@@ -179,20 +184,21 @@ osg::Vec3f Actor::getSimulationPosition() const
     return mSimulationPosition;
 }
 
-void Actor::updateCollisionObjectPositionUnsafe()
+osg::Vec3f Actor::getScaledMeshTranslation() const
 {
+    return mRotation * osg::componentMultiply(mMeshTranslation, mScale);
+}
+
+void Actor::updateCollisionObjectPosition()
+{
+    std::scoped_lock lock(mPositionMutex);
     mShape->setLocalScaling(Misc::Convert::toBullet(mScale));
     osg::Vec3f scaledTranslation = mRotation * osg::componentMultiply(mMeshTranslation, mScale);
     osg::Vec3f newPosition = scaledTranslation + mPosition;
     mLocalTransform.setOrigin(Misc::Convert::toBullet(newPosition));
     mLocalTransform.setRotation(Misc::Convert::toBullet(mRotation));
     mCollisionObject->setWorldTransform(mLocalTransform);
-}
-
-void Actor::updateCollisionObjectPosition()
-{
-    std::scoped_lock lock(mPositionMutex);
-    updateCollisionObjectPositionUnsafe();
+    mWorldPositionChanged = false;
 }
 
 osg::Vec3f Actor::getCollisionObjectPosition() const
@@ -201,28 +207,20 @@ osg::Vec3f Actor::getCollisionObjectPosition() const
     return Misc::Convert::toOsg(mLocalTransform.getOrigin());
 }
 
-void Actor::setPosition(const osg::Vec3f& position)
+bool Actor::setPosition(const osg::Vec3f& position)
 {
     std::scoped_lock lock(mPositionMutex);
-    mPreviousPosition = mPosition;
-    mPosition = position;
+    bool hasChanged = mPosition != position || mPositionOffset.length() != 0 || mWorldPositionChanged;
+    mPreviousPosition = mPosition + mPositionOffset;
+    mPosition = position + mPositionOffset;
+    mPositionOffset = osg::Vec3f();
+    return hasChanged;
 }
 
 void Actor::adjustPosition(const osg::Vec3f& offset)
 {
     std::scoped_lock lock(mPositionMutex);
-    mPosition += offset;
-    mPreviousPosition += offset;
-}
-
-void Actor::resetPosition()
-{
-    std::scoped_lock lock(mPositionMutex);
-    updatePositionUnsafe();
-    mPreviousPosition = mWorldPosition;
-    mPosition = mWorldPosition;
-    mSimulationPosition = mWorldPosition;
-    updateCollisionObjectPositionUnsafe();
+    mPositionOffset += offset;
 }
 
 osg::Vec3f Actor::getPosition() const
@@ -238,8 +236,6 @@ osg::Vec3f Actor::getPreviousPosition() const
 void Actor::updateRotation ()
 {
     std::scoped_lock lock(mPositionMutex);
-    if (mRotation == mPtr.getRefData().getBaseNode()->getAttitude())
-        return;
     mRotation = mPtr.getRefData().getBaseNode()->getAttitude();
 }
 
@@ -270,7 +266,6 @@ osg::Vec3f Actor::getHalfExtents() const
 
 osg::Vec3f Actor::getOriginalHalfExtents() const
 {
-    std::scoped_lock lock(mPositionMutex);
     return mHalfExtents;
 }
 
@@ -307,7 +302,6 @@ void Actor::setWalkingOnWater(bool walkingOnWater)
 
 void Actor::setCanWaterWalk(bool waterWalk)
 {
-    std::scoped_lock lock(mPositionMutex);
     if (waterWalk != mCanWaterWalk)
     {
         mCanWaterWalk = waterWalk;

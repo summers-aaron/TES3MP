@@ -2156,7 +2156,7 @@ void CharacterController::update(float duration, bool animationOnly)
             movementSettings.mSpeedFactor *= 2.f;
 
         static const bool smoothMovement = Settings::Manager::getBool("smooth movement", "Game");
-        if (smoothMovement && !isFirstPersonPlayer)
+        if (smoothMovement)
         {
             static const float playerTurningCoef = 1.0 / std::max(0.01f, Settings::Manager::getFloat("smooth movement player turning delay", "Game"));
             float angle = mPtr.getRefData().getPosition().rot[2];
@@ -2166,7 +2166,9 @@ void CharacterController::update(float duration, bool animationOnly)
             float deltaLen = delta.length();
 
             float maxDelta;
-            if (std::abs(speedDelta) < deltaLen / 2)
+            if (isFirstPersonPlayer)
+                maxDelta = 1;
+            else if (std::abs(speedDelta) < deltaLen / 2)
                 // Turning is smooth for player and less smooth for NPCs (otherwise NPC can miss a path point).
                 maxDelta = duration * (isPlayer ? playerTurningCoef : 6.f);
             else if (isPlayer && speedDelta < -deltaLen / 2)
@@ -2204,7 +2206,10 @@ void CharacterController::update(float duration, bool animationOnly)
         bool canMove = cls.getMaxSpeed(mPtr) > 0;
         static const bool turnToMovementDirection = Settings::Manager::getBool("turn to movement direction", "Game");
         if (!turnToMovementDirection || isFirstPersonPlayer)
+        {
             movementSettings.mIsStrafing = std::abs(vec.x()) > std::abs(vec.y()) * 2;
+            stats.setSideMovementAngle(0);
+        }
         else if (canMove)
         {
             float targetMovementAngle = vec.y() >= 0 ? std::atan2(-vec.x(), vec.y()) : std::atan2(vec.x(), -vec.y());
@@ -2456,18 +2461,19 @@ void CharacterController::update(float duration, bool animationOnly)
                 sndMgr->playSound3D(mPtr, sound, 1.f, 1.f, MWSound::Type::Foot, MWSound::PlayMode::NoPlayerLocal);
         }
 
-        if (turnToMovementDirection)
+        if (turnToMovementDirection && !isFirstPersonPlayer &&
+            (movestate == CharState_SwimRunForward || movestate == CharState_SwimWalkForward ||
+             movestate == CharState_SwimRunBack || movestate == CharState_SwimWalkBack))
         {
-            float targetSwimmingPitch;
-            if (inwater && vec.y() != 0 && !isFirstPersonPlayer && !movementSettings.mIsStrafing)
-                targetSwimmingPitch = -mPtr.getRefData().getPosition().rot[0];
-            else
-                targetSwimmingPitch = 0;
-            float maxSwimPitchDelta = 3.0f * duration;
             float swimmingPitch = mAnimation->getBodyPitchRadians();
+            float targetSwimmingPitch = -mPtr.getRefData().getPosition().rot[0];
+            float maxSwimPitchDelta = 3.0f * duration;
             swimmingPitch += osg::clampBetween(targetSwimmingPitch - swimmingPitch, -maxSwimPitchDelta, maxSwimPitchDelta);
             mAnimation->setBodyPitchRadians(swimmingPitch);
         }
+        else
+            mAnimation->setBodyPitchRadians(0);
+
         static const bool swimUpwardCorrection = Settings::Manager::getBool("swim upward correction", "Game");
         if (inwater && isPlayer && !isFirstPersonPlayer && swimUpwardCorrection)
         {
@@ -2615,7 +2621,7 @@ void CharacterController::update(float duration, bool animationOnly)
     moved.y() *= scale;
 
     // Ensure we're moving in generally the right direction...
-    if(speed > 0.f)
+    if (speed > 0.f && moved != osg::Vec3f())
     {
         float l = moved.length();
         if (std::abs(movement.x() - moved.x()) > std::abs(moved.x()) / 2 ||
@@ -2631,8 +2637,14 @@ void CharacterController::update(float duration, bool animationOnly)
         }
     }
 
-    if (mFloatToSurface && cls.isActor() && cls.getCreatureStats(mPtr).isDead() && cls.canSwim(mPtr))
-        moved.z() = 1.0;
+    if (mFloatToSurface && cls.isActor() && cls.canSwim(mPtr))
+    {
+        if (cls.getCreatureStats(mPtr).isDead()
+            || (!godmode && cls.getCreatureStats(mPtr).isParalyzed()))
+        {
+            moved.z() = 1.0;
+        }
+    }    
 
     // Update movement
     if(!animationOnly && mMovementAnimationControlled && mPtr.getClass().isActor())

@@ -224,13 +224,23 @@ add_component_dir (fallback
     fallback validate
     )
 
-if(NOT WIN32 AND NOT ANDROID)
-    if (BUILD_OPENMW OR BUILD_OPENCS)
+# Start of tes3mp change (major)
+#
+# Don't require the crashcatcher when building the server
+if (BUILD_OPENMW OR BUILD_OPENCS)
+    if(WIN32)
+        add_component_dir (crashcatcher
+            windows_crashcatcher
+            windows_crashmonitor
+            windows_crashshm
+        )
+    elseif(NOT ANDROID)
         add_component_dir (crashcatcher
             crashcatcher
         )
     endif()
 endif()
+# End of tes3mp change (major)
 
 if (BUILD_OPENMW OR BUILD_OPENCS)
     add_component_dir(detournavigator
@@ -309,19 +319,28 @@ target_link_libraries(components
     ${OSGGA_LIBRARIES}
     ${OSGSHADOW_LIBRARIES}
     ${OSGANIMATION_LIBRARIES}
-    ${BULLET_LIBRARIES}
     ${SDL2_LIBRARIES}
     ${OPENGL_gl_LIBRARY}
     ${MyGUI_LIBRARIES}
     LZ4::LZ4
     )
 
+# Start of tes3mp change (major)
+#
+# Don't require RecastNavigation when building the server
 if (BUILD_OPENMW OR BUILD_OPENCS)
     target_link_libraries(components
             RecastNavigation::DebugUtils
             RecastNavigation::Detour
             RecastNavigation::Recast)
 endif ()
+# End of tes3mp change (major)
+
+if (BULLET_USE_DOUBLES AND (UBUNTU_FOUND OR DEBIAN_FOUND))
+    target_link_libraries(components BulletCollision-float64 LinearMath-float64)
+else()
+    target_link_libraries(components ${BULLET_LIBRARIES})
+endif()
 
 if (WIN32)
     target_link_libraries(components
