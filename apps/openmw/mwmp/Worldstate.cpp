@@ -384,7 +384,7 @@ void Worldstate::setClientGlobals()
         if (clientGlobal.variableType == mwmp::VARIABLE_TYPE::SHORT || clientGlobal.variableType == mwmp::VARIABLE_TYPE::LONG)
             MWBase::Environment::get().getWorld()->setGlobalInt(clientGlobal.id, clientGlobal.intValue);
         else if (clientGlobal.variableType == mwmp::VARIABLE_TYPE::FLOAT)
-            MWBase::Environment::get().getWorld()->setGlobalInt(clientGlobal.id, clientGlobal.floatValue);
+            MWBase::Environment::get().getWorld()->setGlobalFloat(clientGlobal.id, clientGlobal.floatValue);
     }
 
     LOG_APPEND(TimedLog::LOG_INFO, "- %s", debugMessage.c_str());
