@@ -27,10 +27,10 @@ namespace RecordHelper
     void overrideRecord(const mwmp::ProbeRecord& record);
     void overrideRecord(const mwmp::RepairRecord& record);
     void overrideRecord(const mwmp::ScriptRecord& record);
+    void overrideRecord(const mwmp::SoundRecord& record);
     void overrideRecord(const mwmp::SpellRecord& record);
     void overrideRecord(const mwmp::StaticRecord& record);
     void overrideRecord(const mwmp::WeaponRecord& record);
-    void overrideRecord(const mwmp::SoundRecord& record);
 
     template<class RecordType>
     void overrideRecord(const RecordType &record)
