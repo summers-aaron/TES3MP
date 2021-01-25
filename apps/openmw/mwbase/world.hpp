@@ -10,6 +10,16 @@
 
 #include <components/esm/cellid.hpp>
 
+/*
+    Start of tes3mp addition
+
+    Include additional headers for multiplayer purposes
+*/
+#include <components/esm/variant.hpp>
+/*
+    End of tes3mp addition
+*/
+
 #include <osg/Timer>
 
 #include "../mwworld/ptr.hpp"
@@ -174,6 +184,19 @@ namespace MWBase
 
             virtual void getDoorMarkers (MWWorld::CellStore* cell, std::vector<DoorMarker>& out) = 0;
             ///< get a list of teleport door markers for a given cell, to be displayed on the local map
+
+            /*
+                Start of tes3mp addition
+
+                Make it possible to check whether global variables exist and to create
+                new ones
+            */
+            virtual bool hasGlobal(const std::string& name) = 0;
+
+            virtual void createGlobal(const std::string& name, ESM::VarType varType) = 0;
+            /*
+                End of tes3mp addition
+            */
 
             virtual void setGlobalInt (const std::string& name, int value) = 0;
             ///< Set value independently from real type.

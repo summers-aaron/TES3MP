@@ -658,6 +658,28 @@ namespace MWWorld
         return mWorldScene->hasCellChanged();
     }
 
+    /*
+        Start of tes3mp addition
+
+        Make it possible to check whether global variables exist and to create
+        new ones
+    */
+    bool World::hasGlobal(const std::string& name)
+    {
+        return mGlobalVariables.hasRecord(name);
+    }
+
+    void World::createGlobal(const std::string& name, ESM::VarType varType)
+    {
+        ESM::Global global;
+        global.mId = name;
+        global.mValue.setType(varType);
+        mGlobalVariables.addRecord(global);
+    }
+    /*
+        End of tes3mp addition
+    */
+
     void World::setGlobalInt (const std::string& name, int value)
     {
         bool dateUpdated = mCurrentDate->updateGlobalInt(name, value);

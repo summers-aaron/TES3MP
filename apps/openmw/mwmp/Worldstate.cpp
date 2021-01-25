@@ -381,10 +381,27 @@ void Worldstate::setClientGlobals()
             debugMessage += clientGlobal.id + ": " + variableTypeAsString + " " + valueAsString;
         }
 
+        MWBase::World* world = MWBase::Environment::get().getWorld();
+
+        // If this global doesn't exist, create it
+        if (!world->hasGlobal(clientGlobal.id))
+        {
+            ESM::VarType varType;
+
+            if (clientGlobal.variableType == mwmp::VARIABLE_TYPE::SHORT)
+                varType = ESM::VarType::VT_Short;
+            else if (clientGlobal.variableType == mwmp::VARIABLE_TYPE::LONG)
+                varType = ESM::VarType::VT_Long;
+            if (clientGlobal.variableType == mwmp::VARIABLE_TYPE::FLOAT)
+                varType = ESM::VarType::VT_Float;
+
+            world->createGlobal(clientGlobal.id, varType);
+        }
+
         if (clientGlobal.variableType == mwmp::VARIABLE_TYPE::SHORT || clientGlobal.variableType == mwmp::VARIABLE_TYPE::LONG)
-            MWBase::Environment::get().getWorld()->setGlobalInt(clientGlobal.id, clientGlobal.intValue);
+            world->setGlobalInt(clientGlobal.id, clientGlobal.intValue);
         else if (clientGlobal.variableType == mwmp::VARIABLE_TYPE::FLOAT)
-            MWBase::Environment::get().getWorld()->setGlobalFloat(clientGlobal.id, clientGlobal.floatValue);
+            world->setGlobalFloat(clientGlobal.id, clientGlobal.floatValue);
     }
 
     LOG_APPEND(TimedLog::LOG_INFO, "- %s", debugMessage.c_str());

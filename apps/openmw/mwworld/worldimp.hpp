@@ -281,6 +281,19 @@ namespace MWWorld
             void getDoorMarkers (MWWorld::CellStore* cell, std::vector<DoorMarker>& out) override;
             ///< get a list of teleport door markers for a given cell, to be displayed on the local map
 
+            /*
+                Start of tes3mp addition
+
+                Make it possible to check whether global variables exist and to create
+                new ones
+            */
+            bool hasGlobal(const std::string& name);
+
+            void createGlobal(const std::string& name, ESM::VarType varType);
+            /*
+                End of tes3mp addition
+            */
+
             void setGlobalInt (const std::string& name, int value) override;
             ///< Set value independently from real type.
 
