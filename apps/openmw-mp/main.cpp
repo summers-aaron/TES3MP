@@ -200,7 +200,8 @@ int main(int argc, char *argv[])
 
     vector<string> plugins(Utils::split(mgr.getString("plugins", "Plugins"), ','));
 
-    Utils::printVersion("TES3MP dedicated server", TES3MP_VERSION, version.mCommitHash, TES3MP_PROTO_VERSION);
+    std::string versionInfo = Utils::getVersionInfo("TES3MP dedicated server", TES3MP_VERSION, version.mCommitHash, TES3MP_PROTO_VERSION);
+    LOG_MESSAGE_SIMPLE(TimedLog::LOG_INFO, "%s", versionInfo.c_str());
     
     Script::SetModDir(dataDirectory);
 

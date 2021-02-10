@@ -59,7 +59,7 @@ namespace Utils
     std::string getOperatingSystemType();
     std::string getArchitectureType();
 
-    void printVersion(std::string appName, std::string version, std::string commitHash, int protocol);
+    std::string getVersionInfo(std::string appName, std::string version, std::string commitHash, int protocol);
 
     void printWithWidth(std::ostringstream &sstr, std::string str, size_t width);
 

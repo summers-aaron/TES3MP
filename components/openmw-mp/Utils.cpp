@@ -207,14 +207,16 @@ std::string Utils::getArchitectureType()
 #endif
 }
 
-void Utils::printVersion(std::string appName, std::string version, std::string commitHash, int protocol)
+std::string Utils::getVersionInfo(std::string appName, std::string version, std::string commitHash, int protocol)
 {
-    cout << appName << " " << version;
-    cout << " (" << getOperatingSystemType() << " " << getArchitectureType() << ")" << endl;
-    cout << "Protocol version: " << protocol << endl;
-    cout << "Oldest compatible commit hash: " << commitHash.substr(0, 10) << endl;
+    std::stringstream stream;
 
-    cout << "------------------------------------------------------------" << endl;
+    stream << appName << " " << version << " (" << getOperatingSystemType() << " " << getArchitectureType() << ")" << endl;
+    stream << "Protocol version: " << protocol << endl;
+    stream << "Oldest compatible commit hash: " << commitHash.substr(0, 10) << endl;
+    stream << "------------------------------------------------------------" << endl;
+
+    return stream.str();
 }
 
 void Utils::printWithWidth(ostringstream &sstr, string str, size_t width)
