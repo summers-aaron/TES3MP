@@ -379,45 +379,31 @@ namespace MWClass
         return info;
     }
 
-    std::string Door::getDestination (const MWWorld::LiveCellRef<ESM::Door>& door)
+    std::string Door::getDestination(const MWWorld::LiveCellRef<ESM::Door>& door)
     {
         const MWWorld::ESMStore& store = MWBase::Environment::get().getWorld()->getStore();
 
-        std::string dest;
-        if (door.mRef.getDestCell() != "")
-        {
-            // door leads to an interior, use interior name as tooltip
-            dest = door.mRef.getDestCell();
-
-            /*
-                Start of tes3mp change (major)
-
-                If there is a destination override in the mwmp::Worldstate for this door's original
-                destination, use it
-            */
-            if (mwmp::Main::get().getNetworking()->getWorldstate()->destinationOverrides.count(dest) != 0)
-                dest = mwmp::Main::get().getNetworking()->getWorldstate()->destinationOverrides[dest];
-            /*
-                End of tes3mp change (major)
-            */
-        }
-        else
+        std::string dest = door.mRef.getDestCell();
+        if (dest.empty())
         {
             // door leads to exterior, use cell name (if any), otherwise translated region name
-            int x,y;
-            MWBase::Environment::get().getWorld()->positionToIndex (door.mRef.getDoorDest().pos[0], door.mRef.getDoorDest().pos[1], x, y);
-            const ESM::Cell* cell = store.get<ESM::Cell>().find(x,y);
-            if (cell->mName != "")
-                dest = cell->mName;
-            else
-            {
-                const ESM::Region* region =
-                    store.get<ESM::Region>().find(cell->mRegion);
-
-                //name as is, not a token
-                return MyGUI::TextIterator::toTagsString(region->mName);
-            }
+            int x, y;
+            auto world = MWBase::Environment::get().getWorld();
+            world->positionToIndex(door.mRef.getDoorDest().pos[0], door.mRef.getDoorDest().pos[1], x, y);
+            const ESM::Cell* cell = world->getStore().get<ESM::Cell>().search(x, y);
+            dest = world->getCellName(cell);
         }
+        /*
+            Start of tes3mp addition
+
+            If there is a destination override in the mwmp::Worldstate for this door's original
+            destination, use it
+        */
+        else if (mwmp::Main::get().getNetworking()->getWorldstate()->destinationOverrides.count(dest) != 0)
+            dest = mwmp::Main::get().getNetworking()->getWorldstate()->destinationOverrides[dest];
+        /*
+            End of tes3mp addition
+        */
 
         return "#{sCell=" + dest + "}";
     }

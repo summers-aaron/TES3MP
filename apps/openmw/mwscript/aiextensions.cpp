@@ -255,7 +255,7 @@ namespace MWScript
                 {
                     MWWorld::Ptr ptr = R()(runtime);
 
-                    runtime.push(ptr.getClass().getCreatureStats (ptr).getAiSetting (mIndex).getModified());
+                    runtime.push(ptr.getClass().getCreatureStats (ptr).getAiSetting (mIndex).getModified(false));
                 }
         };
         template<class R>
@@ -290,20 +290,20 @@ namespace MWScript
                     Interpreter::Type_Integer value = runtime[0].mInteger;
                     runtime.pop();
 
-                    MWMechanics::Stat<int> stat = ptr.getClass().getCreatureStats(ptr).getAiSetting(mIndex);
-
                     /*
                         Start of tes3mp addition
 
                         Track the original stat value, to ensure we don't send repetitive packets to the server
                         about its changes
                     */
+                    MWMechanics::Stat<int> stat = ptr.getClass().getCreatureStats(ptr).getAiSetting(mIndex);
+
                     int initialValue = stat.getBase();
                     /*
                         End of tes3mp addition
-                    */                    
+                    */
 
-                    stat.setModified(value, 0);
+                    ptr.getClass().getCreatureStats(ptr).setAiSetting(mIndex, value);
                     ptr.getClass().setBaseAISetting(ptr.getCellRef().getRefId(), mIndex, value);
 
                     /*
