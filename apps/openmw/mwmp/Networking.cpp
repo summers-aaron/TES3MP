@@ -40,10 +40,9 @@
 #include "GUIController.hpp"
 #include "CellController.hpp"
 
-using namespace std;
 using namespace mwmp;
 
-string listDiscrepancies(PacketPreInit::PluginContainer checksums, PacketPreInit::PluginContainer checksumsResponse)
+std::string listDiscrepancies(PacketPreInit::PluginContainer checksums, PacketPreInit::PluginContainer checksumsResponse)
 {
     std::ostringstream sstr;
     sstr << "Your plugins or their load order don't match the server's. A full comparison is included in your debug window and latest log file. In short, the following discrepancies have been found:\n\n";
@@ -59,7 +58,7 @@ string listDiscrepancies(PacketPreInit::PluginContainer checksums, PacketPreInit
             if (discrepancyCount > 1)
                 sstr << "\n";
 
-            string clientFilename = checksums.at(fileIndex).first;
+            std::string clientFilename = checksums.at(fileIndex).first;
 
             sstr << fileIndex << ": ";
             sstr << clientFilename << " is past the number of plugins used by the server";
@@ -71,21 +70,21 @@ string listDiscrepancies(PacketPreInit::PluginContainer checksums, PacketPreInit
             if (discrepancyCount > 1)
                 sstr << "\n";
 
-            string serverFilename = checksumsResponse.at(fileIndex).first;
+            std::string serverFilename = checksumsResponse.at(fileIndex).first;
 
             sstr << fileIndex << ": ";
             sstr << serverFilename << " is completely missing from the client but required by the server";
         }
         else
         {
-            string clientFilename = checksums.at(fileIndex).first;
-            string serverFilename = checksumsResponse.at(fileIndex).first;
+            std::string clientFilename = checksums.at(fileIndex).first;
+            std::string serverFilename = checksumsResponse.at(fileIndex).first;
 
-            string clientChecksum = Utils::intToHexStr(checksums.at(fileIndex).second.at(0));
+            std::string clientChecksum = Utils::intToHexStr(checksums.at(fileIndex).second.at(0));
 
             bool filenameMatches = false;
             bool checksumMatches = false;
-            string eligibleChecksums = "";
+            std::string eligibleChecksums = "";
 
             if (Misc::StringUtils::ciEqual(clientFilename, serverFilename))
                 filenameMatches = true;
@@ -94,7 +93,7 @@ string listDiscrepancies(PacketPreInit::PluginContainer checksums, PacketPreInit
             {
                 for (size_t checksumIndex = 0; checksumIndex < checksumsResponse.at(fileIndex).second.size(); checksumIndex++)
                 {
-                    string serverChecksum = Utils::intToHexStr(checksumsResponse.at(fileIndex).second.at(checksumIndex));
+                    std::string serverChecksum = Utils::intToHexStr(checksumsResponse.at(fileIndex).second.at(checksumIndex));
 
                     if (checksumIndex != 0)
                         eligibleChecksums = eligibleChecksums + " or ";
@@ -135,7 +134,7 @@ string listDiscrepancies(PacketPreInit::PluginContainer checksums, PacketPreInit
     return sstr.str();
 }
 
-string listComparison(PacketPreInit::PluginContainer checksums, PacketPreInit::PluginContainer checksumsResponse,
+std::string listComparison(PacketPreInit::PluginContainer checksums, PacketPreInit::PluginContainer checksumsResponse,
                       bool full = false)
 {
     std::ostringstream sstr;
@@ -159,7 +158,7 @@ string listComparison(PacketPreInit::PluginContainer checksums, PacketPreInit::P
 
     for (size_t i = 0; i < checksums.size() || i < checksumsResponse.size(); i++)
     {
-        string plugin;
+        std::string plugin;
         unsigned val;
 
         if (i < checksums.size())
@@ -269,14 +268,14 @@ void Networking::update()
     }
 }
 
-void Networking::connect(const std::string &ip, unsigned short port, std::vector<string> &content, Files::Collections &collections)
+void Networking::connect(const std::string &ip, unsigned short port, std::vector<std::string> &content, Files::Collections &collections)
 {
     RakNet::SystemAddress master;
     master.SetBinaryAddress(ip.c_str());
     master.SetPortHostOrder(port);
     std::string errmsg = "";
 
-    stringstream sstr;
+    std::stringstream sstr;
     sstr << TES3MP_VERSION;
     sstr << TES3MP_PROTO_VERSION;
     std::string commitHashString = Version::getOpenmwVersion(Main::getResDir()).mCommitHash;
@@ -330,11 +329,11 @@ void Networking::connect(const std::string &ip, unsigned short port, std::vector
                     break;
                 }
                 case ID_DISCONNECTION_NOTIFICATION:
-                    throw runtime_error("ID_DISCONNECTION_NOTIFICATION.\n");
+                    throw std::runtime_error("ID_DISCONNECTION_NOTIFICATION.\n");
                 case ID_CONNECTION_BANNED:
-                    throw runtime_error("You have been banned from this server.\n");
+                    throw std::runtime_error("You have been banned from this server.\n");
                 case ID_CONNECTION_LOST:
-                    throw runtime_error("ID_CONNECTION_LOST.\n");
+                    throw std::runtime_error("ID_CONNECTION_LOST.\n");
                 default:
                     LOG_MESSAGE_SIMPLE(TimedLog::LOG_INFO, "Connection message with identifier %i has arrived in initialization.",
                                        packet->data[0]);
@@ -356,7 +355,7 @@ void Networking::connect(const std::string &ip, unsigned short port, std::vector
 void Networking::preInit(std::vector<std::string> &content, Files::Collections &collections)
 {
     PacketPreInit::PluginContainer checksums;
-    vector<string>::const_iterator it(content.begin());
+    std::vector<std::string>::const_iterator it(content.begin());
     for (int idx = 0; it != content.end(); ++it, ++idx)
     {
         boost::filesystem::path filename(*it);

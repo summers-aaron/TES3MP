@@ -39,7 +39,6 @@
 
 
 using namespace mwmp;
-using namespace std;
 
 DedicatedPlayer::DedicatedPlayer(RakNet::RakNetGUID guid) : BasePlayer(guid)
 {
@@ -259,7 +258,7 @@ void DedicatedPlayer::setEquipment()
     {
         MWWorld::ContainerStoreIterator it = invStore.getSlot(slot);
 
-        const string &packetRefId = equipmentItems[slot].refId;
+        const std::string &packetRefId = equipmentItems[slot].refId;
         std::string ptrItemId = "";
         bool equal = false;
 

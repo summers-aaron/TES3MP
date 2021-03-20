@@ -43,7 +43,6 @@
 #include "MechanicsHelper.hpp"
 
 using namespace mwmp;
-using namespace std;
 
 std::map<std::string, int> storedItemRemovals;
 
@@ -520,7 +519,7 @@ void LocalPlayer::updateInventory(bool forceUpdate)
 
     auto setItem = [](Item &item, const MWWorld::Ptr &iter) {
         item.refId = iter.getCellRef().getRefId();
-        if (item.refId.find("$dynamic") != string::npos)
+        if (item.refId.find("$dynamic") != std::string::npos)
             return true;
         item.count = iter.getRefData().getCount();
         item.charge = iter.getCellRef().getCharge();
@@ -1422,7 +1421,7 @@ void LocalPlayer::sendClass()
     const ESM::NPC *npcBase = world->getPlayerPtr().get<ESM::NPC>()->mBase;
     const ESM::Class *esmClass = world->getStore().get<ESM::Class>().find(npcBase->mClass);
 
-    if (npcBase->mClass.find("$dynamic") != string::npos) // custom class
+    if (npcBase->mClass.find("$dynamic") != std::string::npos) // custom class
     {
         charClass.mId = "";
         charClass.mName = esmClass->mName;
@@ -1451,7 +1450,7 @@ void LocalPlayer::sendInventory()
         item.refId = iter.getCellRef().getRefId();
 
         // Skip any items that somehow have clientside-only dynamic IDs
-        if (item.refId.find("$dynamic") != string::npos)
+        if (item.refId.find("$dynamic") != std::string::npos)
             continue;
 
         // Skip bound items
@@ -1559,7 +1558,7 @@ void LocalPlayer::sendSpellbook()
 void LocalPlayer::sendSpellChange(std::string id, unsigned int action)
 {
     // Skip any bugged spells that somehow have clientside-only dynamic IDs
-    if (id.find("$dynamic") != string::npos)
+    if (id.find("$dynamic") != std::string::npos)
         return;
 
     spellbookChanges.spells.clear();
@@ -1598,7 +1597,7 @@ void LocalPlayer::sendSpellsActive()
 void LocalPlayer::sendSpellsActiveAddition(const std::string id, ESM::ActiveSpells::ActiveSpellParams params)
 {
     // Skip any bugged spells that somehow have clientside-only dynamic IDs
-    if (id.find("$dynamic") != string::npos)
+    if (id.find("$dynamic") != std::string::npos)
         return;
 
     spellsActiveChanges.activeSpells.clear();
@@ -1616,7 +1615,7 @@ void LocalPlayer::sendSpellsActiveAddition(const std::string id, ESM::ActiveSpel
 void LocalPlayer::sendSpellsActiveRemoval(const std::string id)
 {
     // Skip any bugged spells that somehow have clientside-only dynamic IDs
-    if (id.find("$dynamic") != string::npos)
+    if (id.find("$dynamic") != std::string::npos)
         return;
 
     spellsActiveChanges.activeSpells.clear();

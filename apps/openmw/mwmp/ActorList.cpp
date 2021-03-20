@@ -9,7 +9,6 @@
 #include <components/openmw-mp/TimedLog.hpp>
 
 using namespace mwmp;
-using namespace std;
 
 ActorList::ActorList()
 {

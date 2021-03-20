@@ -19,7 +19,6 @@
 
 
 using namespace mwmp;
-using namespace std;
 
 std::map <RakNet::RakNetGUID, DedicatedPlayer *> PlayerList::playerList;
 
@@ -72,7 +71,7 @@ DedicatedPlayer *PlayerList::getPlayer(const MWWorld::Ptr &ptr)
         if (playerEntry.second == nullptr || playerEntry.second->getPtr().mRef == nullptr)
             continue;
         
-        string refId = ptr.getCellRef().getRefId();
+        std::string refId = ptr.getCellRef().getRefId();
         
         if (playerEntry.second->getPtr().getCellRef().getRefId() == refId)
             return playerEntry.second;

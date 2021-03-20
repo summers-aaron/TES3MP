@@ -31,7 +31,6 @@
 #include "MechanicsHelper.hpp"
 
 using namespace mwmp;
-using namespace std;
 
 DedicatedActor::DedicatedActor()
 {
@@ -178,7 +177,7 @@ void DedicatedActor::setEquipment()
 
         MWWorld::ContainerStoreIterator it = invStore.getSlot(slot);
 
-        const string &packetRefId = equipmentItems[slot].refId;
+        const std::string &packetRefId = equipmentItems[slot].refId;
         int packetCharge = equipmentItems[slot].charge;
         std::string storeRefId = "";
         bool equal = false;

@@ -18,7 +18,6 @@
 #include "CellController.hpp"
 
 using namespace mwmp;
-using namespace std;
 
 Worldstate::Worldstate()
 {

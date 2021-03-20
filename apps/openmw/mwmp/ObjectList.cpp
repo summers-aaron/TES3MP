@@ -40,7 +40,6 @@
 #include "../mwworld/timestamp.hpp"
 
 using namespace mwmp;
-using namespace std;
 
 ObjectList::ObjectList()
 {
@@ -206,7 +205,7 @@ void ObjectList::editContainers(MWWorld::CellStore* cellStore)
                 //LOG_APPEND(TimedLog::LOG_VERBOSE, "-- containerItem %s, count: %i, actionCount: %i",
                 //    containerItem.refId.c_str(), containerItem.count, containerItem.actionCount);
 
-                if (containerItem.refId.find("$dynamic") != string::npos)
+                if (containerItem.refId.find("$dynamic") != std::string::npos)
                     continue;
 
                 if (action == BaseObjectList::SET || action == BaseObjectList::ADD)
@@ -392,7 +391,7 @@ void ObjectList::placeObjects(MWWorld::CellStore* cellStore)
             baseObject.enchantmentCharge, baseObject.soul.c_str());
 
         // Ignore generic dynamic refIds because they could be anything on other clients
-        if (baseObject.refId.find("$dynamic") != string::npos)
+        if (baseObject.refId.find("$dynamic") != std::string::npos)
             continue;
 
         MWWorld::Ptr ptrFound = cellStore->searchExact(0, baseObject.mpNum);
@@ -450,7 +449,7 @@ void ObjectList::spawnObjects(MWWorld::CellStore* cellStore)
             baseObject.refNum, baseObject.mpNum);
 
         // Ignore generic dynamic refIds because they could be anything on other clients
-        if (baseObject.refId.find("$dynamic") != string::npos)
+        if (baseObject.refId.find("$dynamic") != std::string::npos)
             continue;
         else if (!RecordHelper::doesRecordIdExist<ESM::Creature>(baseObject.refId) && !RecordHelper::doesRecordIdExist<ESM::NPC>(baseObject.refId))
         {
@@ -1196,7 +1195,7 @@ void ObjectList::addObjectHit(const MWWorld::Ptr& ptr, const MWWorld::Ptr& hitti
 
 void ObjectList::addObjectPlace(const MWWorld::Ptr& ptr, bool droppedByPlayer)
 {
-    if (ptr.getCellRef().getRefId().find("$dynamic") != string::npos)
+    if (ptr.getCellRef().getRefId().find("$dynamic") != std::string::npos)
     {
         MWBase::Environment::get().getWindowManager()->messageBox("You cannot place unsynchronized custom items in multiplayer.");
         return;
@@ -1227,7 +1226,7 @@ void ObjectList::addObjectPlace(const MWWorld::Ptr& ptr, bool droppedByPlayer)
 
 void ObjectList::addObjectSpawn(const MWWorld::Ptr& ptr)
 {
-    if (ptr.getCellRef().getRefId().find("$dynamic") != string::npos)
+    if (ptr.getCellRef().getRefId().find("$dynamic") != std::string::npos)
     {
         MWBase::Environment::get().getWindowManager()->messageBox("You're trying to spawn a custom object lacking a server-given refId, "
             "and those cannot be synchronized in multiplayer.");

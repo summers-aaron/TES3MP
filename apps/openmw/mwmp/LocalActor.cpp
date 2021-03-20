@@ -18,7 +18,6 @@
 #include "MechanicsHelper.hpp"
 
 using namespace mwmp;
-using namespace std;
 
 LocalActor::LocalActor()
 {

@@ -48,7 +48,6 @@
 #include "RecordHelper.hpp"
 
 using namespace mwmp;
-using namespace std;
 
 Main *Main::pMain = 0;
 std::string Main::address = "";
@@ -119,8 +118,8 @@ void Main::optionsDesc(boost::program_options::options_description *desc)
 
 void Main::configure(const boost::program_options::variables_map &variables)
 {
-    Main::address = variables["connect"].as<string>();
-    Main::serverPassword = variables["password"].as<string>();
+    Main::address = variables["connect"].as<std::string>();
+    Main::serverPassword = variables["password"].as<std::string>();
     resourceDir = variables["resources"].as<Files::EscapePath>().mPath.string();
 }
 
