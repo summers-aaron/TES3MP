@@ -47,7 +47,7 @@ add_component_dir (resource
     )
 
 add_component_dir (shader
-    shadermanager shadervisitor
+    shadermanager shadervisitor removedalphafunc
     )
 
 add_component_dir (sceneutil
@@ -143,7 +143,7 @@ add_component_dir (fontloader
     )
 
 add_component_dir (sdlutil
-    sdlgraphicswindow imagetosurface sdlinputwrapper sdlvideowrapper events sdlcursormanager
+    gl4es_init sdlgraphicswindow imagetosurface sdlinputwrapper sdlvideowrapper events sdlcursormanager
     )
 ENDIF(BUILD_OPENMW OR BUILD_OPENCS)
 
@@ -242,6 +242,9 @@ if (BUILD_OPENMW OR BUILD_OPENCS)
 endif()
 # End of tes3mp change (major)
 
+# Start of tes3mp change (major)
+#
+# Don't require the DetourNavigator when building the server
 if (BUILD_OPENMW OR BUILD_OPENCS)
     add_component_dir(detournavigator
             debug
@@ -261,8 +264,10 @@ if (BUILD_OPENMW OR BUILD_OPENCS)
             settings
             navigator
             findrandompointaroundcircle
+            raycast
             )
 endif()
+# End of tes3mp change (major)
 
 set (ESM_UI ${CMAKE_SOURCE_DIR}/files/ui/contentselector.ui
     )
@@ -305,20 +310,26 @@ include_directories(${BULLET_INCLUDE_DIRS} ${CMAKE_CURRENT_BINARY_DIR})
 add_library(components STATIC ${COMPONENT_FILES} ${MOC_SRCS} ${ESM_UI_HDR})
 
 target_link_libraries(components
+    # CMake's built-in OSG finder does not use pkgconfig, so we have to
+    # manually ensure the order is correct for inter-library dependencies.
+    # This only makes a difference with `-DOPENMW_USE_SYSTEM_OSG=ON -DOSG_STATIC=ON`.
+    # https://gitlab.kitware.com/cmake/cmake/-/issues/21701
+    ${OSGPARTICLE_LIBRARIES}
+    ${OSGVIEWER_LIBRARIES}
+    ${OSGSHADOW_LIBRARIES}
+    ${OSGANIMATION_LIBRARIES}
+    ${OSGGA_LIBRARIES}
+    ${OSGTEXT_LIBRARIES}
+    ${OSGDB_LIBRARIES}
+    ${OSGUTIL_LIBRARIES}
+    ${OSG_LIBRARIES}
+    ${OPENTHREADS_LIBRARIES}
+
     ${Boost_SYSTEM_LIBRARY}
     ${Boost_FILESYSTEM_LIBRARY}
     ${Boost_PROGRAM_OPTIONS_LIBRARY}
     ${Boost_IOSTREAMS_LIBRARY}
-    ${OSG_LIBRARIES}
-    ${OPENTHREADS_LIBRARIES}
-    ${OSGPARTICLE_LIBRARIES}
-    ${OSGUTIL_LIBRARIES}
-    ${OSGDB_LIBRARIES}
-    ${OSGVIEWER_LIBRARIES}
-    ${OSGTEXT_LIBRARIES}
-    ${OSGGA_LIBRARIES}
-    ${OSGSHADOW_LIBRARIES}
-    ${OSGANIMATION_LIBRARIES}
+
     ${SDL2_LIBRARIES}
     ${OPENGL_gl_LIBRARY}
     ${MyGUI_LIBRARIES}

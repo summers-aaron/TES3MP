@@ -184,7 +184,7 @@ namespace MWGui
       , mWerewolfOverlayEnabled(Settings::Manager::getBool ("werewolf overlay", "GUI"))
       , mHudEnabled(true)
       , mCursorVisible(true)
-      , mCursorActive(false)
+      , mCursorActive(true)
       , mPlayerBounty(-1)
       , mGui(nullptr)
       , mGuiModes()
@@ -201,7 +201,7 @@ namespace MWGui
     {
         float uiScale = Settings::Manager::getFloat("scaling factor", "GUI");
         mGuiPlatform = new osgMyGUI::Platform(viewer, guiRoot, resourceSystem->getImageManager(), uiScale);
-        mGuiPlatform->initialise(resourcePath, logpath);
+        mGuiPlatform->initialise(resourcePath, (boost::filesystem::path(logpath) / "MyGUI.log").generic_string());
 
         mGui = new MyGUI::Gui;
         mGui->initialise("");
@@ -516,6 +516,8 @@ namespace MWGui
         }
         else
             allow(GW_ALL);
+
+        mStatsWatcher->forceUpdate();
     }
 
     WindowManager::~WindowManager()
@@ -523,8 +525,6 @@ namespace MWGui
         try
         {
             mStatsWatcher.reset();
-
-            mKeyboardNavigation.reset();
 
             MyGUI::LanguageManager::getInstance().eventRequestTag.clear();
             MyGUI::PointerManager::getInstance().eventChangeMousePointer.clear();
@@ -543,6 +543,8 @@ namespace MWGui
             delete mSoulgemDialog;
             delete mCursorManager;
             delete mToolTips;
+
+            mKeyboardNavigation.reset();
 
             cleanupGarbage();
 

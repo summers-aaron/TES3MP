@@ -186,9 +186,11 @@ namespace MWPhysics
         mPostStepBarrier = std::make_unique<Misc::Barrier>(mNumThreads, [&]()
             {
                 if (mRemainingSteps)
+                {
                     --mRemainingSteps;
+                    updateActorsPositions();
+                }
                 mNextJob.store(0, std::memory_order_release);
-                updateActorsPositions();
             });
 
         mPostSimBarrier = std::make_unique<Misc::Barrier>(mNumThreads, [&]()
@@ -492,6 +494,7 @@ namespace MWPhysics
                 if (actor->setPosition(actorData.mPosition))
                 {
                     std::scoped_lock lock(mCollisionWorldMutex);
+                    actorData.mPosition = actor->getPosition(); // account for potential position change made by script
                     actor->updateCollisionObjectPosition();
                     mCollisionWorld->updateSingleAabb(actor->getCollisionObject());
                 }
