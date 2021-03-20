@@ -11,8 +11,6 @@
 #include <boost/filesystem/fstream.hpp>
 #include <iomanip>
 
-using namespace std;
-
 #ifdef _WIN32
 int setenv(const char *name, const char *value, int overwrite)
 {
@@ -117,15 +115,15 @@ std::string Utils::toString(int num)
     return stream.str();
 }
 
-std::string Utils::replaceString(const string& source, const char* find, const char* replace)
+std::string Utils::replaceString(const std::string& source, const char* find, const char* replace)
 {
     unsigned int find_len = strlen(find);
     unsigned int replace_len = strlen(replace);
     size_t pos = 0;
 
-    string dest = source;
+    std::string dest = source;
 
-    while ((pos = dest.find(find, pos)) != string::npos)
+    while ((pos = dest.find(find, pos)) != std::string::npos)
     {
         dest.replace(pos, find_len, replace);
         pos += replace_len;
@@ -134,7 +132,7 @@ std::string Utils::replaceString(const string& source, const char* find, const c
     return dest;
 }
 
-string& Utils::removeExtension(string& file)
+std::string& Utils::removeExtension(std::string& file)
 {
     size_t pos = file.find_last_of('.');
 
@@ -211,23 +209,23 @@ std::string Utils::getVersionInfo(std::string appName, std::string version, std:
 {
     std::stringstream stream;
 
-    stream << appName << " " << version << " (" << getOperatingSystemType() << " " << getArchitectureType() << ")" << endl;
-    stream << "Protocol version: " << protocol << endl;
-    stream << "Oldest compatible commit hash: " << commitHash.substr(0, 10) << endl;
-    stream << "------------------------------------------------------------" << endl;
+    stream << appName << " " << version << " (" << getOperatingSystemType() << " " << getArchitectureType() << ")" << std::endl;
+    stream << "Protocol version: " << protocol << std::endl;
+    stream << "Oldest compatible commit hash: " << commitHash.substr(0, 10) << std::endl;
+    stream << "------------------------------------------------------------" << std::endl;
 
     return stream.str();
 }
 
-void Utils::printWithWidth(ostringstream &sstr, string str, size_t width)
+void Utils::printWithWidth(std::ostringstream &sstr, std::string str, size_t width)
 {
-    sstr << left << setw(width) << setfill(' ') << str;
+    sstr << std::left << std::setw(width) << std::setfill(' ') << str;
 }
 
-string Utils::intToHexStr(unsigned val)
+std::string Utils::intToHexStr(unsigned val)
 {
-    ostringstream sstr;
-    sstr << "0x" << setfill('0') << setw(8) << uppercase << hex << val;
+    std::ostringstream sstr;
+    sstr << "0x" << std::setfill('0') << std::setw(8) << std::uppercase << std::hex << val;
     return sstr.str();
 }
 

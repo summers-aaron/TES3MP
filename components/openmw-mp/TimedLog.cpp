@@ -8,8 +8,6 @@
 #include <boost/lexical_cast.hpp>
 #include "TimedLog.hpp"
 
-using namespace std;
-
 TimedLog *TimedLog::sTimedLog = nullptr;
 
 TimedLog::TimedLog(int logLevel) : logLevel(logLevel)
@@ -99,15 +97,15 @@ void TimedLog::print(int level, bool hasPrefix, const char *file, int line, cons
         sstr << '\n';
     va_list args;
     va_start(args, message);
-    vector<char> buf((unsigned long) (vsnprintf(nullptr, 0, sstr.str().c_str(), args) + 1));
+    std::vector<char> buf((unsigned long) (vsnprintf(nullptr, 0, sstr.str().c_str(), args) + 1));
     va_end(args);
     va_start(args, message);
     vsnprintf(buf.data(), buf.size(), sstr.str().c_str(), args);
     va_end(args);
-    cout << buf.data() << flush;
+    std::cout << buf.data() << std::flush;
 }
 
-string TimedLog::getFilenameTimestamp()
+std::string TimedLog::getFilenameTimestamp()
 {
     time_t rawtime = time(0);
     struct tm *timeinfo = localtime(&rawtime);

@@ -22,22 +22,20 @@ namespace mwmp
         template<class Packet>
         static void addServer(Packet *packet, QueryData &server, bool send)
         {
-            using namespace std;
-
             int32_t rulesSize = server.rules.size();
             packet->RW(rulesSize, send);
 
             if (rulesSize > QueryData::maxRules)
                 rulesSize = 0;
 
-            map<string, ServerRule>::iterator ruleIt;
+            std::map<std::string, ServerRule>::iterator ruleIt;
             if (send)
                 ruleIt = server.rules.begin();
 
             while (rulesSize--)
             {
                 ServerRule *rule = nullptr;
-                string key;
+                std::string key;
                 if (send)
                 {
                     key = ruleIt->first;
@@ -47,7 +45,7 @@ namespace mwmp
                 packet->RW(key, send, false, QueryData::maxStringLength);
                 if (!send)
                 {
-                    ruleIt = server.rules.insert(pair<string, ServerRule>(key, ServerRule())).first;
+                    ruleIt = server.rules.insert(std::pair<std::string, ServerRule>(key, ServerRule())).first;
                     rule = &ruleIt->second;
                 }
 
@@ -62,7 +60,7 @@ namespace mwmp
                     ruleIt++;
             }
 
-            vector<string>::iterator plIt;
+            std::vector<std::string>::iterator plIt;
 
             int32_t playersCount = server.players.size();
             packet->RW(playersCount, send);

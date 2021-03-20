@@ -1,7 +1,6 @@
 #include <components/openmw-mp/NetworkMessages.hpp>
 #include "PacketPlayerQuickKeys.hpp"
 
-using namespace std;
 using namespace mwmp;
 
 PacketPlayerQuickKeys::PacketPlayerQuickKeys(RakNet::RakPeerInterface *peer) : PlayerPacket(peer)

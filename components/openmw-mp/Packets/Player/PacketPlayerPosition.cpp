@@ -1,7 +1,6 @@
 #include "PacketPlayerPosition.hpp"
 #include <components/openmw-mp/NetworkMessages.hpp>
 
-using namespace std;
 using namespace mwmp;
 
 PacketPlayerPosition::PacketPlayerPosition(RakNet::RakPeerInterface *peer) : PlayerPacket(peer)

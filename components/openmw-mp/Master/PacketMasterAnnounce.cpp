@@ -5,7 +5,6 @@
 
 using namespace mwmp;
 using namespace RakNet;
-using namespace std;
 
 PacketMasterAnnounce::PacketMasterAnnounce(RakNet::RakPeerInterface *peer) : BasePacket(peer)
 {

@@ -1,7 +1,6 @@
 #include <components/openmw-mp/NetworkMessages.hpp>
 #include "PacketPlayerJournal.hpp"
 
-using namespace std;
 using namespace mwmp;
 
 PacketPlayerJournal::PacketPlayerJournal(RakNet::RakPeerInterface *peer) : PlayerPacket(peer)

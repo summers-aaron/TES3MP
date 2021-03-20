@@ -6,7 +6,6 @@
 
 
 using namespace mwmp;
-using namespace std;
 using namespace RakNet;
 
 PacketMasterQuery::PacketMasterQuery(RakNet::RakPeerInterface *peer) : BasePacket(peer)
@@ -26,12 +25,12 @@ void PacketMasterQuery::Packet(RakNet::BitStream *newBitstream, bool send)
 
     RW(serversCount, send);
 
-    map<SystemAddress, QueryData>::iterator serverIt;
+    std::map<SystemAddress, QueryData>::iterator serverIt;
     if (send)
         serverIt = servers->begin();
 
     QueryData server;
-    string addr;
+    std::string addr;
     uint16_t port;
     while (serversCount--)
     {
@@ -55,12 +54,12 @@ void PacketMasterQuery::Packet(RakNet::BitStream *newBitstream, bool send)
         if (send)
             serverIt++;
         else
-            servers->insert(pair<SystemAddress, QueryData>(SystemAddress(addr.c_str(), port), server));
+            servers->insert(std::pair<SystemAddress, QueryData>(SystemAddress(addr.c_str(), port), server));
     }
 
 }
 
-void PacketMasterQuery::SetServers(map<SystemAddress, QueryData> *serverMap)
+void PacketMasterQuery::SetServers(std::map<SystemAddress, QueryData> *serverMap)
 {
     servers = serverMap;
 }

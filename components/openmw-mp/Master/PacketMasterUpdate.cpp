@@ -3,7 +3,6 @@
 #include "ProxyMasterPacket.hpp"
 
 using namespace mwmp;
-using namespace std;
 using namespace RakNet;
 
 PacketMasterUpdate::PacketMasterUpdate(RakNet::RakPeerInterface *peer) : BasePacket(peer)
@@ -19,7 +18,7 @@ void PacketMasterUpdate::Packet(RakNet::BitStream *newBitstream, bool send)
     if (send)
         bs->Write(packetID);
 
-    string addr = server->first.ToString(false);
+    std::string addr = server->first.ToString(false);
     uint16_t port = server->first.GetPort();
 
     RW(addr, send);

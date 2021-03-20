@@ -1,7 +1,6 @@
 #include <components/openmw-mp/NetworkMessages.hpp>
 #include "PacketPlayerSpellbook.hpp"
 
-using namespace std;
 using namespace mwmp;
 
 PacketPlayerSpellbook::PacketPlayerSpellbook(RakNet::RakPeerInterface *peer) : PlayerPacket(peer)

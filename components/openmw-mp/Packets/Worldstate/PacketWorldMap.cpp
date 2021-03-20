@@ -2,7 +2,6 @@
 #include <components/openmw-mp/TimedLog.hpp>
 #include "PacketWorldMap.hpp"
 
-using namespace std;
 using namespace mwmp;
 
 PacketWorldMap::PacketWorldMap(RakNet::RakPeerInterface *peer) : WorldstatePacket(peer)

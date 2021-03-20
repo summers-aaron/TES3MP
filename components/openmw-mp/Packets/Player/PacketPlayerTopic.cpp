@@ -1,7 +1,6 @@
 #include <components/openmw-mp/NetworkMessages.hpp>
 #include "PacketPlayerTopic.hpp"
 
-using namespace std;
 using namespace mwmp;
 
 PacketPlayerTopic::PacketPlayerTopic(RakNet::RakPeerInterface *peer) : PlayerPacket(peer)
