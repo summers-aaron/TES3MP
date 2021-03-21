@@ -2,12 +2,10 @@
 
 #include <cstdarg>
 
-using namespace std;
-
-const vector<string> Utils::split(const string &str, int delimiter)
+const std::vector<std::string> Utils::split(const std::string &str, int delimiter)
 {
-    string buffer;
-    vector<string> result;
+    std::string buffer;
+    std::vector<std::string> result;
 
     for (auto symb:str)
         if (symb != delimiter)
@@ -94,7 +92,7 @@ void Utils::getArguments(std::vector<boost::any> &params, va_list args, const st
                 break;
 
             default:
-                throw runtime_error("C++ call: Unknown argument identifier " + c);
+                throw std::runtime_error("C++ call: Unknown argument identifier " + c);
             }
         }
     }

@@ -4,19 +4,18 @@
 #include <Networking.hpp>
 #include <Script/API/TimerAPI.hpp>
 
-using namespace std;
 using namespace mwmp;
 
 int ScriptFunctions::CreateTimer(ScriptFunc callback, int msec) noexcept
 {
-    return mwmp::TimerAPI::CreateTimer(callback, msec, "", vector<boost::any>());
+    return mwmp::TimerAPI::CreateTimer(callback, msec, "", std::vector<boost::any>());
 }
 
 int ScriptFunctions::CreateTimerEx(ScriptFunc callback, int msec, const char *types, va_list args) noexcept
 {
     try
     {
-        vector<boost::any> params;
+        std::vector<boost::any> params;
         Utils::getArguments(params, args, types);
 
         return mwmp::TimerAPI::CreateTimer(callback, msec, types, params);

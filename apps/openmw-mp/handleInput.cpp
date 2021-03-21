@@ -1,6 +1,5 @@
-using namespace std;
 namespace mwmp_input {
-    string windowInputBuffer;
+    std::string windowInputBuffer;
     void handler() {
         char c;
 #ifndef WIN32
@@ -10,9 +9,9 @@ namespace mwmp_input {
         while (_kbhit()) {
             c = _getch();
 #endif
-            cout << c << flush;
+            std::cout << c << std::flush;
             if (c == '\n' || c == '\r') { // handle carriage return as new line on Windows
-                cout << endl;
+                std::cout << std::endl;
                 Script::Call<Script::CallbackIdentity("OnServerWindowInput")>(windowInputBuffer.c_str());
                 windowInputBuffer.assign("");
             }

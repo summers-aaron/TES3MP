@@ -5,8 +5,6 @@
 #include "LangLua/LangLua.hpp"
 #endif
 
-using namespace std;
-
 Script::ScriptList Script::scripts;
 std::string Script::moddir;
 
@@ -15,7 +13,7 @@ Script::Script(const char *path)
     FILE *file = fopen(path, "rb");
 
     if (!file)
-        throw runtime_error("Script not found: " + string(path));
+        throw std::runtime_error("Script not found: " + std::string(path));
 
     fclose(file);
 
@@ -36,7 +34,7 @@ Script::Script(const char *path)
     }
 #endif
     else
-        throw runtime_error("Script type not recognized: " + string(path));
+        throw std::runtime_error("Script type not recognized: " + std::string(path));
 
     try
     {

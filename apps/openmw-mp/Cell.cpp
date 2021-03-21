@@ -6,8 +6,6 @@
 #include "Player.hpp"
 #include "Script/Script.hpp"
 
-using namespace std;
-
 Cell::Cell(ESM::Cell cell) : cell(cell)
 {
     cellActorList.count = 0;

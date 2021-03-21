@@ -11,7 +11,6 @@
 #include <apps/openmw-mp/Networking.hpp>
 #include <apps/openmw-mp/Script/ScriptFunctions.hpp>
 
-using namespace std;
 using namespace ESM;
 
 int StatsFunctions::GetAttributeCount() noexcept

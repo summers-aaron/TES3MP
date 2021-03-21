@@ -6,9 +6,7 @@
 #include "LangLua/LangLua.hpp"
 #endif
 
-using namespace std;
-
-ScriptFunction::ScriptFunction(ScriptFunc fCpp,char ret_type, const string &def) :
+ScriptFunction::ScriptFunction(ScriptFunc fCpp,char ret_type, const std::string &def) :
         fCpp(fCpp), ret_type(ret_type), def(def), script_type(SCRIPT_CPP)
 {
 
@@ -30,12 +28,12 @@ ScriptFunction::~ScriptFunction()
 #endif
 }
 
-boost::any ScriptFunction::Call(const vector<boost::any> &args)
+boost::any ScriptFunction::Call(const std::vector<boost::any> &args)
 {
     boost::any result;
 
     if (def.length() != args.size())
-        throw runtime_error("Script call: Number of arguments does not match definition");
+        throw std::runtime_error("Script call: Number of arguments does not match definition");
 #if defined (ENABLE_LUA)
     else if (script_type == SCRIPT_LUA)
     {
@@ -60,7 +58,7 @@ boost::any ScriptFunction::Call(const vector<boost::any> &args)
                 result = boost::any();
                 break;
             default:
-                throw runtime_error("Lua call: Unknown return type" + ret_type);
+                throw std::runtime_error("Lua call: Unknown return type" + ret_type);
         }
 
         lua_settop(fLua.lua, 0);

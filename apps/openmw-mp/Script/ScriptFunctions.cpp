@@ -11,8 +11,6 @@ constexpr char TypeString<Types...>::value[];
 constexpr ScriptFunctionData ScriptFunctions::functions[];
 constexpr ScriptCallbackData ScriptFunctions::callbacks[];
 
-using namespace std;
-
 void ScriptFunctions::MakePublic(ScriptFunc _public, const char *name, char ret_type, const char *def) noexcept
 {
     Public::MakePublic(_public, name, ret_type, def);
@@ -20,11 +18,11 @@ void ScriptFunctions::MakePublic(ScriptFunc _public, const char *name, char ret_
 
 boost::any ScriptFunctions::CallPublic(const char *name, va_list args) noexcept
 {
-    vector<boost::any> params;
+    std::vector<boost::any> params;
 
     try
     {
-        string def = Public::GetDefinition(name);
+        std::string def = Public::GetDefinition(name);
         Utils::getArguments(params, args, def);
 
         return Public::Call(name, params);

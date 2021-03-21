@@ -10,7 +10,6 @@
 
 #include "Worldstate.hpp"
 
-using namespace std;
 using namespace mwmp;
 
 BaseWorldstate *WorldstateFunctions::readWorldstate;

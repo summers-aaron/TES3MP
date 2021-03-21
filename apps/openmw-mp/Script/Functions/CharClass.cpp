@@ -5,7 +5,6 @@
 #include <apps/openmw-mp/Networking.hpp>
 #include <apps/openmw-mp/Script/ScriptFunctions.hpp>
 
-using namespace std;
 using namespace ESM;
 
 const char *CharClassFunctions::GetDefaultClass(unsigned short pid) noexcept
@@ -38,7 +37,7 @@ int CharClassFunctions::GetClassMajorAttribute(unsigned short pid, unsigned char
     GET_PLAYER(pid, player, 0);
 
     if (slot > 1)
-        throw invalid_argument("Incorrect attribute slot id");
+        throw std::invalid_argument("Incorrect attribute slot id");
 
     return player->charClass.mData.mAttribute[slot];
 }
@@ -57,7 +56,7 @@ int CharClassFunctions::GetClassMajorSkill(unsigned short pid, unsigned char slo
     GET_PLAYER(pid, player, 0);
 
     if (slot > 4)
-        throw invalid_argument("Incorrect skill slot id");
+        throw std::invalid_argument("Incorrect skill slot id");
 
     return player->charClass.mData.mSkills[slot][1];
 }
@@ -68,7 +67,7 @@ int CharClassFunctions::GetClassMinorSkill(unsigned short pid, unsigned char slo
     GET_PLAYER(pid, player, 0);
 
     if (slot > 4)
-        throw invalid_argument("Incorrect skill slot id");
+        throw std::invalid_argument("Incorrect skill slot id");
 
     return player->charClass.mData.mSkills[slot][0];
 }
@@ -109,7 +108,7 @@ void CharClassFunctions::SetClassMajorAttribute(unsigned short pid, unsigned cha
     GET_PLAYER(pid, player,);
 
     if (slot > 1)
-        throw invalid_argument("Incorrect attribute slot id");
+        throw std::invalid_argument("Incorrect attribute slot id");
 
     player->charClass.mData.mAttribute[slot] = attrId;
 
@@ -127,7 +126,7 @@ void CharClassFunctions::SetClassMajorSkill(unsigned short pid, unsigned char sl
     GET_PLAYER(pid, player,);
 
     if (slot > 4)
-        throw invalid_argument("Incorrect skill slot id");
+        throw std::invalid_argument("Incorrect skill slot id");
 
     player->charClass.mData.mSkills[slot][1] = skillId;
 }
@@ -137,7 +136,7 @@ void CharClassFunctions::SetClassMinorSkill(unsigned short pid, unsigned char sl
     GET_PLAYER(pid, player,);
 
     if (slot > 4)
-        throw invalid_argument("Incorrect skill slot id");
+        throw std::invalid_argument("Incorrect skill slot id");
 
     player->charClass.mData.mSkills[slot][0] = skillId;
 }

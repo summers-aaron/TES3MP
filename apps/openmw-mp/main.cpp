@@ -31,7 +31,6 @@
 #include <handler/exception_handler.h>
 #endif
 
-using namespace std;
 using namespace mwmp;
 
 #ifdef ENABLE_BREAKPAD
@@ -190,15 +189,15 @@ int main(int argc, char *argv[])
     LOG_INIT(logLevel);
 
     int players = mgr.getInt("maximumPlayers", "General");
-    string address = mgr.getString("localAddress", "General");
+    std::string address = mgr.getString("localAddress", "General");
     int port = mgr.getInt("port", "General");
 
-    string password = mgr.getString("password", "General");
+    std::string password = mgr.getString("password", "General");
 
-    string pluginHome = mgr.getString("home", "Plugins");
-    string dataDirectory = Utils::convertPath(pluginHome + "/data");
+    std::string pluginHome = mgr.getString("home", "Plugins");
+    std::string dataDirectory = Utils::convertPath(pluginHome + "/data");
 
-    vector<string> plugins(Utils::split(mgr.getString("plugins", "Plugins"), ','));
+    std::vector<std::string> plugins(Utils::split(mgr.getString("plugins", "Plugins"), ','));
 
     std::string versionInfo = Utils::getVersionInfo("TES3MP dedicated server", TES3MP_VERSION, version.mCommitHash, TES3MP_PROTO_VERSION);
     LOG_MESSAGE_SIMPLE(TimedLog::LOG_INFO, "%s", versionInfo.c_str());
@@ -220,7 +219,7 @@ int main(int argc, char *argv[])
 
     RakNet::RakPeerInterface *peer = RakNet::RakPeerInterface::GetInstance();
 
-    stringstream sstr;
+    std::stringstream sstr;
     sstr << TES3MP_VERSION;
     sstr << TES3MP_PROTO_VERSION;
     // Remove carriage returns added to version file on Windows
@@ -247,21 +246,21 @@ int main(int argc, char *argv[])
             case RakNet::CRABNET_STARTED:
                 break;
             case RakNet::CRABNET_ALREADY_STARTED:
-                throw runtime_error("Already started");
+                throw std::runtime_error("Already started");
             case RakNet::INVALID_SOCKET_DESCRIPTORS:
-                throw runtime_error("Incorrect port or address");
+                throw std::runtime_error("Incorrect port or address");
             case RakNet::INVALID_MAX_CONNECTIONS:
-                throw runtime_error("Max players cannot be negative or 0");
+                throw std::runtime_error("Max players cannot be negative or 0");
             case RakNet::SOCKET_FAILED_TO_BIND:
             case RakNet::SOCKET_PORT_ALREADY_IN_USE:
             case RakNet::PORT_CANNOT_BE_ZERO:
-                throw runtime_error("Failed to bind port. Make sure a server isn't already running on that port.");
+                throw std::runtime_error("Failed to bind port. Make sure a server isn't already running on that port.");
             case RakNet::SOCKET_FAILED_TEST_SEND:
             case RakNet::SOCKET_FAMILY_NOT_SUPPORTED:
             case RakNet::FAILED_TO_CREATE_NETWORK_THREAD:
             case RakNet::COULD_NOT_GENERATE_GUID:
             case RakNet::STARTUP_OTHER_FAILURE:
-                throw runtime_error("Cannot start server");
+                throw std::runtime_error("Cannot start server");
         }
 
         peer->SetMaximumIncomingConnections((unsigned short) (players));
@@ -272,7 +271,7 @@ int main(int argc, char *argv[])
         if (mgr.getBool("enabled", "MasterServer"))
         {
             LOG_MESSAGE_SIMPLE(TimedLog::LOG_INFO, "Sharing server query info to master enabled.");
-            string masterAddr = mgr.getString("address", "MasterServer");
+            std::string masterAddr = mgr.getString("address", "MasterServer");
             int masterPort = mgr.getInt("port", "MasterServer");
             int updateRate = mgr.getInt("rate", "MasterServer");
 
@@ -294,7 +293,7 @@ int main(int argc, char *argv[])
             networking.InitQuery(masterAddr, (unsigned short) masterPort);
             networking.getMasterClient()->SetMaxPlayers((unsigned) players);
             networking.getMasterClient()->SetUpdateRate((unsigned) updateRate);
-            string hostname = mgr.getString("hostname", "General");
+            std::string hostname = mgr.getString("hostname", "General");
             networking.getMasterClient()->SetHostname(hostname);
             networking.getMasterClient()->SetRuleString("CommitHash", version.mCommitHash.substr(0, 10));
 

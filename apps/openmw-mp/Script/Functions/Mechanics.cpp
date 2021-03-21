@@ -7,7 +7,6 @@
 #include <apps/openmw-mp/Networking.hpp>
 
 #include <iostream>
-using namespace std;
 
 static std::string tempCellDescription;
 

@@ -5,7 +5,6 @@
 #include <apps/openmw-mp/Networking.hpp>
 
 #include <iostream>
-using namespace std;
 
 double PositionFunctions::GetPosX(unsigned short pid) noexcept
 {

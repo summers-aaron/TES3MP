@@ -9,8 +9,6 @@
 #include <iostream>
 #include <random>
 
-using namespace std;
-
 const char *MiscellaneousFunctions::GenerateRandomString(unsigned int length) noexcept
 {
     const std::string characters = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";

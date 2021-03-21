@@ -10,7 +10,6 @@
 #include <components/openmw-mp/Master/PacketMasterAnnounce.hpp>
 #include "Networking.hpp"
 
-using namespace std;
 using namespace mwmp;
 using namespace RakNet;
 
@@ -50,7 +49,7 @@ void MasterClient::SetMaxPlayers(unsigned pl)
 void MasterClient::SetHostname(std::string hostname)
 {
     mutexData.lock();
-    string substr = hostname.substr(0, 200);
+    std::string substr = hostname.substr(0, 200);
     if (queryData.GetName() != substr)
     {
         queryData.SetName(substr.c_str());
@@ -62,7 +61,7 @@ void MasterClient::SetHostname(std::string hostname)
 void MasterClient::SetModname(std::string modname)
 {
     mutexData.lock();
-    string substr = modname.substr(0, 200);
+    std::string substr = modname.substr(0, 200);
     if (queryData.GetGameMode() != substr)
     {
         queryData.SetGameMode(substr.c_str());
@@ -236,7 +235,7 @@ void MasterClient::Thread()
 
 void MasterClient::Start()
 {
-    thrQuery = thread(&MasterClient::Thread, this);
+    thrQuery = std::thread(&MasterClient::Thread, this);
 }
 
 void MasterClient::Stop()

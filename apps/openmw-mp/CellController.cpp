@@ -5,8 +5,6 @@
 #include "Player.hpp"
 #include "Script/Script.hpp"
 
-using namespace std;
-
 CellController::CellController()
 {
 

@@ -4,8 +4,6 @@
 TPlayers Players::players;
 TSlots Players::slots;
 
-using namespace std;
-
 void Players::deletePlayer(RakNet::RakNetGUID guid)
 {
     LOG_MESSAGE_SIMPLE(TimedLog::LOG_INFO, "Deleting player with guid %lu", guid.g);
@@ -89,12 +87,12 @@ void Player::setId(unsigned short id)
 
 bool Player::isHandshaked()
 {
-    return handshakeCounter == numeric_limits<int>::max();
+    return handshakeCounter == std::numeric_limits<int>::max();
 }
 
 void Player::setHandshake()
 {
-    handshakeCounter = numeric_limits<int>::max();
+    handshakeCounter = std::numeric_limits<int>::max();
 }
 
 void Player::incrementHandshakeAttempts()

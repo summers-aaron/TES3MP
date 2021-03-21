@@ -4,7 +4,6 @@
 
 #include <iostream>
 using namespace mwmp;
-using namespace std;
 
 Timer::Timer(ScriptFunc callback, long msec, const std::string& def, std::vector<boost::any> args) : ScriptFunction(callback, 'v', def)
 {
@@ -27,8 +26,8 @@ void Timer::Tick()
     if (isEnded)
         return;
 
-    const auto duration = chrono::system_clock::now().time_since_epoch();
-    const auto time = chrono::duration_cast<chrono::milliseconds>(duration).count();
+    const auto duration = std::chrono::system_clock::now().time_since_epoch();
+    const auto time = std::chrono::duration_cast<std::chrono::milliseconds>(duration).count();
 
     if (time - startTime >= targetMsec)
     {
@@ -57,8 +56,8 @@ void Timer::Start()
 {
     isEnded = false;
 
-    const auto duration = chrono::system_clock::now().time_since_epoch();
-    const auto msec = chrono::duration_cast<chrono::milliseconds>(duration).count();
+    const auto duration = std::chrono::system_clock::now().time_since_epoch();
+    const auto msec = std::chrono::duration_cast<std::chrono::milliseconds>(duration).count();
     startTime = msec;
 }
 
@@ -125,7 +124,7 @@ void TimerAPI::FreeTimer(int timerid)
     }
     catch(...)
     {
-        std::cerr << "Timer " << timerid << " not found!" << endl;
+        std::cerr << "Timer " << timerid << " not found!" << std::endl;
     }
 }
 
@@ -137,7 +136,7 @@ void TimerAPI::ResetTimer(int timerid, long msec)
     }
     catch(...)
     {
-        std::cerr << "Timer " << timerid << " not found!" << endl;
+        std::cerr << "Timer " << timerid << " not found!" << std::endl;
     }
 }
 
@@ -152,7 +151,7 @@ void TimerAPI::StartTimer(int timerid)
     }
     catch(...)
     {
-        std::cerr << "Timer " << timerid << " not found!" << endl;
+        std::cerr << "Timer " << timerid << " not found!" << std::endl;
     }
 }
 
@@ -164,7 +163,7 @@ void TimerAPI::StopTimer(int timerid)
     }
     catch(...)
     {
-        std::cerr << "Timer " << timerid << " not found!" << endl;
+        std::cerr << "Timer " << timerid << " not found!" << std::endl;
     }
 }
 
@@ -177,7 +176,7 @@ bool TimerAPI::IsTimerElapsed(int timerid)
     }
     catch(...)
     {
-        std::cerr << "Timer " << timerid << " not found!" << endl;
+        std::cerr << "Timer " << timerid << " not found!" << std::endl;
     }
     return ret;
 }

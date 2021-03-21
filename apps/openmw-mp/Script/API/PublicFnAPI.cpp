@@ -1,9 +1,7 @@
 #include <Script/ScriptFunction.hpp>
 #include "PublicFnAPI.hpp"
 
-using namespace std;
-
-unordered_map<string, Public *> Public::publics;
+std::unordered_map<std::string, Public *> Public::publics;
 
 Public::~Public()
 {
@@ -25,7 +23,7 @@ boost::any Public::Call(const std::string &name, const std::vector<boost::any> &
 {
     auto it = publics.find(name);
     if (it == publics.end())
-        throw runtime_error("Public with name \"" + name + "\" does not exist");
+        throw std::runtime_error("Public with name \"" + name + "\" does not exist");
 
     return it->second->ScriptFunction::Call(args);
 }
@@ -36,7 +34,7 @@ const std::string &Public::GetDefinition(const std::string &name)
     auto it = publics.find(name);
 
     if (it == publics.end())
-        throw runtime_error("Public with name \"" + name + "\" does not exist");
+        throw std::runtime_error("Public with name \"" + name + "\" does not exist");
 
     return it->second->def;
 }
@@ -49,7 +47,7 @@ bool Public::IsLua(const std::string &name)
 #else
     auto it = publics.find(name);
     if (it == publics.end())
-        throw runtime_error("Public with name \"" + name + "\" does not exist");
+        throw std::runtime_error("Public with name \"" + name + "\" does not exist");
 
     return it->second->script_type == SCRIPT_LUA;
 #endif

@@ -3,14 +3,12 @@
 #include <Script/Script.hpp>
 #include <Script/Types.hpp>
 
-using namespace std;
-
 std::set<std::string> LangLua::packagePath;
 std::set<std::string> LangLua::packageCPath;
 
 void setLuaPath(lua_State* L, const char* path, bool cpath = false)
 {
-    string field = cpath ? "cpath" : "path";
+    std::string field = cpath ? "cpath" : "path";
     lua_getglobal(L, "package");
 
     lua_getfield(L, -1, field.c_str());
@@ -62,9 +60,9 @@ struct Lua_dispatch_ {
         constexpr ScriptFunctionData const& F_ = ScriptFunctions::functions[F];
         auto arg = luabridge::Stack<typename CharType<F_.func.types[I - 1]>::type>::get(lua, I);
         return Lua_dispatch_<I - 1, F>::template Lua_dispatch<R>(
-                forward<lua_State*>(lua),
+                std::forward<lua_State*>(lua),
                 arg,
-                forward<Args>(args)...);
+                std::forward<Args>(args)...);
     }
 };
 
@@ -73,20 +71,20 @@ struct Lua_dispatch_<0, F> {
     template<typename R, typename... Args>
     inline static R Lua_dispatch(lua_State*&&, Args&&... args) noexcept {
         constexpr ScriptFunctionData const& F_ = ScriptFunctions::functions[F];
-        return reinterpret_cast<FunctionEllipsis<R>>(F_.func.addr)(forward<Args>(args)...);
+        return reinterpret_cast<FunctionEllipsis<R>>(F_.func.addr)(std::forward<Args>(args)...);
     }
 };
 
 template<unsigned int I>
-static typename enable_if<ScriptFunctions::functions[I].func.ret == 'v', int>::type wrapper(lua_State* lua) noexcept {
-    Lua_dispatch_<ScriptFunctions::functions[I].func.numargs, I>::template Lua_dispatch<void>(forward<lua_State*>(lua));
+static typename std::enable_if<ScriptFunctions::functions[I].func.ret == 'v', int>::type wrapper(lua_State* lua) noexcept {
+    Lua_dispatch_<ScriptFunctions::functions[I].func.numargs, I>::template Lua_dispatch<void>(std::forward<lua_State*>(lua));
     return 0;
 }
 
 template<unsigned int I>
-static typename enable_if<ScriptFunctions::functions[I].func.ret != 'v', int>::type wrapper(lua_State* lua) noexcept {
+static typename std::enable_if<ScriptFunctions::functions[I].func.ret != 'v', int>::type wrapper(lua_State* lua) noexcept {
     auto ret = Lua_dispatch_<ScriptFunctions::functions[I].func.numargs, I>::template Lua_dispatch<
-            typename CharType<ScriptFunctions::functions[I].func.ret>::type>(forward<lua_State*>(lua));
+            typename CharType<ScriptFunctions::functions[I].func.ret>::type>(std::forward<lua_State*>(lua));
     luabridge::Stack <typename CharType<ScriptFunctions::functions[I].func.ret>::type>::push (lua, ret);
     return 1;
 }
@@ -169,8 +167,8 @@ void LangLua::LoadProgram(const char *filename)
     int err = 0;
 
     if ((err =luaL_loadfile(lua, filename)) != 0)
-        throw runtime_error("Lua script " + string(filename) + " error (" + to_string(err) + "): \"" +
-                            string(lua_tostring(lua, -1)) + "\"");
+        throw std::runtime_error("Lua script " + std::string(filename) + " error (" + std::to_string(err) + "): \"" +
+                            std::string(lua_tostring(lua, -1)) + "\"");
 
     constexpr auto functions_n = sizeof(ScriptFunctions::functions) / sizeof(ScriptFunctions::functions[0]);
 
@@ -187,8 +185,8 @@ void LangLua::LoadProgram(const char *filename)
     tes3mp.endNamespace();
 
     if ((err = lua_pcall(lua, 0, 0, 0)) != 0) // Run once script for load in memory.
-        throw runtime_error("Lua script " + string(filename) + " error (" + to_string(err) + "): \"" +
-                            string(lua_tostring(lua, -1)) + "\"");
+        throw std::runtime_error("Lua script " + std::string(filename) + " error (" + std::to_string(err) + "): \"" +
+                            std::string(lua_tostring(lua, -1)) + "\"");
 }
 
 int LangLua::FreeProgram()
@@ -248,7 +246,7 @@ boost::any LangLua::Call(const char *name, const char *argl, int buf, ...)
                 break;
 
             default:
-                throw runtime_error("C++ call: Unknown argument identifier " + argl[index]);
+                throw std::runtime_error("C++ call: Unknown argument identifier " + argl[index]);
         }
     }
 
@@ -300,7 +298,7 @@ boost::any LangLua::Call(const char *name, const char *argl, const std::vector<b
                 luabridge::Stack<bool>::push(lua, boost::any_cast<int>(args.at(index)));
                 break;
             default:
-                throw runtime_error("Lua call: Unknown argument identifier " + argl[index]);
+                throw std::runtime_error("Lua call: Unknown argument identifier " + argl[index]);
         }
     }
 

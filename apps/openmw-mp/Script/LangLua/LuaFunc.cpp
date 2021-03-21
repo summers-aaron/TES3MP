@@ -3,11 +3,9 @@
 #include <Script/API/TimerAPI.hpp>
 #include <Script/API/PublicFnAPI.hpp>
 
-using namespace std;
-
-inline vector<boost::any> DefToVec(lua_State *lua, string types, int args_begin, int args_n)
+inline std::vector<boost::any> DefToVec(lua_State *lua, std::string types, int args_begin, int args_n)
 {
-    vector<boost::any> args;
+    std::vector<boost::any> args;
 
     for (int i = args_begin; i < args_n + args_begin; i++)
     {
@@ -51,8 +49,8 @@ inline vector<boost::any> DefToVec(lua_State *lua, string types, int args_begin,
 
             default:
             {
-                stringstream ssErr;
-                ssErr << "Lua: Unknown argument identifier" << "\"" << types[i] << "\"" << endl;
+                std::stringstream ssErr;
+                ssErr << "Lua: Unknown argument identifier" << "\"" << types[i] << "\"" << std::endl;
                 throw std::runtime_error(ssErr.str());
             }
         }
@@ -78,12 +76,12 @@ int LangLua::CallPublic(lua_State *lua)
 
     int args_n = lua_gettop(lua) - 1;
 
-    string types = Public::GetDefinition(name);
+    std::string types = Public::GetDefinition(name);
 
     if (args_n  != (long)types.size())
-        throw invalid_argument("Script call: Number of arguments does not match definition");
+        throw std::invalid_argument("Script call: Number of arguments does not match definition");
 
-    vector<boost::any> args = DefToVec(lua, types, 2, args_n);
+    std::vector<boost::any> args = DefToVec(lua, types, 2, args_n);
 
     boost::any result = Public::Call(&name[0], args);
     if (result.empty())
@@ -106,7 +104,7 @@ int LangLua::CreateTimer(lua_State *lua) noexcept
     const char * callback= luabridge::Stack<const char*>::get(lua, 1);
     int msec = luabridge::Stack<int>::get(lua, 2);
 
-    int id = mwmp::TimerAPI::CreateTimerLua(lua, callback, msec, "", vector<boost::any>());
+    int id = mwmp::TimerAPI::CreateTimerLua(lua, callback, msec, "", std::vector<boost::any>());
     luabridge::push(lua, id);
     return 1;
 }
@@ -120,7 +118,7 @@ int LangLua::CreateTimerEx(lua_State *lua)
 
     int args_n = (int)lua_strlen(lua, 3);
 
-    vector<boost::any> args;
+    std::vector<boost::any> args;
 
     for (int i = 4; i < args_n + 4; i++)
     {
@@ -164,8 +162,8 @@ int LangLua::CreateTimerEx(lua_State *lua)
 
             default:
             {
-                stringstream ssErr;
-                ssErr << "Lua: Unknown argument identifier" << "\"" << types[i] << "\"" << endl;
+                std::stringstream ssErr;
+                ssErr << "Lua: Unknown argument identifier" << "\"" << types[i] << "\"" << std::endl;
                 throw std::runtime_error(ssErr.str());
             }
         }

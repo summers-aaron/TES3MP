@@ -28,7 +28,6 @@
 #include "handleInput.cpp"
 
 using namespace mwmp;
-using namespace std;
 
 Networking *Networking::sThis = 0;
 
@@ -490,7 +489,7 @@ void Networking::stopServer(int code)
 
 void signalHandler(int signum) 
 {
-    cout << "Interrupt signal (" << signum << ") received.\n";
+    std::cout << "Interrupt signal (" << signum << ") received.\n";
     //15 is SIGTERM(Normal OS stop call), 2 is SIGINT(Ctrl+C)
     if(signum == 15 or signum == 2)
     {
@@ -585,7 +584,7 @@ int Networking::mainLoop()
             }
         }
         TimerAPI::Tick();
-        this_thread::sleep_for(chrono::milliseconds(1));
+        std::this_thread::sleep_for(std::chrono::milliseconds(1));
     }
 
     TimerAPI::Terminate();

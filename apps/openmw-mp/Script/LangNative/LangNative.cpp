@@ -7,8 +7,6 @@
 #include <Script/SystemInterface.hpp>
 #include <Script/Script.hpp>
 
-using namespace std;
-
 template<typename R>
 bool SetScript(lib_t lib, const char *name, R value)
 {
@@ -25,7 +23,7 @@ void LangNative::LoadProgram(const char *filename)
     FILE *file = fopen(filename, "rb");
 
     if (!file)
-        throw runtime_error("Script not found: " + string(filename));
+        throw std::runtime_error("Script not found: " + std::string(filename));
 
     fclose(file);
 
@@ -36,16 +34,16 @@ void LangNative::LoadProgram(const char *filename)
 #endif
 
     if (!lib)
-        throw runtime_error("Was not able to load C++ script: " + string(filename));
+        throw std::runtime_error("Was not able to load C++ script: " + std::string(filename));
 
     try
     {
 
         const char *prefix = SystemInterface<const char *>(lib, "prefix").result;
-        string pf(prefix);
+        std::string pf(prefix);
 
         for (const auto &function : ScriptFunctions::functions)
-            if (!SetScript(lib, string(pf + function.name).c_str(), function.func.addr))
+            if (!SetScript(lib, std::string(pf + function.name).c_str(), function.func.addr))
                 LOG_MESSAGE_SIMPLE(TimedLog::LOG_WARN, "Script function pointer not found: %s", function.name);
     }
     catch (...)

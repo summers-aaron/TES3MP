@@ -9,7 +9,6 @@
 
 #include "RecordsDynamic.hpp"
 
-using namespace std;
 using namespace mwmp;
 
 SpellRecord tempSpell;
