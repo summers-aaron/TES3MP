@@ -5,8 +5,6 @@
 #include <apps/openmw-mp/Networking.hpp>
 #include <apps/openmw-mp/Script/ScriptFunctions.hpp>
 
-using namespace ESM;
-
 const char *CharClassFunctions::GetDefaultClass(unsigned short pid) noexcept
 {
     Player *player;
