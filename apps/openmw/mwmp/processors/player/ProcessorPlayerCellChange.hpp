@@ -18,6 +18,8 @@ namespace mwmp
         {
             if (isLocal())
             {
+                LOG_MESSAGE_SIMPLE(TimedLog::LOG_INFO, "Received ID_PLAYER_CELL_CHANGE from server about me");
+
                 if (isRequest())
                     static_cast<LocalPlayer *>(player)->updateCell(true);
                 else
