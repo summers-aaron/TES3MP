@@ -4,7 +4,8 @@
 mwmp::PacketWorldRegionAuthority::PacketWorldRegionAuthority(RakNet::RakPeerInterface *peer) : WorldstatePacket(peer)
 {
     packetID = ID_WORLD_REGION_AUTHORITY;
-    priority = IMMEDIATE_PRIORITY;
+    // Make sure the priority is lower than PlayerCellChange's, so it doesn't get sent before it
+    priority = HIGH_PRIORITY;
     reliability = RELIABLE_ORDERED;
 }
 
