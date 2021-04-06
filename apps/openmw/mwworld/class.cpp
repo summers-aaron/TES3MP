@@ -174,6 +174,19 @@ namespace MWWorld
         return false;
     }
 
+    /*
+        Start of tes3mp addition
+
+        Make it possible to check whether a class can be harvested
+    */
+    bool Class::canBeHarvested(const ConstPtr& ptr) const
+    {
+        return false;
+    }
+    /*
+        End of tes3mp addition
+    */
+
     bool Class::canLock(const ConstPtr &ptr) const
     {
         return false;

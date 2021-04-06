@@ -171,6 +171,17 @@ namespace MWWorld
 
             virtual bool canLock (const ConstPtr& ptr) const;
 
+            /*
+                Start of tes3mp addition
+
+                Make it possible to check whether a class can be harvested
+            */
+            virtual bool canBeHarvested(const ConstPtr& ptr) const;
+            ///< Can this object be harvested? (default implementation: false)
+            /*
+                End of tes3mp addition
+            */
+
             virtual void setRemainingUsageTime (const Ptr& ptr, float duration) const;
             ///< Sets the remaining duration of the object, such as an equippable light
             /// source. (default implementation: throw an exception)
