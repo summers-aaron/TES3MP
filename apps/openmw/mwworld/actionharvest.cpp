@@ -146,28 +146,5 @@ namespace MWWorld
         // Update animation object
         MWBase::Environment::get().getWorld()->disable(target);
         MWBase::Environment::get().getWorld()->enable(target);
-
-        /*
-            Start of tes3mp addition
-
-            Send ID_OBJECT_STATE packets whenever an object is harvested, as long as
-            the player is logged in on the server
-        */
-        if (mwmp::Main::get().getLocalPlayer()->isLoggedIn())
-        {
-                mwmp::ObjectList* objectList = mwmp::Main::get().getNetworking()->getObjectList();
-                objectList->reset();
-                objectList->packetOrigin = mwmp::CLIENT_GAMEPLAY;
-                objectList->addObjectState(target, false);
-                objectList->sendObjectState();
-
-                objectList->reset();
-                objectList->packetOrigin = mwmp::CLIENT_GAMEPLAY;
-                objectList->addObjectState(target, true);
-                objectList->sendObjectState();
-        }
-        /*
-            End of tes3mp addition
-        */
     }
 }

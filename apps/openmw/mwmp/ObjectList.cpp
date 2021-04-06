@@ -293,6 +293,13 @@ void ObjectList::editContainers(MWWorld::CellStore* cellStore)
                 mwmp::Main::get().getCellController()->getLocalActor(ptrFound)->updateEquipment(true, true);
             }
 
+            // If this container can be harvested, disable and then enable it again to refresh its animation
+            if (ptrFound.getClass().canBeHarvested(ptrFound))
+            {
+                MWBase::Environment::get().getWorld()->disable(ptrFound);
+                MWBase::Environment::get().getWorld()->enable(ptrFound);
+            }
+
             // If this container was open for us, update its view
             if (isCurrentContainer)
             {
