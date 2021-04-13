@@ -35,6 +35,7 @@ namespace MWPhysics
 Actor::Actor(const MWWorld::Ptr& ptr, const Resource::BulletShape* shape, PhysicsTaskScheduler* scheduler)
   : mStandingOnPtr(nullptr), mCanWaterWalk(false), mWalkingOnWater(false)
   , mCollisionObject(nullptr), mMeshTranslation(shape->mCollisionBox.center), mHalfExtents(shape->mCollisionBox.extents)
+  , mStuckFrames(0), mLastStuckPosition{0, 0, 0}
   , mForce(0.f, 0.f, 0.f), mOnGround(true), mOnSlope(false)
   , mInternalCollisionMode(true)
   , mExternalCollisionMode(true)
@@ -213,9 +214,10 @@ bool Actor::setPosition(const osg::Vec3f& position)
     if (mSkipSimulation)
         return false;
     bool hasChanged = mPosition != position || mPositionOffset.length() != 0 || mWorldPositionChanged;
-    mPreviousPosition = mPosition + mPositionOffset;
-    mPosition = position + mPositionOffset;
-    mPositionOffset = osg::Vec3f();
+    updateWorldPosition();
+    applyOffsetChange();
+    mPreviousPosition = mPosition;
+    mPosition = position;
     return hasChanged;
 }
 
@@ -232,6 +234,7 @@ void Actor::applyOffsetChange()
     mWorldPosition += mPositionOffset;
     mPosition += mPositionOffset;
     mPreviousPosition += mPositionOffset;
+    mSimulationPosition += mPositionOffset;
     mPositionOffset = osg::Vec3f();
     mWorldPositionChanged = true;
 }

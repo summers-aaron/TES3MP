@@ -4,7 +4,7 @@ Contributors
 The OpenMW project was started in 2008 by Nicolay Korslund.
 In the course of years many people have contributed to the project.
 
-If you feel your name is missing from this list, please notify a developer.
+If you feel your name is missing from this list, please add it to `AUTHORS.md`.
 
 
 Programmers
@@ -24,7 +24,7 @@ Programmers
     Alex McKibben
     alexanderkjall
     Alexander Nadeau (wareya)
-    Alexander Olofsson (Ace)
+    Alexander Olofsson (Ananace)
     Alex Rice
     Alex S (docwest)
     Allofich
@@ -131,6 +131,7 @@ Programmers
     Martin Otto (MAtahualpa)
     Mateusz Kołaczek (PL_kolek)
     Mateusz Malisz (malice)
+    Max Henzerling (SaintMercury)
     megaton
     Michael Hogan (Xethik)
     Michael Mc Donnell
@@ -183,6 +184,7 @@ Programmers
     sergoz
     ShadowRadiance
     Siimacore
+    Simon Meulenbeek (simonmb)
     sir_herrbatka
     smbas
     Sophie Kirschner (pineapplemachine)
@@ -196,6 +198,7 @@ Programmers
     Sylvain Thesnieres (Garvek)
     t6
     terrorfisch
+    Tess (tescoShoppah)
     thegriglat
     Thomas Luppi (Digmaster)
     tlmullis
@@ -234,7 +237,8 @@ Documentation
 Packagers
 ---------
 
-    Alexander Olofsson (Ace) - Windows
+    Alexander Olofsson (Ananace) - Windows and Flatpak
+    Alexey Sokolov (DarthGandalf) - Gentoo Linux
     Bret Curtis (psi29a) - Debian and Ubuntu Linux
     Edmondo Tommasina (edmondo) - Gentoo Linux
     Julian Ospald (hasufell) - Gentoo Linux

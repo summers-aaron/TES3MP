@@ -57,6 +57,7 @@
     Bug #5424: Creatures do not headtrack player
     Bug #5425: Poison effect only appears for one frame
     Bug #5427: GetDistance unknown ID error is misleading
+    Bug #5431: Physics performance degradation after a specific number of actors on a scene
     Bug #5435: Enemies can't hurt the player when collision is off
     Bug #5441: Enemies can't push a player character when in critical strike stance
     Bug #5451: Magic projectiles don't disappear with the caster
@@ -87,6 +88,7 @@
     Bug #5656: Sneaking characters block hits while standing
     Bug #5661: Region sounds don't play at the right interval
     Bug #5675: OpenMW-cs. FRMR subrecords are saved with the wrong MastIdx
+    Bug #5680: Bull Netches incorrectly aim over the player character's head and always miss
     Bug #5681: Player character can clip or pass through bridges instead of colliding against them
     Bug #5687: Bound items covering the same inventory slot expiring at the same time freezes the game
     Bug #5688: Water shader broken indoors with enable indoor shadows = false
@@ -111,6 +113,10 @@
     Bug #5899: Visible modal windows and dropdowns crashing game on exit
     Bug #5902: NiZBufferProperty is unable to disable the depth test
     Bug #5906: Sunglare doesn't work with Mesa drivers and AMD GPUs
+    Bug #5912: ImprovedBound mod doesn't work
+    Bug #5914: BM: The Swimmer can't reach destination
+    Bug #5923: Clicking on empty spaces between journal entries might show random topics
+    Bug #5934: AddItem command doesn't accept negative values
     Feature #390: 3rd person look "over the shoulder"
     Feature #832: OpenMW-CS: Handle deleted references
     Feature #1536: Show more information about level on menu
@@ -118,6 +124,7 @@
     Feature #2404: Levelled List can not be placed into a container
     Feature #2686: Timestamps in openmw.log
     Feature #3171: OpenMW-CS: Instance drag selection
+    Feature #3983: Wizard: Add link to buy Morrowind
     Feature #4894: Consider actors as obstacles for pathfinding
     Feature #4899: Alpha-To-Coverage Anti-Aliasing for alpha testing
     Feature #4977: Use the "default icon.tga" when an item's icon is not found
@@ -129,6 +136,7 @@
     Feature #5456: Basic collada animation support
     Feature #5457: Realistic diagonal movement
     Feature #5486: Fixes trainers to choose their training skills based on their base skill points
+    Feature #5511: Add in game option to toggle HRTF support in OpenMW
     Feature #5519: Code Patch tab in launcher
     Feature #5524: Resume failed script execution after reload
     Feature #5545: Option to allow stealing from an unconscious NPC during combat
@@ -143,6 +151,8 @@
     Feature #5730: Add graphic herbalism option to the launcher and documents
     Feature #5771: ori command should report where a mesh is loaded from and whether the x version is used.
     Feature #5813: Instanced groundcover support
+    Feature #5814: Bsatool should be able to create BSA archives, not only to extract it
+    Feature #5910: Fall back to delta time when physics can't keep up
     Task #5480: Drop Qt4 support
     Task #5520: Improve cell name autocompleter implementation
     Task #5844: Update 'toggle sneak' documentation

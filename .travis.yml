@@ -18,7 +18,7 @@ addons:
       - ubuntu-toolchain-r-test
     packages: [
       # Dev
-      cmake, clang-tools, gcc-8, g++-8, ccache,
+      cmake, clang-tools-7, gcc-8, g++-8, ccache,
       # Boost
       libboost-filesystem-dev, libboost-iostreams-dev, libboost-program-options-dev, libboost-system-dev,
       # FFmpeg
