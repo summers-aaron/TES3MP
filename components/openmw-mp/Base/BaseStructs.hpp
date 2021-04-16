@@ -3,6 +3,7 @@
 
 #include <string>
 
+#include <components/esm/activespells.hpp>
 #include <components/esm/loadcell.hpp>
 #include <components/esm/statstate.hpp>
 
@@ -154,6 +155,24 @@ namespace mwmp
         bool instant;
 
         bool shouldSend;
+    };
+
+    struct ActiveSpell
+    {
+        std::string id;
+        ESM::ActiveSpells::ActiveSpellParams params;
+    };
+
+    struct SpellsActiveChanges
+    {
+        std::vector<ActiveSpell> activeSpells;
+        enum ACTION_TYPE
+        {
+            SET = 0,
+            ADD,
+            REMOVE
+        };
+        int action; // 0 - Clear and set in entirety, 1 - Add spell, 2 - Remove spell
     };
 
     struct Animation
