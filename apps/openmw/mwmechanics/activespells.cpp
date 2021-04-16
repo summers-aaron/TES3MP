@@ -43,7 +43,10 @@ namespace MWMechanics
 
                         Whenever a player loses an active spell, send an ID_PLAYER_SPELLS_ACTIVE packet to the server with it
                     */
-                    mwmp::Main::get().getLocalPlayer()->sendSpellsActiveRemoval(iter->first);
+                    if (this == &MWMechanics::getPlayer().getClass().getCreatureStats(MWMechanics::getPlayer()).getActiveSpells())
+                    {
+                        mwmp::Main::get().getLocalPlayer()->sendSpellsActiveRemoval(iter->first);
+                    }
                     /*
                         End of tes3mp addition
                     */
