@@ -244,10 +244,10 @@ namespace MWMechanics
                     /*
                         Start of tes3mp change (major)
 
-                        If the target is a DedicatedPlayer, don't apply effects to them unilaterally on this client
-                        and wait for the server's response to the other client to apply the effects for us
+                        If the target is a DedicatedPlayer or DedicatedActor, don't apply effects to them unilaterally on this
+                        client and wait for the server's response to the other client to apply the effects for us
                     */
-                    if (effect.mDuration == 0 && !mwmp::PlayerList::isDedicatedPlayer(target))
+                    if (effect.mDuration == 0 && !mwmp::PlayerList::isDedicatedPlayer(target) && !mwmp::Main::get().getCellController()->isDedicatedActor(target))
                     /*
                         End of tes3mp change (major)
                     */
@@ -290,10 +290,10 @@ namespace MWMechanics
                     /*
                         Start of tes3mp change (major)
 
-                        If the target is a DedicatedPlayer, don't apply effects to them unilaterally on this client
-                        and wait for the server's response to the other client to apply the effects for us
+                        If the target is a DedicatedPlayer or DedicatedActor, don't apply effects to them unilaterally on this
+                        client and wait for the server's response to the other client to apply the effects for us
                     */
-                    else if (!mwmp::PlayerList::isDedicatedPlayer(target))
+                    else if (!mwmp::PlayerList::isDedicatedPlayer(target) && !mwmp::Main::get().getCellController()->isDedicatedActor(target))
                     /*
                         End of tes3mp change (major)
                     */
