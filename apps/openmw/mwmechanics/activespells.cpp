@@ -15,6 +15,8 @@
 #include "../mwworld/class.hpp"
 #include "../mwmp/Main.hpp"
 #include "../mwmp/LocalPlayer.hpp"
+#include "../mwmp/CellController.hpp"
+#include "../mwmp/MechanicsHelper.hpp"
 /*
     End of tes3mp addition
 */
@@ -46,6 +48,10 @@ namespace MWMechanics
                     if (this == &MWMechanics::getPlayer().getClass().getCreatureStats(MWMechanics::getPlayer()).getActiveSpells())
                     {
                         mwmp::Main::get().getLocalPlayer()->sendSpellsActiveRemoval(iter->first);
+                    }
+                    else if (mwmp::Main::get().getCellController()->isLocalActor(MechanicsHelper::getCurrentActor()))
+                    {
+                        mwmp::Main::get().getCellController()->getLocalActor(MechanicsHelper::getCurrentActor())->sendSpellsActiveRemoval(iter->first);
                     }
                     /*
                         End of tes3mp addition
@@ -204,6 +210,10 @@ namespace MWMechanics
         if (this == &MWMechanics::getPlayer().getClass().getCreatureStats(MWMechanics::getPlayer()).getActiveSpells())
         {
             mwmp::Main::get().getLocalPlayer()->sendSpellsActiveAddition(id, esmParams);
+        }
+        else if (mwmp::Main::get().getCellController()->isLocalActor(MechanicsHelper::getCurrentActor()))
+        {
+            mwmp::Main::get().getCellController()->getLocalActor(MechanicsHelper::getCurrentActor())->sendSpellsActiveAddition(id, esmParams);
         }
         /*
             End of tes3mp addition

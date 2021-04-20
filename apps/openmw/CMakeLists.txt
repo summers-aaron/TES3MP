@@ -115,7 +115,8 @@ add_openmw_dir (mwmp/processors/system ProcessorSystemHandshake
 
 add_openmw_dir (mwmp/processors/actor ProcessorActorAI ProcessorActorAnimFlags ProcessorActorAnimPlay ProcessorActorAttack
     ProcessorActorAuthority ProcessorActorCast ProcessorActorCellChange ProcessorActorDeath ProcessorActorEquipment
-    ProcessorActorList ProcessorActorPosition ProcessorActorSpeech ProcessorActorStatsDynamic ProcessorActorTest
+    ProcessorActorList ProcessorActorPosition ProcessorActorSpeech ProcessorActorSpellsActive ProcessorActorStatsDynamic
+    ProcessorActorTest
     )
 
 add_openmw_dir (mwmp/processors/player ProcessorChatMessage ProcessorGUIMessageBox ProcessorUserDisconnected

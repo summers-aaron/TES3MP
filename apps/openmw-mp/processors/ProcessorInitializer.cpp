@@ -51,9 +51,10 @@
 #include "actor/ProcessorActorCellChange.hpp"
 #include "actor/ProcessorActorDeath.hpp"
 #include "actor/ProcessorActorEquipment.hpp"
-#include "actor/ProcessorActorStatsDynamic.hpp"
 #include "actor/ProcessorActorPosition.hpp"
 #include "actor/ProcessorActorSpeech.hpp"
+#include "actor/ProcessorActorSpellsActive.hpp"
+#include "actor/ProcessorActorStatsDynamic.hpp"
 #include "ObjectProcessor.hpp"
 #include "object/ProcessorConsoleCommand.hpp"
 #include "object/ProcessorContainer.hpp"
@@ -137,6 +138,7 @@ void ProcessorInitializer()
     ActorProcessor::AddProcessor(new ProcessorActorEquipment());
     ActorProcessor::AddProcessor(new ProcessorActorPosition());
     ActorProcessor::AddProcessor(new ProcessorActorSpeech());
+    ActorProcessor::AddProcessor(new ProcessorActorSpellsActive());
     ActorProcessor::AddProcessor(new ProcessorActorStatsDynamic());
     ActorProcessor::AddProcessor(new ProcessorActorTest());
 

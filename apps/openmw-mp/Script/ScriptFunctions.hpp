@@ -207,6 +207,7 @@ public:
             {"OnActorEquipment",         Callback<unsigned short, const char*>()},
             {"OnActorAI",                Callback<unsigned short, const char*>()},
             {"OnActorDeath",             Callback<unsigned short, const char*>()},
+            {"OnActorSpellsActive",      Callback<unsigned short, const char*>()},
             {"OnActorCellChange",        Callback<unsigned short, const char*>()},
             {"OnActorTest",              Callback<unsigned short, const char*>()},
             {"OnPlayerSendMessage",      Callback<unsigned short, const char*>()},

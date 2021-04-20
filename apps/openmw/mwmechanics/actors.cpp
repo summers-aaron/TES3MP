@@ -2123,6 +2123,16 @@ namespace MWMechanics
                     End of tes3mp change (major)
                 */
 
+                /*
+                    Start of tes3mp addition
+
+                    Store the current actor's Ptr so it can be retrieved from inside ActiveSpells for
+                    multiplayer logic purposes
+                */
+                MechanicsHelper::storeCurrentActor(iter->first);
+                /*
+                    End of tes3mp addition
+                */
                 iter->first.getClass().getCreatureStats(iter->first).getActiveSpells().update(duration);
 
                 const Misc::TimerStatus engageCombatTimerStatus = iter->second->updateEngageCombatTimer(duration);
@@ -2528,6 +2538,16 @@ namespace MWMechanics
         {
             if (iter->first.getClass().getCreatureStats(iter->first).isDead())
             {
+                /*
+                    Start of tes3mp addition
+
+                    Store the current actor's Ptr so it can be retrieved from inside ActiveSpells for
+                    multiplayer logic purposes
+                */
+                MechanicsHelper::storeCurrentActor(iter->first);
+                /*
+                    End of tes3mp addition
+                */
                 iter->first.getClass().getCreatureStats(iter->first).getActiveSpells().update(duration);
                 continue;
             }
@@ -2546,6 +2566,17 @@ namespace MWMechanics
             calculateCreatureStatModifiers (iter->first, duration);
             if (iter->first.getClass().isNpc())
                 calculateNpcStatModifiers(iter->first, duration);
+
+                /*
+                    Start of tes3mp addition
+
+                    Store the current actor's Ptr so it can be retrieved from inside ActiveSpells for
+                    multiplayer logic purposes
+                */
+                MechanicsHelper::storeCurrentActor(iter->first);
+                /*
+                    End of tes3mp addition
+                */
 
             iter->first.getClass().getCreatureStats(iter->first).getActiveSpells().update(duration);
 

@@ -286,6 +286,36 @@ void Cell::readSpeech(ActorList& actorList)
         uninitializeDedicatedActors(actorList);
 }
 
+void Cell::readSpellsActive(ActorList& actorList)
+{
+    initializeDedicatedActors(actorList);
+
+    if (dedicatedActors.empty()) return;
+
+    for (const auto& baseActor : actorList.baseActors)
+    {
+        std::string mapIndex = Main::get().getCellController()->generateMapIndex(baseActor);
+
+        if (dedicatedActors.count(mapIndex) > 0)
+        {
+            DedicatedActor* actor = dedicatedActors[mapIndex];
+            actor->spellsActiveChanges = baseActor.spellsActiveChanges;
+
+            int spellsActiveAction = baseActor.spellsActiveChanges.action;
+
+            if (spellsActiveAction == SpellsActiveChanges::ADD)
+                actor->addSpellsActive();
+            else if (spellsActiveAction == SpellsActiveChanges::REMOVE)
+                actor->removeSpellsActive();
+            else
+                actor->setSpellsActive();
+        }
+    }
+
+    if (hasLocalAuthority())
+        uninitializeDedicatedActors(actorList);
+}
+
 void Cell::readAi(ActorList& actorList)
 {
     initializeDedicatedActors(actorList);

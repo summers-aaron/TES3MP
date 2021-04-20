@@ -285,6 +285,49 @@ void LocalActor::sendEquipment()
     Main::get().getNetworking()->getActorPacket(ID_ACTOR_EQUIPMENT)->Send();
 }
 
+void LocalActor::sendSpellsActiveAddition(const std::string id, ESM::ActiveSpells::ActiveSpellParams params)
+{
+    // Skip any bugged spells that somehow have clientside-only dynamic IDs
+    if (id.find("$dynamic") != std::string::npos)
+        return;
+
+    spellsActiveChanges.activeSpells.clear();
+
+    mwmp::ActiveSpell spell;
+    spell.id = id;
+    spell.params = params;
+    spellsActiveChanges.activeSpells.push_back(spell);
+
+    spellsActiveChanges.action = mwmp::SpellsActiveChanges::ADD;
+
+    ActorList actorList;
+    actorList.cell = cell;
+    actorList.addActor(*this);
+    Main::get().getNetworking()->getActorPacket(ID_ACTOR_SPELLS_ACTIVE)->setActorList(&actorList);
+    Main::get().getNetworking()->getActorPacket(ID_ACTOR_SPELLS_ACTIVE)->Send();
+}
+
+void LocalActor::sendSpellsActiveRemoval(const std::string id)
+{
+    // Skip any bugged spells that somehow have clientside-only dynamic IDs
+    if (id.find("$dynamic") != std::string::npos)
+        return;
+
+    spellsActiveChanges.activeSpells.clear();
+
+    mwmp::ActiveSpell spell;
+    spell.id = id;
+    spellsActiveChanges.activeSpells.push_back(spell);
+
+    spellsActiveChanges.action = mwmp::SpellsActiveChanges::REMOVE;
+
+    ActorList actorList;
+    actorList.cell = cell;
+    actorList.addActor(*this);
+    Main::get().getNetworking()->getActorPacket(ID_ACTOR_SPELLS_ACTIVE)->setActorList(&actorList);
+    Main::get().getNetworking()->getActorPacket(ID_ACTOR_SPELLS_ACTIVE)->Send();
+}
+
 void LocalActor::sendDeath(char newDeathState)
 {
     deathState = newDeathState;

@@ -30,6 +30,7 @@ namespace mwmp
         void readDeath(mwmp::ActorList& actorList);
         void readEquipment(mwmp::ActorList& actorList);
         void readSpeech(mwmp::ActorList& actorList);
+        void readSpellsActive(mwmp::ActorList& actorList);
         void readAi(mwmp::ActorList& actorList);
         void readAttack(mwmp::ActorList& actorList);
         void readCast(mwmp::ActorList& actorList);

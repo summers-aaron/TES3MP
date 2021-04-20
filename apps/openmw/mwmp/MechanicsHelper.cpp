@@ -589,3 +589,13 @@ MWWorld::Ptr MechanicsHelper::getItemPtrFromStore(const mwmp::Item& item, MWWorl
 
     return closestPtr;
 }
+
+MWWorld::Ptr MechanicsHelper::getCurrentActor()
+{
+    return currentActor;
+}
+
+void MechanicsHelper::storeCurrentActor(const MWWorld::Ptr& actor)
+{
+    currentActor = actor;
+}

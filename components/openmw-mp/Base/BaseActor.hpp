@@ -58,6 +58,7 @@ namespace mwmp
         bool hasStatsDynamicData;
 
         Item equipmentItems[19];
+        SpellsActiveChanges spellsActiveChanges;
     };
 
     class BaseActorList

@@ -84,8 +84,8 @@ set(PROCESSORS_ACTOR
         processors/actor/ProcessorActorCast.hpp processors/actor/ProcessorActorCellChange.hpp
         processors/actor/ProcessorActorDeath.hpp processors/actor/ProcessorActorEquipment.hpp
         processors/actor/ProcessorActorList.hpp processors/actor/ProcessorActorPosition.hpp
-        processors/actor/ProcessorActorSpeech.hpp processors/actor/ProcessorActorStatsDynamic.hpp
-        processors/actor/ProcessorActorTest.hpp
+        processors/actor/ProcessorActorSpeech.hpp processors/actor/ProcessorActorSpellsActive.hpp
+        processors/actor/ProcessorActorStatsDynamic.hpp processors/actor/ProcessorActorTest.hpp
         )
 
 source_group(tes3mp-server\\processors\\actor FILES ${PROCESSORS_ACTOR})

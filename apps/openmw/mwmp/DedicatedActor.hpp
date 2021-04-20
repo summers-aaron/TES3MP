@@ -29,6 +29,10 @@ namespace mwmp
         bool hasItem(std::string itemId, int charge);
         void equipItem(std::string itemId, int charge, bool noSound = false);
 
+        void addSpellsActive();
+        void removeSpellsActive();
+        void setSpellsActive();
+
         MWWorld::Ptr getPtr();
         void setPtr(const MWWorld::Ptr& newPtr);
 

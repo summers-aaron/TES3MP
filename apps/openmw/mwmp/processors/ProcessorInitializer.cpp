@@ -87,6 +87,7 @@
 #include "actor/ProcessorActorList.hpp"
 #include "actor/ProcessorActorPosition.hpp"
 #include "actor/ProcessorActorSpeech.hpp"
+#include "actor/ProcessorActorSpellsActive.hpp"
 #include "actor/ProcessorActorStatsDynamic.hpp"
 #include "actor/ProcessorActorTest.hpp"
 
@@ -190,6 +191,7 @@ void ProcessorInitializer()
     ActorProcessor::AddProcessor(new ProcessorActorList());
     ActorProcessor::AddProcessor(new ProcessorActorPosition());
     ActorProcessor::AddProcessor(new ProcessorActorSpeech());
+    ActorProcessor::AddProcessor(new ProcessorActorSpellsActive());
     ActorProcessor::AddProcessor(new ProcessorActorStatsDynamic());
     ActorProcessor::AddProcessor(new ProcessorActorTest());
 

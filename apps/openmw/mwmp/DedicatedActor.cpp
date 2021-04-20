@@ -359,6 +359,41 @@ void DedicatedActor::equipItem(std::string itemId, int charge, bool noSound)
     }
 }
 
+void DedicatedActor::addSpellsActive()
+{
+    MWMechanics::ActiveSpells& activeSpells = getPtr().getClass().getCreatureStats(getPtr()).getActiveSpells();
+
+    for (const auto& activeSpell : spellsActiveChanges.activeSpells)
+    {
+        // Only add spells that are ensured to exist
+        if (MWBase::Environment::get().getWorld()->getStore().get<ESM::Spell>().search(activeSpell.id))
+        {
+            activeSpells.addSpell(activeSpell.id, false, activeSpell.params.mEffects, activeSpell.params.mDisplayName, 1);
+        }
+        else
+            LOG_APPEND(TimedLog::LOG_INFO, "- Ignored addition of invalid spell %s", activeSpell.id.c_str());
+    }
+}
+
+void DedicatedActor::removeSpellsActive()
+{
+    MWMechanics::ActiveSpells& activeSpells = getPtr().getClass().getCreatureStats(getPtr()).getActiveSpells();
+
+    for (const auto& activeSpell : spellsActiveChanges.activeSpells)
+    {
+        activeSpells.removeEffects(activeSpell.id);
+    }
+}
+
+void DedicatedActor::setSpellsActive()
+{
+    MWMechanics::ActiveSpells& activeSpells = getPtr().getClass().getCreatureStats(getPtr()).getActiveSpells();
+    activeSpells.clear();
+
+    // Proceed by adding spells active
+    addSpellsActive();
+}
+
 MWWorld::Ptr DedicatedActor::getPtr()
 {
     return ptr;

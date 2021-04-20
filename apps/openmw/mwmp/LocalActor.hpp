@@ -26,6 +26,8 @@ namespace mwmp
         void updateAttackOrCast();
 
         void sendEquipment();
+        void sendSpellsActiveAddition(const std::string id, ESM::ActiveSpells::ActiveSpellParams params);
+        void sendSpellsActiveRemoval(const std::string id);
         void sendDeath(char newDeathState);
 
         MWWorld::Ptr getPtr();

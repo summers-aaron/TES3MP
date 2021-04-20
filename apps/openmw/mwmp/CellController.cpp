@@ -211,6 +211,17 @@ void CellController::readSpeech(ActorList& actorList)
         cellsInitialized[mapIndex]->readSpeech(actorList);
 }
 
+void CellController::readSpellsActive(ActorList& actorList)
+{
+    std::string mapIndex = actorList.cell.getDescription();
+
+    initializeCell(actorList.cell);
+
+    // If this now exists, send it the data
+    if (cellsInitialized.count(mapIndex) > 0)
+        cellsInitialized[mapIndex]->readSpellsActive(actorList);
+}
+
 void CellController::readAi(ActorList& actorList)
 {
     std::string mapIndex = actorList.cell.getDescription();
