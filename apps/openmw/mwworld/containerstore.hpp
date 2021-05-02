@@ -261,6 +261,7 @@ namespace MWWorld
 
             void resolve();
             ResolutionHandle resolveTemporarily();
+            void unresolve();
 
             friend class ContainerStoreIteratorBase<Ptr>;
             friend class ContainerStoreIteratorBase<ConstPtr>;

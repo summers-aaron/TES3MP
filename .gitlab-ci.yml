@@ -31,7 +31,8 @@ stages:
       - build/install/
 
 Coverity:
-  extends: .Debian
+  extends: .Debian_Image
+  stage: build
   rules:
     - if: '$CI_PIPELINE_SOURCE == "schedule"'
   before_script:
@@ -44,10 +45,10 @@ Coverity:
     - cov-analysis-linux64-*/bin/cov-build --dir cov-int cmake --build build -- -j $(nproc) openmw
   after_script:
     - tar cfz cov-int.tar.gz cov-int
-    - curl https://scan.coverity.com/builds?project=$COVERITY_SCAN_PROJECT_NAME \
-      --form token=$COVERITY_SCAN_TOKEN --form email=$GITLAB_USER_EMAIL \
-      --form file=@cov-int.tar.gz --form version="`git describe --tags`" \
-      --form description="`git describe --tags` / $CI_COMMIT_TITLE / $CI_COMMIT_REF_NAME:$CI_PIPELINE_ID  
+    - curl https://scan.coverity.com/builds?project=$COVERITY_SCAN_PROJECT_NAME
+      --form token=$COVERITY_SCAN_TOKEN --form email=$GITLAB_USER_EMAIL
+      --form file=@cov-int.tar.gz --form version="`git describe --tags`"
+      --form description="`git describe --tags` / $CI_COMMIT_TITLE / $CI_COMMIT_REF_NAME:$CI_PIPELINE_ID"
   variables:
     CC: gcc
     CXX: g++
@@ -119,7 +120,7 @@ Debian_Clang_tests:
 .MacOS:
   image: macos-11-xcode-12
   tags:
-    - macos
+    - shared-macos-amd64
   stage: build
   only:
     variables:
@@ -128,12 +129,12 @@ Debian_Clang_tests:
     paths:
     - ccache/
   script:
-    - rm -fr build/*  # remove anything in the build directory
+    - rm -fr build  # remove the build directory
+    - CI/before_install.osx.sh
     - export CCACHE_BASEDIR="$(pwd)"
     - export CCACHE_DIR="$(pwd)/ccache"
     - mkdir -pv "${CCACHE_DIR}"
     - ccache -z -M "${CCACHE_SIZE}"
-    - CI/before_install.osx.sh
     - CI/before_script.osx.sh
     - cd build; make -j $(sysctl -n hw.logicalcpu) package
     - for dmg in *.dmg; do mv "$dmg" "${dmg%.dmg}_${CI_COMMIT_REF_NAME}_${CI_JOB_ID}.dmg"; done
@@ -154,6 +155,7 @@ macOS11_Xcode12:
 macOS10.15_Xcode11:
   extends: .MacOS
   image: macos-10.15-xcode-11
+  allow_failure: true
   cache:
     key: macOS10.15_Xcode11.v1
   variables:

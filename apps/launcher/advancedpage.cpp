@@ -1,5 +1,7 @@
 #include "advancedpage.hpp"
 
+#include <array>
+
 #include <components/config/gamesettings.hpp>
 #include <components/config/launchersettings.hpp>
 #include <QFileDialog>
@@ -138,6 +140,13 @@ bool Launcher::AdvancedPage::loadSettings()
 
         loadSettingBool(activeGridObjectPagingCheckBox, "object paging active grid", "Terrain");
         viewingDistanceComboBox->setValue(convertToCells(mEngineSettings.getInt("viewing distance", "Camera")));
+
+        int lightingMethod = 1;
+        if (mEngineSettings.getString("lighting method", "Shaders") == "legacy")
+            lightingMethod = 0;
+        else if (mEngineSettings.getString("lighting method", "Shaders") == "shaders")
+            lightingMethod = 2;
+        lightingMethodComboBox->setCurrentIndex(lightingMethod);
     }
 
     // Audio
@@ -194,6 +203,7 @@ bool Launcher::AdvancedPage::loadSettings()
             showOwnedComboBox->setCurrentIndex(showOwnedIndex);
         loadSettingBool(stretchBackgroundCheckBox, "stretch menu background", "GUI");
         loadSettingBool(graphicHerbalismCheckBox, "graphic herbalism", "Game");
+        scalingSpinBox->setValue(mEngineSettings.getFloat("scaling factor", "GUI"));
     }
 
     // Bug fixes
@@ -288,6 +298,9 @@ void Launcher::AdvancedPage::saveSettings()
         {
             mEngineSettings.setInt("viewing distance", "Camera", convertToUnits(viewingDistance));
         }
+
+        static std::array<std::string, 3> lightingMethodMap = {"legacy", "shaders compatibility", "shaders"};
+        mEngineSettings.setString("lighting method", "Shaders", lightingMethodMap[lightingMethodComboBox->currentIndex()]);
     }
     
     // Audio
@@ -348,6 +361,9 @@ void Launcher::AdvancedPage::saveSettings()
             mEngineSettings.setInt("show owned", "Game", showOwnedCurrentIndex);
         saveSettingBool(stretchBackgroundCheckBox, "stretch menu background", "GUI");
         saveSettingBool(graphicHerbalismCheckBox, "graphic herbalism", "Game");
+        float uiScalingFactor = scalingSpinBox->value();
+        if (uiScalingFactor != mEngineSettings.getFloat("scaling factor", "GUI"))
+            mEngineSettings.setFloat("scaling factor", "GUI", uiScalingFactor);
     }
 
     // Bug fixes

@@ -49,6 +49,7 @@ Programmers
     Cédric Mocquillon
     Chris Boyce (slothlife)
     Chris Robinson (KittyCat)
+    Cody Glassman (Wazabear)
     Coleman Smith (olcoal)
     Cory F. Cohen (cfcohen)
     Cris Mihalache (Mirceam)
@@ -89,6 +90,7 @@ Programmers
     Internecine
     Jackerty
     Jacob Essex (Yacoby)
+    Jacob Turnbull (Tankinfrank)
     Jake Westrip (16bitint)
     James Carty (MrTopCat)
     James Moore (moore.work)
@@ -150,6 +152,7 @@ Programmers
     Nathan Jeffords (blunted2night)
     NeveHanter
     Nialsy
+    Nick Crawford (nighthawk469)
     Nikolay Kasyanov (corristo)
     nobrakal
     Nolan Poe (nopoe)

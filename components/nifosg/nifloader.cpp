@@ -214,7 +214,7 @@ namespace NifOsg
         return sHiddenNodeMask;
     }
 
-    unsigned int Loader::sIntersectionDisabledNodeMask = ~0;
+    unsigned int Loader::sIntersectionDisabledNodeMask = ~0u;
 
     void Loader::setIntersectionDisabledNodeMask(unsigned int mask)
     {
@@ -238,7 +238,7 @@ namespace NifOsg
         std::string mFilename;
         unsigned int mVersion, mUserVersion, mBethVersion;
 
-        size_t mFirstRootTextureIndex = -1;
+        size_t mFirstRootTextureIndex{~0u};
         bool mFoundFirstRootTexturingProperty = false;
 
         bool mHasNightDayLabel = false;
@@ -312,8 +312,7 @@ namespace NifOsg
             for (size_t i = 0; i < numRoots; ++i)
             {
                 const Nif::Record* r = nif->getRoot(i);
-                const Nif::Node* nifNode = nullptr;
-                if ((nifNode = dynamic_cast<const Nif::Node*>(r)))
+                if (const Nif::Node* nifNode = dynamic_cast<const Nif::Node*>(r))
                     roots.emplace_back(nifNode);
             }
             if (roots.empty())
@@ -609,7 +608,8 @@ namespace NifOsg
                 bool hasVisController = false;
                 for (Nif::ControllerPtr ctrl = nifNode->controller; !ctrl.empty(); ctrl = ctrl->next)
                 {
-                    if ((hasVisController |= (ctrl->recType == Nif::RC_NiVisController)))
+                    hasVisController |= (ctrl->recType == Nif::RC_NiVisController);
+                    if (hasVisController)
                         break;
                 }
 

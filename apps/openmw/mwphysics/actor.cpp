@@ -156,6 +156,7 @@ void Actor::updatePosition()
     mPreviousPosition = mWorldPosition;
     mPosition = mWorldPosition;
     mSimulationPosition = mWorldPosition;
+    mPositionOffset = osg::Vec3f();
     mStandingOnPtr = nullptr;
     mSkipSimulation = true;
 }
@@ -231,7 +232,6 @@ void Actor::applyOffsetChange()
 {
     if (mPositionOffset.length() == 0)
         return;
-    mWorldPosition += mPositionOffset;
     mPosition += mPositionOffset;
     mPreviousPosition += mPositionOffset;
     mSimulationPosition += mPositionOffset;

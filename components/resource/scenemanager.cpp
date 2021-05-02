@@ -226,6 +226,7 @@ namespace Resource
         , mAutoUseNormalMaps(false)
         , mAutoUseSpecularMaps(false)
         , mApplyLightingToEnvMaps(false)
+        , mLightingMethod(SceneUtil::LightingMethod::FFP)
         , mConvertAlphaTestToAlphaToCoverage(false)
         , mInstanceCache(new MultiObjectCache)
         , mSharedStateManager(new SharedStateManager)
@@ -304,6 +305,26 @@ namespace Resource
         mApplyLightingToEnvMaps = apply;
     }
 
+    void SceneManager::setSupportedLightingMethods(const SceneUtil::LightManager::SupportedMethods& supported)
+    {
+        mSupportedLightingMethods = supported;
+    }
+
+    bool SceneManager::isSupportedLightingMethod(SceneUtil::LightingMethod method) const
+    {
+        return mSupportedLightingMethods[static_cast<int>(method)];
+    }
+
+    void SceneManager::setLightingMethod(SceneUtil::LightingMethod method)
+    {
+        mLightingMethod = method;
+    }
+
+    SceneUtil::LightingMethod SceneManager::getLightingMethod() const
+    {
+        return mLightingMethod;
+    }
+    
     void SceneManager::setConvertAlphaTestToAlphaToCoverage(bool convert)
     {
         mConvertAlphaTestToAlphaToCoverage = convert;

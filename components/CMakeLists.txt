@@ -89,7 +89,7 @@ add_component_dir (esmterrain
     )
 
 add_component_dir (misc
-    constants utf8stream stringops resourcehelpers rng messageformatparser weakcache
+    constants utf8stream stringops resourcehelpers rng messageformatparser weakcache thread
     )
 
 add_component_dir (debug
@@ -265,6 +265,8 @@ if (BUILD_OPENMW OR BUILD_OPENCS)
             navigator
             findrandompointaroundcircle
             raycast
+            navmeshtileview
+            oscillatingrecastmeshobject
             )
 endif()
 # End of tes3mp change (major)

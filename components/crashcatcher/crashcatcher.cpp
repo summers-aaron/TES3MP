@@ -43,7 +43,7 @@ namespace bfs = boost::filesystem;
 #include <sys/user.h>
 #endif
 
-static const char crash_switch[] = "--cc-handle-crash";
+#include "crashcatcher.hpp"
 
 static const char fatal_err[] = "\n\n*** Fatal Error ***\n";
 static const char pipe_err[] = "!!! Failed to create pipe\n";
@@ -150,6 +150,9 @@ static void gdb_info(pid_t pid)
      * So CoverityScan warning is valid only for ancient versions of stdlib.
     */
     strcpy(respfile, "/tmp/gdb-respfile-XXXXXX");
+#ifdef __COVERITY__
+    umask(0600);
+#endif
     if((fd=mkstemp(respfile)) >= 0 && (f=fdopen(fd, "w")) != nullptr)
     {
         fprintf(f, "attach %d\n"
