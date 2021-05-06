@@ -100,6 +100,7 @@
     Bug #5739: Saving and loading the save a second or two before hitting the ground doesn't count fall damage
     Bug #5758: Paralyzed actors behavior is inconsistent with vanilla
     Bug #5762: Movement solver is insufficiently robust
+    BUG #5800: Equipping a CE enchanted ring deselects an already equipped and selected enchanted ring from the spell menu
     Bug #5807: Video decoding crash on ARM
     Bug #5821: NPCs from mods getting removed if mod order was changed
     Bug #5835: OpenMW doesn't accept negative values for NPC's hello, alarm, fight, and flee
@@ -118,6 +119,7 @@
     Bug #5923: Clicking on empty spaces between journal entries might show random topics
     Bug #5934: AddItem command doesn't accept negative values
     Bug #5975: NIF controllers from sheath meshes are used
+    Bug #5991: Activate should always be allowed for inventory items
     Bug #5995: NiUVController doesn't calculate the UV offset properly
     Feature #390: 3rd person look "over the shoulder"
     Feature #832: OpenMW-CS: Handle deleted references
