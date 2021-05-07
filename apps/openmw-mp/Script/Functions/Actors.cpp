@@ -17,6 +17,7 @@ BaseActorList writeActorList;
 
 BaseActor tempActor;
 const BaseActor emptyActor = {};
+std::vector<ESM::ActiveEffect> storedActorActiveEffects;
 
 static std::string tempCellDescription;
 
@@ -224,6 +225,56 @@ unsigned int ActorFunctions::GetActorDeathState(unsigned int index) noexcept
     return readActorList->baseActors.at(index).deathState;
 }
 
+unsigned int ActorFunctions::GetActorSpellsActiveChangesSize(unsigned int actorIndex) noexcept
+{
+    return readActorList->baseActors.at(actorIndex).spellsActiveChanges.activeSpells.size();
+}
+
+unsigned int ActorFunctions::GetActorSpellsActiveChangesAction(unsigned int actorIndex) noexcept
+{
+    return readActorList->baseActors.at(actorIndex).spellsActiveChanges.action;
+}
+
+const char* ActorFunctions::GetActorSpellsActiveId(unsigned int actorIndex, unsigned int spellIndex) noexcept
+{
+    return readActorList->baseActors.at(actorIndex).spellsActiveChanges.activeSpells.at(spellIndex).id.c_str();
+}
+
+const char* ActorFunctions::GetActorSpellsActiveDisplayName(unsigned int actorIndex, unsigned int spellIndex) noexcept
+{
+    return readActorList->baseActors.at(actorIndex).spellsActiveChanges.activeSpells.at(spellIndex).params.mDisplayName.c_str();
+}
+
+unsigned int ActorFunctions::GetActorSpellsActiveEffectCount(unsigned int actorIndex, unsigned int spellIndex) noexcept
+{
+    return readActorList->baseActors.at(actorIndex).spellsActiveChanges.activeSpells.at(spellIndex).params.mEffects.size();
+}
+
+unsigned int ActorFunctions::GetActorSpellsActiveEffectId(unsigned int actorIndex, unsigned int spellIndex, unsigned int effectIndex) noexcept
+{
+    return readActorList->baseActors.at(actorIndex).spellsActiveChanges.activeSpells.at(spellIndex).params.mEffects.at(effectIndex).mEffectId;
+}
+
+int ActorFunctions::GetActorSpellsActiveEffectArg(unsigned int actorIndex, unsigned int spellIndex, unsigned int effectIndex) noexcept
+{
+    return readActorList->baseActors.at(actorIndex).spellsActiveChanges.activeSpells.at(spellIndex).params.mEffects.at(effectIndex).mArg;
+}
+
+double ActorFunctions::GetActorSpellsActiveEffectMagnitude(unsigned int actorIndex, unsigned int spellIndex, unsigned int effectIndex) noexcept
+{
+    return readActorList->baseActors.at(actorIndex).spellsActiveChanges.activeSpells.at(spellIndex).params.mEffects.at(effectIndex).mMagnitude;
+}
+
+double ActorFunctions::GetActorSpellsActiveEffectDuration(unsigned int actorIndex, unsigned int spellIndex, unsigned int effectIndex) noexcept
+{
+    return readActorList->baseActors.at(actorIndex).spellsActiveChanges.activeSpells.at(spellIndex).params.mEffects.at(effectIndex).mDuration;
+}
+
+double ActorFunctions::GetActorSpellsActiveEffectTimeLeft(unsigned int actorIndex, unsigned int spellIndex, unsigned int effectIndex) noexcept
+{
+    return readActorList->baseActors.at(actorIndex).spellsActiveChanges.activeSpells.at(spellIndex).params.mEffects.at(effectIndex).mTimeLeft;
+}
+
 bool ActorFunctions::DoesActorHavePosition(unsigned int index) noexcept
 {
     return readActorList->baseActors.at(index).hasPositionData;
@@ -338,6 +389,11 @@ void ActorFunctions::SetActorDeathInstant(bool isInstant) noexcept
     tempActor.isInstantDeath = isInstant;
 }
 
+void ActorFunctions::SetActorSpellsActiveAction(unsigned char action) noexcept
+{
+    tempActor.spellsActiveChanges.action = action;
+}
+
 void ActorFunctions::SetActorAIAction(unsigned int action) noexcept
 {
     tempActor.aiAction = action;
@@ -396,6 +452,30 @@ void ActorFunctions::EquipActorItem(unsigned short slot, const char *refId, unsi
 void ActorFunctions::UnequipActorItem(unsigned short slot) noexcept
 {
     ActorFunctions::EquipActorItem(slot, "", 0, -1, -1);
+}
+
+void ActorFunctions::AddActorSpellActive(const char* spellId, const char* displayName) noexcept
+{
+    mwmp::ActiveSpell spell;
+    spell.id = spellId;
+    spell.params.mDisplayName = displayName;
+    spell.params.mEffects = storedActorActiveEffects;
+
+    tempActor.spellsActiveChanges.activeSpells.push_back(spell);
+
+    storedActorActiveEffects.clear();
+}
+
+void ActorFunctions::AddActorSpellActiveEffect(int effectId, double magnitude, double duration, double timeLeft, int arg) noexcept
+{
+    ESM::ActiveEffect effect;
+    effect.mEffectId = effectId;
+    effect.mMagnitude = magnitude;
+    effect.mDuration = duration;
+    effect.mTimeLeft = timeLeft;
+    effect.mArg = arg;
+
+    storedActorActiveEffects.push_back(effect);
 }
 
 void ActorFunctions::AddActor() noexcept
@@ -478,6 +558,25 @@ void ActorFunctions::SendActorEquipment(bool sendToOtherVisitors, bool skipAttac
     if (sendToOtherVisitors)
     {
         Cell *serverCell = CellController::get()->getCell(&writeActorList.cell);
+
+        if (serverCell != nullptr)
+        {
+            serverCell->sendToLoaded(actorPacket, &writeActorList);
+        }
+    }
+}
+
+void ActorFunctions::SendActorSpellsActiveChanges(bool sendToOtherVisitors, bool skipAttachedPlayer) noexcept
+{
+    mwmp::ActorPacket* actorPacket = mwmp::Networking::get().getActorPacketController()->GetPacket(ID_ACTOR_SPELLS_ACTIVE);
+    actorPacket->setActorList(&writeActorList);
+
+    if (!skipAttachedPlayer)
+        actorPacket->Send(writeActorList.guid);
+
+    if (sendToOtherVisitors)
+    {
+        Cell* serverCell = CellController::get()->getCell(&writeActorList.cell);
 
         if (serverCell != nullptr)
         {

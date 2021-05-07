@@ -48,6 +48,17 @@
     {"GetActorKillerName",                     ActorFunctions::GetActorKillerName},\
     {"GetActorDeathState",                     ActorFunctions::GetActorDeathState},\
     \
+    {"GetActorSpellsActiveChangesSize",        ActorFunctions::GetActorSpellsActiveChangesSize},\
+    {"GetActorSpellsActiveChangesAction",      ActorFunctions::GetActorSpellsActiveChangesAction},\
+    {"GetActorSpellsActiveId",                 ActorFunctions::GetActorSpellsActiveId},\
+    {"GetActorSpellsActiveDisplayName",        ActorFunctions::GetActorSpellsActiveDisplayName},\
+    {"GetActorSpellsActiveEffectCount",        ActorFunctions::GetActorSpellsActiveEffectCount},\
+    {"GetActorSpellsActiveEffectId",           ActorFunctions::GetActorSpellsActiveEffectId},\
+    {"GetActorSpellsActiveEffectArg",          ActorFunctions::GetActorSpellsActiveEffectArg},\
+    {"GetActorSpellsActiveEffectMagnitude",    ActorFunctions::GetActorSpellsActiveEffectMagnitude},\
+    {"GetActorSpellsActiveEffectDuration",     ActorFunctions::GetActorSpellsActiveEffectDuration},\
+    {"GetActorSpellsActiveEffectTimeLeft",     ActorFunctions::GetActorSpellsActiveEffectTimeLeft},\
+    \
     {"DoesActorHavePosition",                  ActorFunctions::DoesActorHavePosition},\
     {"DoesActorHaveStatsDynamic",              ActorFunctions::DoesActorHaveStatsDynamic},\
     \
@@ -75,6 +86,7 @@
     {"SetActorDeathState",                     ActorFunctions::SetActorDeathState},\
     {"SetActorDeathInstant",                   ActorFunctions::SetActorDeathInstant},\
     {"SetActorSound",                          ActorFunctions::SetActorSound},\
+    {"SetActorSpellsActiveAction",             ActorFunctions::SetActorSpellsActiveAction},\
     \
     {"SetActorAIAction",                       ActorFunctions::SetActorAIAction},\
     {"SetActorAITargetToPlayer",               ActorFunctions::SetActorAITargetToPlayer},\
@@ -87,6 +99,9 @@
     {"EquipActorItem",                         ActorFunctions::EquipActorItem},\
     {"UnequipActorItem",                       ActorFunctions::UnequipActorItem},\
     \
+    {"AddActorSpellActive",                    ActorFunctions::AddActorSpellActive},\
+    {"AddActorSpellActiveEffect",              ActorFunctions::AddActorSpellActiveEffect},\
+    \
     {"AddActor",                               ActorFunctions::AddActor},\
     \
     {"SendActorList",                          ActorFunctions::SendActorList},\
@@ -94,6 +109,7 @@
     {"SendActorPosition",                      ActorFunctions::SendActorPosition},\
     {"SendActorStatsDynamic",                  ActorFunctions::SendActorStatsDynamic},\
     {"SendActorEquipment",                     ActorFunctions::SendActorEquipment},\
+    {"SendActorSpellsActiveChanges",           ActorFunctions::SendActorSpellsActiveChanges},\
     {"SendActorSpeech",                        ActorFunctions::SendActorSpeech},\
     {"SendActorDeath",                         ActorFunctions::SendActorDeath},\
     {"SendActorAI",                            ActorFunctions::SendActorAI},\
@@ -415,6 +431,99 @@ public:
     static unsigned int GetActorDeathState(unsigned int index) noexcept;
 
     /**
+    * \brief Get the number of indexes in an actor's latest spells active changes.
+    *
+    * \param actorIndex The index of the actor.
+    * \return The number of indexes for spells active changes.
+    */
+    static unsigned int GetActorSpellsActiveChangesSize(unsigned int actorIndex) noexcept;
+
+    /**
+    * \brief Get the action type used in an actor's latest spells active changes.
+    *
+    * \param actorIndex The index of the actor.
+    * \return The action type (0 for SET, 1 for ADD, 2 for REMOVE).
+    */
+    static unsigned int GetActorSpellsActiveChangesAction(unsigned int actorIndex) noexcept;
+
+    /**
+    * \brief Get the spell id at a certain index in an actor's latest spells active changes.
+    *
+    * \param actorIndex The index of the actor.
+    * \param spellIndex The index of the spell.
+    * \return The spell id.
+    */
+    static const char* GetActorSpellsActiveId(unsigned int actorIndex, unsigned int spellIndex) noexcept;
+
+    /**
+    * \brief Get the spell display name at a certain index in an actor's latest spells active changes.
+    *
+    * \param actorIndex The index of the actor.
+    * \param spellIndex The index of the spell.
+    * \return The spell display name.
+    */
+    static const char* GetActorSpellsActiveDisplayName(unsigned int actorIndex, unsigned int spellIndex) noexcept;
+
+    /**
+    * \brief Get the number of effects at an index in an actor's latest spells active changes.
+    *
+    * \param actorIndex The index of the actor.
+    * \param spellIndex The index of the spell.
+    * \return The number of effects.
+    */
+    static unsigned int GetActorSpellsActiveEffectCount(unsigned int actorIndex, unsigned int spellIndex) noexcept;
+
+    /**
+    * \brief Get the id for an effect index at a spell index in an actor's latest spells active changes.
+    *
+    * \param actorIndex The index of the actor.
+    * \param spellIndex The index of the spell.
+    * \param effectIndex The index of the effect.
+    * \return The id of the effect.
+    */
+    static unsigned int GetActorSpellsActiveEffectId(unsigned int actorIndex, unsigned int spellIndex, unsigned int effectIndex) noexcept;
+
+    /**
+    * \brief Get the arg for an effect index at a spell index in an actor's latest spells active changes.
+    *
+    * \param actorIndex The index of the actor.
+    * \param spellIndex The index of the spell.
+    * \param effectIndex The index of the effect.
+    * \return The arg of the effect.
+    */
+    static int GetActorSpellsActiveEffectArg(unsigned int actorIndex, unsigned int spellIndex, unsigned int effectIndex) noexcept;
+
+    /**
+    * \brief Get the magnitude for an effect index at a spell index in an actor's latest spells active changes.
+    *
+    * \param actorIndex The index of the actor.
+    * \param spellIndex The index of the spell.
+    * \param effectIndex The index of the effect.
+    * \return The magnitude of the effect.
+    */
+    static double GetActorSpellsActiveEffectMagnitude(unsigned int actorIndex, unsigned int spellIndex, unsigned int effectIndex) noexcept;
+
+    /**
+    * \brief Get the duration for an effect index at a spell index in an actor's latest spells active changes.
+    *
+    * \param actorIndex The index of the actor.
+    * \param spellIndex The index of the spell.
+    * \param effectIndex The index of the effect.
+    * \return The duration of the effect.
+    */
+    static double GetActorSpellsActiveEffectDuration(unsigned int actorIndex, unsigned int spellIndex, unsigned int effectIndex) noexcept;
+
+    /**
+    * \brief Get the time left for an effect index at a spell index in an actor's latest spells active changes.
+    *
+    * \param actorIndex The index of the actor.
+    * \param spellIndex The index of the spell.
+    * \param effectIndex The index of the effect.
+    * \return The time left for the effect.
+    */
+    static double GetActorSpellsActiveEffectTimeLeft(unsigned int actorIndex, unsigned int spellIndex, unsigned int effectIndex) noexcept;
+
+    /**
     * \brief Check whether there is any positional data for the actor at a certain index in
     * the read actor list.
     *
@@ -611,6 +720,15 @@ public:
     static void SetActorDeathInstant(bool isInstant) noexcept;
 
     /**
+    * \brief Set the action type in the spells active changes of the temporary actor
+    *        stored on the server.
+    *
+    * \param action The action (0 for SET, 1 for ADD, 2 for REMOVE).
+    * \return void
+    */
+    static void SetActorSpellsActiveAction(unsigned char action) noexcept;
+
+    /**
     * \brief Set the AI action of the temporary actor stored on the server.
     *
     * \param action The new action.
@@ -694,6 +812,30 @@ public:
     static void UnequipActorItem(unsigned short slot) noexcept;
 
     /**
+    * \brief Add a new active spell to the spells active changes for the temporary actor stored,
+    *        on the server, using the temporary effect values stored so far.
+    *
+    * \param spellId The spellId of the spell.
+    * \param displayName The displayName of the spell.
+    * \return void
+    */
+    static void AddActorSpellActive(const char* spellId, const char* displayName) noexcept;
+
+    /**
+    * \brief Add a new effect to the next active spell that will be added to the temporary actor
+    *        stored on the server.
+    *
+    * \param effectId The id of the effect.
+    * \param magnitude The magnitude of the effect.
+    * \param duration The duration of the effect.
+    * \param timeLeft The timeLeft for the effect.
+    * \param arg The arg of the effect when applicable, e.g. the skill used for Fortify Skill or the attribute
+    *            used for Fortify Attribute.
+    * \return void
+    */
+    static void AddActorSpellActiveEffect(int effectId, double magnitude, double duration, double timeLeft, int arg) noexcept;
+
+    /**
     * \brief Add a copy of the server's temporary actor to the server's temporary actor list.
     *
     * In the process, the server's temporary actor will automatically be cleared so a new
@@ -759,6 +901,18 @@ public:
     * \return void
     */
     static void SendActorEquipment(bool sendToOtherVisitors, bool skipAttachedPlayer) noexcept;
+
+    /**
+    * \brief Send an ActorSpellsActive packet.
+    *
+    * \param sendToOtherVisitors Whether this packet should be sent to cell visitors other
+    *                            than the player attached to the packet (false by default).
+    * \param skipAttachedPlayer Whether the packet should skip being sent to the player attached
+    *                           to the packet (false by default).
+    *
+    * \return void
+    */
+    static void SendActorSpellsActiveChanges(bool sendToOtherVisitors, bool skipAttachedPlayer) noexcept;
 
     /**
     * \brief Send an ActorSpeech packet.
