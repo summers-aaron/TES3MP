@@ -73,20 +73,20 @@ public:
     static unsigned int GetSpellbookChangesAction(unsigned short pid) noexcept;
 
     /**
+    * \brief Get the number of indexes in a player's latest spells active changes.
+    *
+    * \param pid The player ID whose spells active changes should be used.
+    * \return The number of indexes for spells active changes.
+    */
+    static unsigned int GetSpellsActiveChangesSize(unsigned short pid) noexcept;
+
+    /**
     * \brief Get the action type used in a player's latest spells active changes.
     *
     * \param pid The player ID whose spells active changes should be used.
     * \return The action type (0 for SET, 1 for ADD, 2 for REMOVE).
     */
     static unsigned int GetSpellsActiveChangesAction(unsigned short pid) noexcept;
-
-    /**
-    * \brief Get the number of indexes in a player's latest spells active changes.
-    *
-    * \param pid The player ID whose spells active changes should be used.
-    * \return The number of indexes.
-    */
-    static unsigned int GetSpellsActiveChangesSize(unsigned short pid) noexcept;
 
     /**
     * \brief Set the action type in a player's spellbook changes.
@@ -117,7 +117,7 @@ public:
 
     /**
     * \brief Add a new active spell to the spells active changes for a player,
-    *        using the temporary effect times stored so far.
+    *        using the temporary effect values stored so far.
     *
     * \param pid The player ID whose spells active changes should be used.
     * \param spellId The spellId of the spell.
