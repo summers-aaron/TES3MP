@@ -35,6 +35,7 @@ namespace mwmp
 
         MWWorld::Ptr getPtr();
         void setPtr(const MWWorld::Ptr& newPtr);
+        void reloadPtr();
 
     private:
         MWWorld::Ptr ptr;

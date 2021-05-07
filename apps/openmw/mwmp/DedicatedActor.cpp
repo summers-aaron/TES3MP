@@ -371,8 +371,12 @@ void DedicatedActor::addSpellsActive()
             activeSpells.addSpell(activeSpell.id, false, activeSpell.params.mEffects, activeSpell.params.mDisplayName, 1);
         }
         else
+        {
             LOG_APPEND(TimedLog::LOG_INFO, "- Ignored addition of invalid spell %s", activeSpell.id.c_str());
+        }
     }
+
+    reloadPtr();
 }
 
 void DedicatedActor::removeSpellsActive()
@@ -409,4 +413,11 @@ void DedicatedActor::setPtr(const MWWorld::Ptr& newPtr)
 
     position = ptr.getRefData().getPosition();
     drawState = ptr.getClass().getCreatureStats(ptr).getDrawState();
+}
+
+void DedicatedActor::reloadPtr()
+{
+    MWBase::World* world = MWBase::Environment::get().getWorld();
+    world->disable(ptr);
+    world->enable(ptr);
 }
