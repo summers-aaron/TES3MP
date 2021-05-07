@@ -22,8 +22,6 @@ namespace MWMechanics
 
 namespace mwmp
 {
-    struct DedicatedPlayer;
-
     class DedicatedPlayer : public BasePlayer
     {
         friend class PlayerList;
