@@ -73,7 +73,7 @@ public:
   void openRaw(const std::string &filename);
 
   /// Get the current position in the file. Make sure that the file has been opened!
-  size_t getFileOffset();
+  size_t getFileOffset() const;
 
   // This is a quick hack for multiple esm/esp files. Each plugin introduces its own
   //  terrain palette, but ESMReader does not pass a reference to the correct plugin
@@ -127,8 +127,6 @@ public:
       if(isNextSub(name))
           getHT(x);
   }
-
-  int64_t getHNLong(const char *name);
 
   // Get data of a given type/size, including subrecord header
   template <typename X>
@@ -192,9 +190,6 @@ public:
   // Read subrecord name. This gets called a LOT, so I've optimized it
   // slightly.
   void getSubName();
-
-  // This is specially optimized for LoadINFO.
-  bool isEmptyOrGetName();
 
   // Skip current sub record, including header (but not including
   // name.)

@@ -64,6 +64,7 @@
     Bug #5452: Autowalk is being included in savegames
     Bug #5469: Local map is reset when re-entering certain cells
     Bug #5472: Mistify mod causes CTD in 0.46 on Mac
+    Bug #5473: OpenMW-CS: Cell border lines don't update properly on terrain change
     Bug #5479: NPCs who should be walking around town are standing around without walking
     Bug #5484: Zero value items shouldn't be able to be bought or sold for 1 gold
     Bug #5485: Intimidate doesn't increase disposition on marginal wins
@@ -80,6 +81,7 @@
     Bug #5603: Setting constant effect cast style doesn't correct effects view
     Bug #5604: Only one valid NIF root node is loaded from a single file
     Bug #5611: Usable items with "0 Uses" should be used only once
+    Bug #5619: Input events are queued during save loading
     Bug #5622: Can't properly interact with the console when in pause menu
     Bug #5627: Bookart not shown if it isn't followed by <BR> statement
     Bug #5633: Damage Spells in effect before god mode is enabled continue to hurt the player character and can kill them
@@ -121,6 +123,15 @@
     Bug #5975: NIF controllers from sheath meshes are used
     Bug #5991: Activate should always be allowed for inventory items
     Bug #5995: NiUVController doesn't calculate the UV offset properly
+    Bug #6007: Crash when ending cutscene is playing
+    Bug #6016: Greeting interrupts Fargoth's sneak-walk
+    Bug #6022: OpenMW-CS: Terrain selection is not updated when undoing/redoing terrain changes
+    Bug #6023: OpenMW-CS: Clicking on a reference in "Terrain land editing" mode discards corresponding select/edit action
+    Bug #6028: Particle system controller values are incorrectly used
+    Bug #6035: OpenMW-CS: Circle brush in "Terrain land editing" mode sometimes includes vertices outside its radius
+    Bug #6036: OpenMW-CS: Terrain selection at the border of cells omits certain corner vertices
+    Bug #6043: Actor can have torch missing when torch animation is played
+    Bug #6047: Mouse bindings can be triggered during save loading
     Feature #390: 3rd person look "over the shoulder"
     Feature #832: OpenMW-CS: Handle deleted references
     Feature #1536: Show more information about level on menu
@@ -141,6 +152,7 @@
     Feature #5456: Basic collada animation support
     Feature #5457: Realistic diagonal movement
     Feature #5486: Fixes trainers to choose their training skills based on their base skill points
+    Feature #5500: Prepare enough navmesh tiles before scene loading ends
     Feature #5511: Add in game option to toggle HRTF support in OpenMW
     Feature #5519: Code Patch tab in launcher
     Feature #5524: Resume failed script execution after reload
@@ -159,6 +171,9 @@
     Feature #5814: Bsatool should be able to create BSA archives, not only to extract it
     Feature #5828: Support more than 8 lights
     Feature #5910: Fall back to delta time when physics can't keep up
+    Feature #6024: OpenMW-CS: Selecting terrain in "Terrain land editing" should support "Add to selection" and "Remove from selection" modes
+    Feature #6033: Include pathgrid to navigation mesh
+    Feature #6034: Find path based on area cost depending on NPC stats
     Task #5480: Drop Qt4 support
     Task #5520: Improve cell name autocompleter implementation
     Task #5844: Update 'toggle sneak' documentation

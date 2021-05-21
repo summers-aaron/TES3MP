@@ -19,11 +19,19 @@ void Manager::clear()
     mChangedSettings.clear();
 }
 
-void Manager::loadDefault(const std::string &file)
+/*
+    Start of tes3mp change (major)
+
+    Add a base64encoded argument to this function to allow unencoded files to still be opened
+*/
+void Manager::loadDefault(const std::string &file, bool base64encoded)
 {
     SettingsFileParser parser;
-    parser.loadSettingsFile(file, mDefaultSettings);
+    parser.loadSettingsFile(file, mDefaultSettings, base64encoded);
 }
+/*
+    End of tes3mp change (major)
+*/
 
 void Manager::loadUser(const std::string &file)
 {
@@ -49,7 +57,7 @@ std::string Manager::getString(const std::string &setting, const std::string &ca
         return it->second;
 
     throw std::runtime_error(std::string("Trying to retrieve a non-existing setting: ") + setting
-                             + ".\nMake sure the settings-default.cfg file was properly installed.");
+                             + ".\nMake sure the defaults.bin file was properly installed.");
 }
 
 float Manager::getFloat (const std::string& setting, const std::string& category)

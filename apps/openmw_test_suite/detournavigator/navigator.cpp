@@ -3,6 +3,7 @@
 #include <components/detournavigator/navigatorimpl.hpp>
 #include <components/detournavigator/exceptions.hpp>
 #include <components/misc/rng.hpp>
+#include <components/loadinglistener/loadinglistener.hpp>
 
 #include <BulletCollision/CollisionShapes/btHeightfieldTerrainShape.h>
 #include <BulletCollision/CollisionShapes/btBoxShape.h>
@@ -11,6 +12,7 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 
+#include <array>
 #include <deque>
 
 MATCHER_P3(Vec3fEq, x, y, z, "")
@@ -35,6 +37,7 @@ namespace
         std::back_insert_iterator<std::deque<osg::Vec3f>> mOut;
         float mStepSize;
         AreaCosts mAreaCosts;
+        Loading::Listener mListener;
 
         DetourNavigatorNavigatorTest()
             : mPlayerPosition(0, 0, 0)
@@ -64,6 +67,7 @@ namespace
             mSettings.mRegionMergeSize = 20;
             mSettings.mRegionMinSize = 8;
             mSettings.mTileSize = 64;
+            mSettings.mWaitUntilMinDistanceToPlayer = std::numeric_limits<int>::max();
             mSettings.mAsyncNavMeshUpdaterThreads = 1;
             mSettings.mMaxNavMeshTilesCacheSize = 1024 * 1024;
             mSettings.mMaxPolygonPathSize = 1024;
@@ -124,7 +128,7 @@ namespace
         mNavigator->addAgent(mAgentHalfExtents);
         mNavigator->addObject(ObjectId(&shape), shape, btTransform::getIdentity());
         mNavigator->update(mPlayerPosition);
-        mNavigator->wait();
+        mNavigator->wait(mListener, WaitConditionType::requiredTilesPresent);
 
         EXPECT_EQ(mNavigator->findPath(mAgentHalfExtents, mStepSize, mStart, mEnd, Flag_walk, mAreaCosts, mOut), Status::Success);
 
@@ -174,7 +178,7 @@ namespace
         mNavigator->addAgent(mAgentHalfExtents);
         mNavigator->addObject(ObjectId(&heightfieldShape), heightfieldShape, btTransform::getIdentity());
         mNavigator->update(mPlayerPosition);
-        mNavigator->wait();
+        mNavigator->wait(mListener, WaitConditionType::allJobsDone);
 
         EXPECT_EQ(mNavigator->findPath(mAgentHalfExtents, mStepSize, mStart, mEnd, Flag_walk, mAreaCosts, mOut), Status::Success);
 
@@ -206,7 +210,7 @@ namespace
 
         mNavigator->addObject(ObjectId(&compoundShape), compoundShape, btTransform::getIdentity());
         mNavigator->update(mPlayerPosition);
-        mNavigator->wait();
+        mNavigator->wait(mListener, WaitConditionType::allJobsDone);
 
         mPath.clear();
         mOut = std::back_inserter(mPath);
@@ -259,7 +263,7 @@ namespace
         mNavigator->addObject(ObjectId(&heightfieldShape), heightfieldShape, btTransform::getIdentity());
         mNavigator->addObject(ObjectId(&compoundShape), compoundShape, btTransform::getIdentity());
         mNavigator->update(mPlayerPosition);
-        mNavigator->wait();
+        mNavigator->wait(mListener, WaitConditionType::allJobsDone);
 
         EXPECT_EQ(mNavigator->findPath(mAgentHalfExtents, mStepSize, mStart, mEnd, Flag_walk, mAreaCosts, mOut), Status::Success);
 
@@ -293,7 +297,7 @@ namespace
 
         mNavigator->updateObject(ObjectId(&compoundShape), compoundShape, btTransform::getIdentity());
         mNavigator->update(mPlayerPosition);
-        mNavigator->wait();
+        mNavigator->wait(mListener, WaitConditionType::allJobsDone);
 
         mPath.clear();
         mOut = std::back_inserter(mPath);
@@ -352,7 +356,7 @@ namespace
         mNavigator->addObject(ObjectId(&shape), shape, btTransform::getIdentity());
         mNavigator->addObject(ObjectId(&shape2), shape2, btTransform::getIdentity());
         mNavigator->update(mPlayerPosition);
-        mNavigator->wait();
+        mNavigator->wait(mListener, WaitConditionType::allJobsDone);
 
         EXPECT_EQ(mNavigator->findPath(mAgentHalfExtents, mStepSize, mStart, mEnd, Flag_walk, mAreaCosts, mOut), Status::Success);
 
@@ -408,7 +412,7 @@ namespace
         mNavigator->addAgent(mAgentHalfExtents);
         mNavigator->addObject(ObjectId(&shape), ObjectShapes {shape, &shapeAvoid}, btTransform::getIdentity());
         mNavigator->update(mPlayerPosition);
-        mNavigator->wait();
+        mNavigator->wait(mListener, WaitConditionType::allJobsDone);
 
         EXPECT_EQ(mNavigator->findPath(mAgentHalfExtents, mStepSize, mStart, mEnd, Flag_walk, mAreaCosts, mOut), Status::Success);
 
@@ -456,7 +460,7 @@ namespace
         mNavigator->addWater(osg::Vec2i(0, 0), 128 * 4, 300, btTransform::getIdentity());
         mNavigator->addObject(ObjectId(&shape), shape, btTransform::getIdentity());
         mNavigator->update(mPlayerPosition);
-        mNavigator->wait();
+        mNavigator->wait(mListener, WaitConditionType::allJobsDone);
 
         mStart.x() = 0;
         mStart.z() = 300;
@@ -504,7 +508,7 @@ namespace
         mNavigator->addWater(osg::Vec2i(0, 0), 128 * 4, -25, btTransform::getIdentity());
         mNavigator->addObject(ObjectId(&shape), shape, btTransform::getIdentity());
         mNavigator->update(mPlayerPosition);
-        mNavigator->wait();
+        mNavigator->wait(mListener, WaitConditionType::allJobsDone);
 
         mStart.x() = 0;
         mEnd.x() = 0;
@@ -551,7 +555,7 @@ namespace
         mNavigator->addObject(ObjectId(&shape), shape, btTransform::getIdentity());
         mNavigator->addWater(osg::Vec2i(0, 0), std::numeric_limits<int>::max(), -25, btTransform::getIdentity());
         mNavigator->update(mPlayerPosition);
-        mNavigator->wait();
+        mNavigator->wait(mListener, WaitConditionType::allJobsDone);
 
         mStart.x() = 0;
         mEnd.x() = 0;
@@ -598,7 +602,7 @@ namespace
         mNavigator->addWater(osg::Vec2i(0, 0), 128 * 4, -25, btTransform::getIdentity());
         mNavigator->addObject(ObjectId(&shape), shape, btTransform::getIdentity());
         mNavigator->update(mPlayerPosition);
-        mNavigator->wait();
+        mNavigator->wait(mListener, WaitConditionType::allJobsDone);
 
         mStart.x() = 0;
         mEnd.x() = 0;
@@ -642,15 +646,15 @@ namespace
         mNavigator->addAgent(mAgentHalfExtents);
         mNavigator->addObject(ObjectId(&shape), shape, btTransform::getIdentity());
         mNavigator->update(mPlayerPosition);
-        mNavigator->wait();
+        mNavigator->wait(mListener, WaitConditionType::allJobsDone);
 
         mNavigator->removeObject(ObjectId(&shape));
         mNavigator->update(mPlayerPosition);
-        mNavigator->wait();
+        mNavigator->wait(mListener, WaitConditionType::allJobsDone);
 
         mNavigator->addObject(ObjectId(&shape), shape, btTransform::getIdentity());
         mNavigator->update(mPlayerPosition);
-        mNavigator->wait();
+        mNavigator->wait(mListener, WaitConditionType::allJobsDone);
 
         EXPECT_EQ(mNavigator->findPath(mAgentHalfExtents, mStepSize, mStart, mEnd, Flag_walk, mAreaCosts, mOut), Status::Success);
 
@@ -696,7 +700,7 @@ namespace
         mNavigator->addAgent(mAgentHalfExtents);
         mNavigator->addObject(ObjectId(&shape), shape, btTransform::getIdentity());
         mNavigator->update(mPlayerPosition);
-        mNavigator->wait();
+        mNavigator->wait(mListener, WaitConditionType::allJobsDone);
 
         Misc::Rng::init(42);
 
@@ -745,7 +749,7 @@ namespace
         }
 
         mNavigator->update(mPlayerPosition);
-        mNavigator->wait();
+        mNavigator->wait(mListener, WaitConditionType::allJobsDone);
 
         EXPECT_EQ(mNavigator->findPath(mAgentHalfExtents, mStepSize, mStart, mEnd, Flag_walk, mAreaCosts, mOut), Status::Success);
 
@@ -788,7 +792,7 @@ namespace
             mNavigator->addObject(ObjectId(&shapes[i]), shapes[i], transform);
         }
         mNavigator->update(mPlayerPosition);
-        mNavigator->wait();
+        mNavigator->wait(mListener, WaitConditionType::allJobsDone);
 
         const auto start = std::chrono::steady_clock::now();
         for (std::size_t i = 0; i < shapes.size(); ++i)
@@ -797,7 +801,7 @@ namespace
             mNavigator->updateObject(ObjectId(&shapes[i]), shapes[i], transform);
         }
         mNavigator->update(mPlayerPosition);
-        mNavigator->wait();
+        mNavigator->wait(mListener, WaitConditionType::allJobsDone);
 
         for (std::size_t i = 0; i < shapes.size(); ++i)
         {
@@ -805,7 +809,7 @@ namespace
             mNavigator->updateObject(ObjectId(&shapes[i]), shapes[i], transform);
         }
         mNavigator->update(mPlayerPosition);
-        mNavigator->wait();
+        mNavigator->wait(mListener, WaitConditionType::allJobsDone);
 
         const auto duration = std::chrono::steady_clock::now() - start;
 
@@ -828,7 +832,7 @@ namespace
         mNavigator->addAgent(mAgentHalfExtents);
         mNavigator->addObject(ObjectId(&shape), shape, btTransform::getIdentity());
         mNavigator->update(mPlayerPosition);
-        mNavigator->wait();
+        mNavigator->wait(mListener, WaitConditionType::allJobsDone);
 
         const auto result = mNavigator->raycast(mAgentHalfExtents, mStart, mEnd, Flag_walk);
 
@@ -859,7 +863,7 @@ namespace
         mNavigator->addObject(ObjectId(&boderBoxShape), boderBoxShape,
                               btTransform(btMatrix3x3::getIdentity(), oscillatingBoxShapePosition + btVector3(0, 0, 200)));
         mNavigator->update(mPlayerPosition);
-        mNavigator->wait();
+        mNavigator->wait(mListener, WaitConditionType::allJobsDone);
 
         const auto navMeshes = mNavigator->getNavMeshes();
         ASSERT_EQ(navMeshes.size(), 1);
@@ -875,7 +879,7 @@ namespace
                                         oscillatingBoxShapePosition);
             mNavigator->updateObject(ObjectId(&oscillatingBoxShape), oscillatingBoxShape, transform);
             mNavigator->update(mPlayerPosition);
-            mNavigator->wait();
+            mNavigator->wait(mListener, WaitConditionType::allJobsDone);
         }
 
         ASSERT_EQ(navMeshes.size(), 1);

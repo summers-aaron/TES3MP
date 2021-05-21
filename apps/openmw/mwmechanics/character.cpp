@@ -2034,8 +2034,10 @@ bool CharacterController::updateWeaponState(CharacterState& idle)
         MWWorld::ConstContainerStoreIterator torch = inv.getSlot(MWWorld::InventoryStore::Slot_CarriedLeft);
         if(torch != inv.end() && torch->getTypeName() == typeid(ESM::Light).name()
                 && updateCarriedLeftVisible(mWeaponType))
-
         {
+            if (mAnimation->isPlaying("shield"))
+                mAnimation->disable("shield");
+
             mAnimation->play("torch", Priority_Torch, MWRender::Animation::BlendMask_LeftArm,
                 false, 1.0f, "start", "stop", 0.0f, (~(size_t)0), true);
         }
@@ -2595,9 +2597,6 @@ void CharacterController::update(float duration)
             if (!mMovementAnimationControlled)
                 world->queueMovement(mPtr, vec);
         }
-        else
-            // We must always queue movement, even if there is none, to apply gravity.
-            world->queueMovement(mPtr, osg::Vec3f(0.f, 0.f, 0.f));
 
         movement = vec;
         movementSettings.mPosition[0] = movementSettings.mPosition[1] = 0;
@@ -2619,8 +2618,6 @@ void CharacterController::update(float duration)
             if (cls.isPersistent(mPtr) || cls.getCreatureStats(mPtr).isDeathAnimationFinished())
                 playDeath(1.f, mDeathState);
         }
-        // We must always queue movement, even if there is none, to apply gravity.
-        world->queueMovement(mPtr, osg::Vec3f(0.f, 0.f, 0.f));
     }
 
     bool isPersist = isPersistentAnimPlaying();

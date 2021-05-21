@@ -26,8 +26,16 @@ namespace Settings
         void clear();
         ///< clears all settings and default settings
 
-        void loadDefault (const std::string& file);
+        /*
+            Start of tes3mp change (major)
+
+            Add a base64encoded argument to this function to allow unencoded files to still be opened
+        */
+        void loadDefault (const std::string& file, bool base64encoded = true);
         ///< load file as the default settings (can be overridden by user settings)
+        /*
+            End of tes3mp change (major)
+        */
 
         void loadUser (const std::string& file);
         ///< load file as user settings

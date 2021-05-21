@@ -256,7 +256,6 @@ if (BUILD_OPENMW OR BUILD_OPENCS)
             navmeshmanager
             navigatorimpl
             asyncnavmeshupdater
-            chunkytrimesh
             recastmesh
             tilecachedrecastmeshmanager
             recastmeshobject
@@ -340,12 +339,15 @@ target_link_libraries(components
 
 # Start of tes3mp change (major)
 #
-# Don't require RecastNavigation when building the server
+# Don't require RecastNavigation or Base64 when building the server
 if (BUILD_OPENMW OR BUILD_OPENCS)
     target_link_libraries(components
             RecastNavigation::DebugUtils
             RecastNavigation::Detour
-            RecastNavigation::Recast)
+            RecastNavigation::Recast
+
+            Base64
+            )
 endif ()
 # End of tes3mp change (major)
 

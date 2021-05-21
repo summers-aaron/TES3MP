@@ -37,8 +37,6 @@
 #include "../mwbase/mechanicsmanager.hpp"
 #include "../mwbase/windowmanager.hpp"
 
-#include "../mwmechanics/actorutil.hpp"
-
 #include "../mwrender/renderingmanager.hpp"
 #include "../mwrender/landmanager.hpp"
 
@@ -677,6 +675,8 @@ namespace MWWorld
 
         if (changeEvent)
             mCellChanged = true;
+
+        mNavigator.wait(*loadingListener, DetourNavigator::WaitConditionType::requiredTilesPresent);
     }
 
     void Scene::testExteriorCells()
@@ -919,6 +919,8 @@ namespace MWWorld
             MWBase::Environment::get().getWindowManager()->fadeScreenIn(0.5);
 
         MWBase::Environment::get().getWindowManager()->changeCell(mCurrentCell);
+
+        mNavigator.wait(*loadingListener, DetourNavigator::WaitConditionType::requiredTilesPresent);
     }
 
     void Scene::changeToExteriorCell (const ESM::Position& position, bool adjustPlayerPos, bool changeEvent)

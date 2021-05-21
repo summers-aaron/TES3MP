@@ -5,8 +5,6 @@
 #include <components/esm/loadpgrd.hpp>
 #include <components/misc/coordinateconverter.hpp>
 
-#include <Recast.h>
-
 namespace DetourNavigator
 {
     NavigatorImpl::NavigatorImpl(const Settings& settings)
@@ -153,9 +151,9 @@ namespace DetourNavigator
         mUpdatesEnabled = enabled;
     }
 
-    void NavigatorImpl::wait()
+    void NavigatorImpl::wait(Loading::Listener& listener, WaitConditionType waitConditionType)
     {
-        mNavMeshManager.wait();
+        mNavMeshManager.wait(listener, waitConditionType);
     }
 
     SharedNavMeshCacheItem NavigatorImpl::getNavMesh(const osg::Vec3f& agentHalfExtents) const
