@@ -718,13 +718,8 @@ void LocalPlayer::addSpellsActive()
 
     for (const auto& activeSpell : spellsActiveChanges.activeSpells)
     {
-        // Only add spells that are ensured to exist
-        if (MWBase::Environment::get().getWorld()->getStore().get<ESM::Spell>().search(activeSpell.id))
-        {
-            activeSpells.addSpell(activeSpell.id, false, activeSpell.params.mEffects, activeSpell.params.mDisplayName, 1);
-        }
-        else
-            LOG_APPEND(TimedLog::LOG_INFO, "- Ignored addition of invalid spell %s", activeSpell.id.c_str());
+        // Don't do a check for a spell's existence, because active effects from potions need to be applied here too
+        activeSpells.addSpell(activeSpell.id, false, activeSpell.params.mEffects, activeSpell.params.mDisplayName, 1);
     }
 }
 
