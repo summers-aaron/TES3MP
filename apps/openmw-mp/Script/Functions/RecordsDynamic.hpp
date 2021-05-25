@@ -93,6 +93,8 @@
     {"SetRecordMagicka",                        RecordsDynamicFunctions::SetRecordMagicka},\
     {"SetRecordFatigue",                        RecordsDynamicFunctions::SetRecordFatigue},\
     \
+    {"SetRecordSoulValue",                      RecordsDynamicFunctions::SetRecordSoulValue},\
+    \
     {"SetRecordAIFight",                        RecordsDynamicFunctions::SetRecordAIFight},\
     {"SetRecordAIFlee",                         RecordsDynamicFunctions::SetRecordAIFlee},\
     {"SetRecordAIAlarm",                        RecordsDynamicFunctions::SetRecordAIAlarm},\
@@ -806,6 +808,15 @@ public:
     * \return void
     */
     static void SetRecordFatigue(int fatigue) noexcept;
+
+    /**
+    * \brief Set the soul value of the temporary record stored on the server for the
+    * currently specified record type.
+    *
+    * \param soulValue The soul value of the record.
+    * \return void
+    */
+    static void SetRecordSoulValue(int soulValue) noexcept;
 
     /**
     * \brief Set the AI fight value of the temporary record stored on the server for the

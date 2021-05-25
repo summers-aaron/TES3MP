@@ -551,6 +551,7 @@ void PacketRecordDynamic::Packet(RakNet::BitStream *newBitstream, bool send)
             RW(recordData.mData.mHealth, send);
             RW(recordData.mData.mMana, send);
             RW(recordData.mData.mFatigue, send);
+            RW(recordData.mData.mSoul, send);
             RW(recordData.mAiData.mFight, send);
             RW(recordData.mAiData.mFlee, send);
             RW(recordData.mAiData.mAlarm, send);
@@ -571,6 +572,7 @@ void PacketRecordDynamic::Packet(RakNet::BitStream *newBitstream, bool send)
                 RW(overrides.hasHealth, send);
                 RW(overrides.hasMagicka, send);
                 RW(overrides.hasFatigue, send);
+                RW(overrides.hasSoulValue, send);
                 RW(overrides.hasAiFight, send);
                 RW(overrides.hasAiFlee, send);
                 RW(overrides.hasAiAlarm, send);

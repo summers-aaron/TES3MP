@@ -132,6 +132,8 @@ namespace mwmp
         bool hasMagicka = false;
         bool hasFatigue = false;
 
+        bool hasSoulValue = false;
+
         bool hasAiFight = false;
         bool hasAiFlee = false;
         bool hasAiAlarm = false;

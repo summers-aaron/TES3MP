@@ -564,6 +564,9 @@ void RecordHelper::overrideRecord(const mwmp::CreatureRecord& record)
         if (record.baseOverrides.hasFatigue)
             finalData.mData.mFatigue = recordData.mData.mFatigue;
 
+        if (record.baseOverrides.hasSoulValue)
+            finalData.mData.mSoul = recordData.mData.mSoul;
+
         if (record.baseOverrides.hasAiFight)
             finalData.mAiData.mFight = recordData.mAiData.mFight;
 

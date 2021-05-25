@@ -1344,6 +1344,21 @@ void RecordsDynamicFunctions::SetRecordFatigue(int fatigue) noexcept
     tempOverrides.hasFatigue = true;
 }
 
+void RecordsDynamicFunctions::SetRecordSoulValue(int soulValue) noexcept
+{
+    unsigned short writeRecordsType = WorldstateFunctions::writeWorldstate.recordsType;
+
+    if (writeRecordsType == mwmp::RECORD_TYPE::CREATURE)
+        tempCreature.data.mData.mSoul = soulValue;
+    else
+    {
+        LOG_MESSAGE_SIMPLE(TimedLog::LOG_ERROR, "Tried to set soul value for record type %i which lacks that property", writeRecordsType);
+        return;
+    }
+
+    tempOverrides.hasSoulValue = true;
+}
+
 void RecordsDynamicFunctions::SetRecordAIFight(int aiFight) noexcept
 {
     unsigned short writeRecordsType = WorldstateFunctions::writeWorldstate.recordsType;
