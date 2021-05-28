@@ -1027,6 +1027,11 @@ void RecordsDynamicFunctions::SetRecordDamageChop(unsigned int minDamage, unsign
         tempWeapon.data.mData.mChop[0] = minDamage;
         tempWeapon.data.mData.mChop[1] = maxDamage;
     }
+    else if (writeRecordsType == mwmp::RECORD_TYPE::CREATURE)
+    {
+        tempCreature.data.mData.mAttack[0] = minDamage;
+        tempCreature.data.mData.mAttack[1] = maxDamage;
+    }
     else
     {
         LOG_MESSAGE_SIMPLE(TimedLog::LOG_ERROR, "Tried to set chop damage for record type %i which lacks that property", writeRecordsType);
@@ -1045,6 +1050,11 @@ void RecordsDynamicFunctions::SetRecordDamageSlash(unsigned int minDamage, unsig
         tempWeapon.data.mData.mSlash[0] = minDamage;
         tempWeapon.data.mData.mSlash[1] = maxDamage;
     }
+    else if (writeRecordsType == mwmp::RECORD_TYPE::CREATURE)
+    {
+        tempCreature.data.mData.mAttack[2] = minDamage;
+        tempCreature.data.mData.mAttack[3] = maxDamage;
+    }
     else
     {
         LOG_MESSAGE_SIMPLE(TimedLog::LOG_ERROR, "Tried to set slash damage for record type %i which lacks that property", writeRecordsType);
@@ -1062,6 +1072,11 @@ void RecordsDynamicFunctions::SetRecordDamageThrust(unsigned int minDamage, unsi
     {
         tempWeapon.data.mData.mThrust[0] = minDamage;
         tempWeapon.data.mData.mThrust[1] = maxDamage;
+    }
+    else if (writeRecordsType == mwmp::RECORD_TYPE::CREATURE)
+    {
+        tempCreature.data.mData.mAttack[4] = minDamage;
+        tempCreature.data.mData.mAttack[5] = maxDamage;
     }
     else
     {

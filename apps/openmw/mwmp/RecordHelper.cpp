@@ -567,6 +567,24 @@ void RecordHelper::overrideRecord(const mwmp::CreatureRecord& record)
         if (record.baseOverrides.hasSoulValue)
             finalData.mData.mSoul = recordData.mData.mSoul;
 
+        if (record.baseOverrides.hasDamageChop)
+        {
+            finalData.mData.mAttack[0] = recordData.mData.mAttack[0];
+            finalData.mData.mAttack[1] = recordData.mData.mAttack[1];
+        }
+
+        if (record.baseOverrides.hasDamageSlash)
+        {
+            finalData.mData.mAttack[2] = recordData.mData.mAttack[2];
+            finalData.mData.mAttack[3] = recordData.mData.mAttack[3];
+        }
+
+        if (record.baseOverrides.hasDamageThrust)
+        {
+            finalData.mData.mAttack[4] = recordData.mData.mAttack[4];
+            finalData.mData.mAttack[5] = recordData.mData.mAttack[5];
+        }
+
         if (record.baseOverrides.hasAiFight)
             finalData.mAiData.mFight = recordData.mAiData.mFight;
 
