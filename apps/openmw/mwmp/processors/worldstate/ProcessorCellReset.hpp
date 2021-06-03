@@ -19,7 +19,6 @@ namespace mwmp
             LOG_MESSAGE_SIMPLE(TimedLog::LOG_INFO, "Received ID_CELL_RESET");
 
             CellController* cellController = Main::get().getCellController();
-            MWBase::World * world = MWBase::Environment::get().getWorld();
 
             mwmp::Main::get().getNetworking()->getWorldstate()->resetCells(&worldstate.cellsToReset);
         }

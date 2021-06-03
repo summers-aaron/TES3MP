@@ -135,8 +135,6 @@ namespace MWScript
                         return;
                     }
 
-                    MWWorld::ContainerStore& store = ptr.getClass().getContainerStore(ptr);
-
                     /*
                         Start of tes3mp change (major)
 
