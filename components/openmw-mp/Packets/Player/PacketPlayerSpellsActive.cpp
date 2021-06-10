@@ -30,6 +30,7 @@ void PacketPlayerSpellsActive::Packet(RakNet::BitStream *newBitstream, bool send
     for (auto&& activeSpell : player->spellsActiveChanges.activeSpells)
     {
         RW(activeSpell.id, send, true);
+        RW(activeSpell.isStackingSpell, send);
         RW(activeSpell.params.mDisplayName, send, true);
 
         uint32_t effectCount;

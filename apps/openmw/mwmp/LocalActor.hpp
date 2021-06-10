@@ -26,7 +26,7 @@ namespace mwmp
         void updateAttackOrCast();
 
         void sendEquipment();
-        void sendSpellsActiveAddition(const std::string id, ESM::ActiveSpells::ActiveSpellParams params);
+        void sendSpellsActiveAddition(const std::string id, bool isStackingSpell, ESM::ActiveSpells::ActiveSpellParams params);
         void sendSpellsActiveRemoval(const std::string id);
         void sendDeath(char newDeathState);
 

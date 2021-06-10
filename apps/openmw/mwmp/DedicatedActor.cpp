@@ -366,7 +366,7 @@ void DedicatedActor::addSpellsActive()
     for (const auto& activeSpell : spellsActiveChanges.activeSpells)
     {
         // Don't do a check for a spell's existence, because active effects from potions need to be applied here too
-        activeSpells.addSpell(activeSpell.id, false, activeSpell.params.mEffects, activeSpell.params.mDisplayName, 1);
+        activeSpells.addSpell(activeSpell.id, activeSpell.isStackingSpell, activeSpell.params.mEffects, activeSpell.params.mDisplayName, 1);
     }
 
     reloadPtr();

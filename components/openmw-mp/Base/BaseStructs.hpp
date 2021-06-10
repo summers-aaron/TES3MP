@@ -160,6 +160,7 @@ namespace mwmp
     struct ActiveSpell
     {
         std::string id;
+        bool isStackingSpell;
         ESM::ActiveSpells::ActiveSpellParams params;
     };
 

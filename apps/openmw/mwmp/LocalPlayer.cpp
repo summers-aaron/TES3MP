@@ -719,7 +719,7 @@ void LocalPlayer::addSpellsActive()
     for (const auto& activeSpell : spellsActiveChanges.activeSpells)
     {
         // Don't do a check for a spell's existence, because active effects from potions need to be applied here too
-        activeSpells.addSpell(activeSpell.id, false, activeSpell.params.mEffects, activeSpell.params.mDisplayName, 1);
+        activeSpells.addSpell(activeSpell.id, activeSpell.isStackingSpell, activeSpell.params.mEffects, activeSpell.params.mDisplayName, 1);
     }
 }
 
@@ -1589,7 +1589,7 @@ void LocalPlayer::sendSpellsActive()
     getNetworking()->getPlayerPacket(ID_PLAYER_SPELLS_ACTIVE)->Send();
 }
 
-void LocalPlayer::sendSpellsActiveAddition(const std::string id, ESM::ActiveSpells::ActiveSpellParams params)
+void LocalPlayer::sendSpellsActiveAddition(const std::string id, bool isStackingSpell, ESM::ActiveSpells::ActiveSpellParams params)
 {
     // Skip any bugged spells that somehow have clientside-only dynamic IDs
     if (id.find("$dynamic") != std::string::npos)
@@ -1599,6 +1599,7 @@ void LocalPlayer::sendSpellsActiveAddition(const std::string id, ESM::ActiveSpel
 
     mwmp::ActiveSpell spell;
     spell.id = id;
+    spell.isStackingSpell = isStackingSpell;
     spell.params = params;
     spellsActiveChanges.activeSpells.push_back(spell);
 

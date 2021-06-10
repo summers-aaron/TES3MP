@@ -91,7 +91,7 @@ namespace mwmp
         void sendSpellbook();
         void sendSpellChange(std::string id, unsigned int action);
         void sendSpellsActive();
-        void sendSpellsActiveAddition(const std::string id, ESM::ActiveSpells::ActiveSpellParams params);
+        void sendSpellsActiveAddition(const std::string id, bool isStackingSpell, ESM::ActiveSpells::ActiveSpellParams params);
         void sendSpellsActiveRemoval(const std::string id);
         void sendQuickKey(unsigned short slot, int type, const std::string& itemId = "");
         void sendJournalEntry(const std::string& quest, int index, const MWWorld::Ptr& actor);

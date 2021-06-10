@@ -285,7 +285,7 @@ void LocalActor::sendEquipment()
     Main::get().getNetworking()->getActorPacket(ID_ACTOR_EQUIPMENT)->Send();
 }
 
-void LocalActor::sendSpellsActiveAddition(const std::string id, ESM::ActiveSpells::ActiveSpellParams params)
+void LocalActor::sendSpellsActiveAddition(const std::string id, bool isStackingSpell, ESM::ActiveSpells::ActiveSpellParams params)
 {
     // Skip any bugged spells that somehow have clientside-only dynamic IDs
     if (id.find("$dynamic") != std::string::npos)
@@ -295,6 +295,7 @@ void LocalActor::sendSpellsActiveAddition(const std::string id, ESM::ActiveSpell
 
     mwmp::ActiveSpell spell;
     spell.id = id;
+    spell.isStackingSpell = isStackingSpell;
     spell.params = params;
     spellsActiveChanges.activeSpells.push_back(spell);
 

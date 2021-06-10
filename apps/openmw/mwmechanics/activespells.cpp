@@ -202,6 +202,8 @@ namespace MWMechanics
 
             Whenever a player gains an active spell, send an ID_PLAYER_SPELLS_ACTIVE packet to the server with it
         */
+        bool isStackingSpell = it == end() || stack;
+
         ESM::ActiveSpells::ActiveSpellParams esmParams;
         esmParams.mEffects = effects;
         esmParams.mDisplayName = displayName;
@@ -209,11 +211,11 @@ namespace MWMechanics
 
         if (this == &MWMechanics::getPlayer().getClass().getCreatureStats(MWMechanics::getPlayer()).getActiveSpells())
         {
-            mwmp::Main::get().getLocalPlayer()->sendSpellsActiveAddition(id, esmParams);
+            mwmp::Main::get().getLocalPlayer()->sendSpellsActiveAddition(id, isStackingSpell, esmParams);
         }
         else if (mwmp::Main::get().getCellController()->isLocalActor(MechanicsHelper::getCurrentActor()))
         {
-            mwmp::Main::get().getCellController()->getLocalActor(MechanicsHelper::getCurrentActor())->sendSpellsActiveAddition(id, esmParams);
+            mwmp::Main::get().getCellController()->getLocalActor(MechanicsHelper::getCurrentActor())->sendSpellsActiveAddition(id, isStackingSpell, esmParams);
         }
         /*
             End of tes3mp addition
