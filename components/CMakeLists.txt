@@ -266,6 +266,7 @@ if (BUILD_OPENMW OR BUILD_OPENCS)
             raycast
             navmeshtileview
             oscillatingrecastmeshobject
+            offmeshconnectionsmanager
             )
 endif()
 # End of tes3mp change (major)
