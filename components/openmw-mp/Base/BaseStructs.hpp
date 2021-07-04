@@ -161,6 +161,8 @@ namespace mwmp
     {
         std::string id;
         bool isStackingSpell;
+        int timestampDay;
+        double timestampHour;
         ESM::ActiveSpells::ActiveSpellParams params;
     };
 

@@ -365,8 +365,10 @@ void DedicatedActor::addSpellsActive()
 
     for (const auto& activeSpell : spellsActiveChanges.activeSpells)
     {
+        MWWorld::TimeStamp timestamp = MWWorld::TimeStamp(activeSpell.timestampHour, activeSpell.timestampDay);
+
         // Don't do a check for a spell's existence, because active effects from potions need to be applied here too
-        activeSpells.addSpell(activeSpell.id, activeSpell.isStackingSpell, activeSpell.params.mEffects, activeSpell.params.mDisplayName, 1);
+        activeSpells.addSpell(activeSpell.id, activeSpell.isStackingSpell, activeSpell.params.mEffects, activeSpell.params.mDisplayName, 1, timestamp);
     }
 
     reloadPtr();
@@ -378,7 +380,16 @@ void DedicatedActor::removeSpellsActive()
 
     for (const auto& activeSpell : spellsActiveChanges.activeSpells)
     {
-        activeSpells.removeEffects(activeSpell.id);
+        // Remove stacking spells based on their timestamps
+        if (activeSpell.isStackingSpell)
+        {
+            MWWorld::TimeStamp timestamp = MWWorld::TimeStamp(activeSpell.timestampHour, activeSpell.timestampDay);
+            activeSpells.removeSpellByTimestamp(activeSpell.id, timestamp);
+        }
+        else
+        {
+            activeSpells.removeEffects(activeSpell.id);
+        }
     }
 }
 

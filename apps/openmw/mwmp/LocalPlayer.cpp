@@ -718,8 +718,10 @@ void LocalPlayer::addSpellsActive()
 
     for (const auto& activeSpell : spellsActiveChanges.activeSpells)
     {
+        MWWorld::TimeStamp timestamp = MWWorld::TimeStamp(activeSpell.timestampHour, activeSpell.timestampDay);
+
         // Don't do a check for a spell's existence, because active effects from potions need to be applied here too
-        activeSpells.addSpell(activeSpell.id, activeSpell.isStackingSpell, activeSpell.params.mEffects, activeSpell.params.mDisplayName, 1);
+        activeSpells.addSpell(activeSpell.id, activeSpell.isStackingSpell, activeSpell.params.mEffects, activeSpell.params.mDisplayName, 1, timestamp);
     }
 }
 
@@ -821,7 +823,16 @@ void LocalPlayer::removeSpellsActive()
  
     for (const auto& activeSpell : spellsActiveChanges.activeSpells)
     {
-        activeSpells.removeEffects(activeSpell.id);
+        // Remove stacking spells based on their timestamps
+        if (activeSpell.isStackingSpell)
+        {
+            MWWorld::TimeStamp timestamp = MWWorld::TimeStamp(activeSpell.timestampHour, activeSpell.timestampDay);
+            activeSpells.removeSpellByTimestamp(activeSpell.id, timestamp);
+        }
+        else
+        {
+            activeSpells.removeEffects(activeSpell.id);
+        }
     }
 }
 
@@ -1589,7 +1600,7 @@ void LocalPlayer::sendSpellsActive()
     getNetworking()->getPlayerPacket(ID_PLAYER_SPELLS_ACTIVE)->Send();
 }
 
-void LocalPlayer::sendSpellsActiveAddition(const std::string id, bool isStackingSpell, ESM::ActiveSpells::ActiveSpellParams params)
+void LocalPlayer::sendSpellsActiveAddition(const std::string id, bool isStackingSpell, ESM::ActiveSpells::ActiveSpellParams params, MWWorld::TimeStamp timestamp)
 {
     // Skip any bugged spells that somehow have clientside-only dynamic IDs
     if (id.find("$dynamic") != std::string::npos)
@@ -1600,15 +1611,20 @@ void LocalPlayer::sendSpellsActiveAddition(const std::string id, bool isStacking
     mwmp::ActiveSpell spell;
     spell.id = id;
     spell.isStackingSpell = isStackingSpell;
+    spell.timestampDay = timestamp.getDay();
+    spell.timestampHour = timestamp.getHour();
     spell.params = params;
     spellsActiveChanges.activeSpells.push_back(spell);
+
+    LOG_MESSAGE_SIMPLE(TimedLog::LOG_INFO, "Sending active spell addition with stacking %s, timestamp %i %f",
+        spell.isStackingSpell ? "true" : "false", spell.timestampDay, spell.timestampHour);
 
     spellsActiveChanges.action = mwmp::SpellsActiveChanges::ADD;
     getNetworking()->getPlayerPacket(ID_PLAYER_SPELLS_ACTIVE)->setPlayer(this);
     getNetworking()->getPlayerPacket(ID_PLAYER_SPELLS_ACTIVE)->Send();
 }
 
-void LocalPlayer::sendSpellsActiveRemoval(const std::string id)
+void LocalPlayer::sendSpellsActiveRemoval(const std::string id, bool isStackingSpell, MWWorld::TimeStamp timestamp)
 {
     // Skip any bugged spells that somehow have clientside-only dynamic IDs
     if (id.find("$dynamic") != std::string::npos)
@@ -1618,7 +1634,13 @@ void LocalPlayer::sendSpellsActiveRemoval(const std::string id)
 
     mwmp::ActiveSpell spell;
     spell.id = id;
+    spell.isStackingSpell = isStackingSpell;
+    spell.timestampDay = timestamp.getDay();
+    spell.timestampHour = timestamp.getHour();
     spellsActiveChanges.activeSpells.push_back(spell);
+
+    LOG_MESSAGE_SIMPLE(TimedLog::LOG_INFO, "Sending active spell removal with stacking %s, timestamp %i %f",
+        spell.isStackingSpell ? "true" : "false", spell.timestampDay, spell.timestampHour);
 
     spellsActiveChanges.action = mwmp::SpellsActiveChanges::REMOVE;
     getNetworking()->getPlayerPacket(ID_PLAYER_SPELLS_ACTIVE)->setPlayer(this);

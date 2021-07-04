@@ -45,13 +45,15 @@ namespace MWMechanics
 
                         Whenever a player loses an active spell, send an ID_PLAYER_SPELLS_ACTIVE packet to the server with it
                     */
+                    bool isStackingSpell = !MWBase::Environment::get().getWorld()->getStore().get<ESM::Spell>().search(iter->first);
+
                     if (this == &MWMechanics::getPlayer().getClass().getCreatureStats(MWMechanics::getPlayer()).getActiveSpells())
                     {
-                        mwmp::Main::get().getLocalPlayer()->sendSpellsActiveRemoval(iter->first);
+                        mwmp::Main::get().getLocalPlayer()->sendSpellsActiveRemoval(iter->first, isStackingSpell, iter->second.mTimeStamp);
                     }
                     else if (mwmp::Main::get().getCellController()->isLocalActor(MechanicsHelper::getCurrentActor()))
                     {
-                        mwmp::Main::get().getCellController()->getLocalActor(MechanicsHelper::getCurrentActor())->sendSpellsActiveRemoval(iter->first);
+                        mwmp::Main::get().getCellController()->getLocalActor(MechanicsHelper::getCurrentActor())->sendSpellsActiveRemoval(iter->first, isStackingSpell, iter->second.mTimeStamp);
                     }
                     /*
                         End of tes3mp addition
@@ -173,8 +175,16 @@ namespace MWMechanics
         return mSpells;
     }
 
+    /*
+        Start of tes3mp change (major)
+
+        Add a timestamp argument so spells received from other clients can have the same timestamps they had there
+    */
     void ActiveSpells::addSpell(const std::string &id, bool stack, std::vector<ActiveEffect> effects,
-                                const std::string &displayName, int casterActorId)
+                                const std::string &displayName, int casterActorId, MWWorld::TimeStamp timestamp)
+    /*
+        End of tes3mp change (major)
+    */
     {
         TContainer::iterator it(mSpells.find(id));
 
@@ -182,6 +192,16 @@ namespace MWMechanics
         params.mEffects = effects;
         params.mDisplayName = displayName;
         params.mCasterActorId = casterActorId;
+
+        /*
+            Start of tes3mp addition
+
+            Track the timestamp of this active spell so that, if spells are stacked, the correct one can be removed
+        */
+        params.mTimeStamp = timestamp;
+        /*
+            End of tes3mp addition
+        */
 
         if (it == end() || stack)
         {
@@ -211,11 +231,11 @@ namespace MWMechanics
 
         if (this == &MWMechanics::getPlayer().getClass().getCreatureStats(MWMechanics::getPlayer()).getActiveSpells())
         {
-            mwmp::Main::get().getLocalPlayer()->sendSpellsActiveAddition(id, isStackingSpell, esmParams);
+            mwmp::Main::get().getLocalPlayer()->sendSpellsActiveAddition(id, isStackingSpell, esmParams, params.mTimeStamp);
         }
         else if (mwmp::Main::get().getCellController()->isLocalActor(MechanicsHelper::getCurrentActor()))
         {
-            mwmp::Main::get().getCellController()->getLocalActor(MechanicsHelper::getCurrentActor())->sendSpellsActiveAddition(id, isStackingSpell, esmParams);
+            mwmp::Main::get().getCellController()->getLocalActor(MechanicsHelper::getCurrentActor())->sendSpellsActiveAddition(id, isStackingSpell, esmParams, params.mTimeStamp);
         }
         /*
             End of tes3mp addition
@@ -223,6 +243,23 @@ namespace MWMechanics
 
         mSpellsChanged = true;
     }
+
+    /*
+        Start of tes3mp addition
+
+        Declare addSpell() without the timestamp argument and make it call the version with that argument,
+        using the current time for the timestamp
+    */
+    void ActiveSpells::addSpell(const std::string& id, bool stack, std::vector<ActiveEffect> effects,
+                                const std::string& displayName, int casterActorId)
+    {
+        MWWorld::TimeStamp timestamp = MWBase::Environment::get().getWorld()->getTimeStamp();
+
+        addSpell(id, stack, effects, displayName, casterActorId, timestamp);
+    }
+    /*
+        End of tes3mp addition
+    */
 
     void ActiveSpells::mergeEffects(std::vector<ActiveEffect>& addTo, const std::vector<ActiveEffect>& from)
     {
@@ -256,6 +293,31 @@ namespace MWMechanics
             }
         }
     }
+
+    /*
+        Start of tes3mp addition
+
+        Remove the spell with a certain ID and a certain timestamp, useful
+        when there are stacked spells with the same ID
+    */
+    void ActiveSpells::removeSpellByTimestamp(const std::string& id, MWWorld::TimeStamp timestamp)
+    {
+        for (TContainer::iterator spell = mSpells.begin(); spell != mSpells.end(); ++spell)
+        {
+            if (spell->first == id)
+            {
+                if (spell->second.mTimeStamp == timestamp)
+                {
+                    spell->second.mEffects.clear();
+                    mSpellsChanged = true;
+                    break;
+                }
+            }
+        }
+    }
+    /*
+        End of tes3mp addition
+    */
 
     void ActiveSpells::visitEffectSources(EffectSourceVisitor &visitor) const
     {

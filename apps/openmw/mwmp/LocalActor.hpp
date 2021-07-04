@@ -4,6 +4,7 @@
 #include <components/openmw-mp/Base/BaseActor.hpp>
 #include "../mwmechanics/creaturestats.hpp"
 #include "../mwworld/manualref.hpp"
+#include "../mwworld/timestamp.hpp"
 
 namespace mwmp
 {
@@ -26,8 +27,8 @@ namespace mwmp
         void updateAttackOrCast();
 
         void sendEquipment();
-        void sendSpellsActiveAddition(const std::string id, bool isStackingSpell, ESM::ActiveSpells::ActiveSpellParams params);
-        void sendSpellsActiveRemoval(const std::string id);
+        void sendSpellsActiveAddition(const std::string id, bool isStackingSpell, ESM::ActiveSpells::ActiveSpellParams params, MWWorld::TimeStamp timestamp);
+        void sendSpellsActiveRemoval(const std::string id, bool isStackingSpell, MWWorld::TimeStamp timestamp);
         void sendDeath(char newDeathState);
 
         MWWorld::Ptr getPtr();

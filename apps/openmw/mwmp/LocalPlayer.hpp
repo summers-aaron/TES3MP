@@ -3,6 +3,7 @@
 
 #include <components/openmw-mp/Base/BasePlayer.hpp>
 #include "../mwworld/ptr.hpp"
+#include "../mwworld/timestamp.hpp"
 #include <RakNetTypes.h>
 
 namespace mwmp
@@ -91,8 +92,8 @@ namespace mwmp
         void sendSpellbook();
         void sendSpellChange(std::string id, unsigned int action);
         void sendSpellsActive();
-        void sendSpellsActiveAddition(const std::string id, bool isStackingSpell, ESM::ActiveSpells::ActiveSpellParams params);
-        void sendSpellsActiveRemoval(const std::string id);
+        void sendSpellsActiveAddition(const std::string id, bool isStackingSpell, ESM::ActiveSpells::ActiveSpellParams params, MWWorld::TimeStamp timestamp);
+        void sendSpellsActiveRemoval(const std::string id, bool isStackingSpell, MWWorld::TimeStamp timestamp);
         void sendQuickKey(unsigned short slot, int type, const std::string& itemId = "");
         void sendJournalEntry(const std::string& quest, int index, const MWWorld::Ptr& actor);
         void sendJournalIndex(const std::string& quest, int index);

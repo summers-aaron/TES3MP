@@ -285,7 +285,7 @@ void LocalActor::sendEquipment()
     Main::get().getNetworking()->getActorPacket(ID_ACTOR_EQUIPMENT)->Send();
 }
 
-void LocalActor::sendSpellsActiveAddition(const std::string id, bool isStackingSpell, ESM::ActiveSpells::ActiveSpellParams params)
+void LocalActor::sendSpellsActiveAddition(const std::string id, bool isStackingSpell, ESM::ActiveSpells::ActiveSpellParams params, MWWorld::TimeStamp timestamp)
 {
     // Skip any bugged spells that somehow have clientside-only dynamic IDs
     if (id.find("$dynamic") != std::string::npos)
@@ -296,6 +296,8 @@ void LocalActor::sendSpellsActiveAddition(const std::string id, bool isStackingS
     mwmp::ActiveSpell spell;
     spell.id = id;
     spell.isStackingSpell = isStackingSpell;
+    spell.timestampDay = timestamp.getDay();
+    spell.timestampHour = timestamp.getHour();
     spell.params = params;
     spellsActiveChanges.activeSpells.push_back(spell);
 
@@ -308,7 +310,7 @@ void LocalActor::sendSpellsActiveAddition(const std::string id, bool isStackingS
     Main::get().getNetworking()->getActorPacket(ID_ACTOR_SPELLS_ACTIVE)->Send();
 }
 
-void LocalActor::sendSpellsActiveRemoval(const std::string id)
+void LocalActor::sendSpellsActiveRemoval(const std::string id, bool isStackingSpell, MWWorld::TimeStamp timestamp)
 {
     // Skip any bugged spells that somehow have clientside-only dynamic IDs
     if (id.find("$dynamic") != std::string::npos)
@@ -318,6 +320,9 @@ void LocalActor::sendSpellsActiveRemoval(const std::string id)
 
     mwmp::ActiveSpell spell;
     spell.id = id;
+    spell.isStackingSpell = isStackingSpell;
+    spell.timestampDay = timestamp.getDay();
+    spell.timestampHour = timestamp.getHour();
     spellsActiveChanges.activeSpells.push_back(spell);
 
     spellsActiveChanges.action = mwmp::SpellsActiveChanges::REMOVE;

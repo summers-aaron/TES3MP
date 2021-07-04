@@ -77,8 +77,30 @@ namespace MWMechanics
             void addSpell (const std::string& id, bool stack, std::vector<ActiveEffect> effects,
                            const std::string& displayName, int casterActorId);
 
+            /*
+                Start of tes3mp addition
+
+                Add a separate addSpell() with a timestamp argument
+            */
+            void addSpell (const std::string& id, bool stack, std::vector<ActiveEffect> effects,
+                           const std::string& displayName, int casterActorId, MWWorld::TimeStamp timestamp);
+            /*
+                End of tes3mp addition
+            */
+
             /// Removes the active effects from this spell/potion/.. with \a id
             void removeEffects (const std::string& id);
+
+            /*
+                Start of tes3mp addition
+
+                Remove the spell with a certain ID and a certain timestamp, useful
+                when there are stacked spells with the same ID
+            */
+            void removeSpellByTimestamp(const std::string& id, MWWorld::TimeStamp timestamp);
+            /*
+                End of tes3mp addition
+            */
 
             /// Remove all active effects with this effect id
             void purgeEffect (short effectId);
