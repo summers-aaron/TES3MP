@@ -74,6 +74,12 @@ namespace Debug
         if (level != NoLevel)
             msg = msg.substr(1);
 
+        /*
+            Start of tes3mp change (major)
+
+            Don't use these timestamps, as TES3MP has its own
+        */
+        /*
         char prefix[32];
         int prefixSize;
         {
@@ -86,6 +92,10 @@ namespace Debug
             prefixSize += snprintf(prefix + prefixSize, sizeof(prefix) - prefixSize,
                                    ".%03u %c] ", static_cast<unsigned>(ms % 1000), levelLetter);
         }
+        */
+        /*
+            End of tes3mp change (major)
+        */
 
         while (!msg.empty())
         {
@@ -94,7 +104,15 @@ namespace Debug
             size_t lineSize = 1;
             while (lineSize < msg.size() && msg[lineSize - 1] != '\n')
                 lineSize++;
-            writeImpl(prefix, prefixSize, level);
+            /*
+                Start of tes3mp change (major)
+
+                Don't use these timestamps, as TES3MP has its own
+            */
+            //writeImpl(prefix, prefixSize, level);
+            /*
+                End of tes3mp change (major)
+            */
             writeImpl(msg.data(), lineSize, level);
             msg = msg.substr(lineSize);
         }
