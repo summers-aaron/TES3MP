@@ -178,10 +178,12 @@ namespace MWMechanics
     /*
         Start of tes3mp change (major)
 
-        Add a timestamp argument so spells received from other clients can have the same timestamps they had there
+        Add a timestamp argument so spells received from other clients can have the same timestamps they had there,
+        as well as a sendPacket argument used to prevent packets from being sent back to the server when we've just
+        received them from it
     */
     void ActiveSpells::addSpell(const std::string &id, bool stack, std::vector<ActiveEffect> effects,
-                                const std::string &displayName, int casterActorId, MWWorld::TimeStamp timestamp)
+                                const std::string &displayName, int casterActorId, MWWorld::TimeStamp timestamp, bool sendPacket)
     /*
         End of tes3mp change (major)
     */
@@ -220,22 +222,26 @@ namespace MWMechanics
         /*
             Start of tes3mp addition
 
-            Whenever a player gains an active spell, send an ID_PLAYER_SPELLS_ACTIVE packet to the server with it
+            Whenever a player gains an active spell as a result of gameplay, send an ID_PLAYER_SPELLS_ACTIVE packet
+            to the server with it
         */
-        bool isStackingSpell = it == end() || stack;
-
-        ESM::ActiveSpells::ActiveSpellParams esmParams;
-        esmParams.mEffects = effects;
-        esmParams.mDisplayName = displayName;
-        esmParams.mCasterActorId = casterActorId;
-
-        if (this == &MWMechanics::getPlayer().getClass().getCreatureStats(MWMechanics::getPlayer()).getActiveSpells())
+        if (sendPacket)
         {
-            mwmp::Main::get().getLocalPlayer()->sendSpellsActiveAddition(id, isStackingSpell, esmParams, params.mTimeStamp);
-        }
-        else if (mwmp::Main::get().getCellController()->isLocalActor(MechanicsHelper::getCurrentActor()))
-        {
-            mwmp::Main::get().getCellController()->getLocalActor(MechanicsHelper::getCurrentActor())->sendSpellsActiveAddition(id, isStackingSpell, esmParams, params.mTimeStamp);
+            bool isStackingSpell = it == end() || stack;
+
+            ESM::ActiveSpells::ActiveSpellParams esmParams;
+            esmParams.mEffects = effects;
+            esmParams.mDisplayName = displayName;
+            esmParams.mCasterActorId = casterActorId;
+
+            if (this == &MWMechanics::getPlayer().getClass().getCreatureStats(MWMechanics::getPlayer()).getActiveSpells())
+            {
+                mwmp::Main::get().getLocalPlayer()->sendSpellsActiveAddition(id, isStackingSpell, esmParams, params.mTimeStamp);
+            }
+            else if (mwmp::Main::get().getCellController()->isLocalActor(MechanicsHelper::getCurrentActor()))
+            {
+                mwmp::Main::get().getCellController()->getLocalActor(MechanicsHelper::getCurrentActor())->sendSpellsActiveAddition(id, isStackingSpell, esmParams, params.mTimeStamp);
+            }
         }
         /*
             End of tes3mp addition

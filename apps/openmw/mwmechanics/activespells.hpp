@@ -83,7 +83,7 @@ namespace MWMechanics
                 Add a separate addSpell() with a timestamp argument
             */
             void addSpell (const std::string& id, bool stack, std::vector<ActiveEffect> effects,
-                           const std::string& displayName, int casterActorId, MWWorld::TimeStamp timestamp);
+                           const std::string& displayName, int casterActorId, MWWorld::TimeStamp timestamp, bool sendPacket = true);
             /*
                 End of tes3mp addition
             */
