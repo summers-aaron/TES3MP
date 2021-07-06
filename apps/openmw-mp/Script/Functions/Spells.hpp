@@ -20,6 +20,7 @@
     {"GetSpellId",                     SpellFunctions::GetSpellId},\
     {"GetSpellsActiveId",              SpellFunctions::GetSpellsActiveId},\
     {"GetSpellsActiveDisplayName",     SpellFunctions::GetSpellsActiveDisplayName},\
+    {"GetSpellsActiveStackingState",   SpellFunctions::GetSpellsActiveStackingState},\
     {"GetSpellsActiveEffectCount",     SpellFunctions::GetSpellsActiveEffectCount},\
     {"GetSpellsActiveEffectId",        SpellFunctions::GetSpellsActiveEffectId},\
     {"GetSpellsActiveEffectArg",       SpellFunctions::GetSpellsActiveEffectArg},\
@@ -166,6 +167,15 @@ public:
     * \return The spell display name.
     */
     static const char* GetSpellsActiveDisplayName(unsigned short pid, unsigned int index) noexcept;
+
+    /**
+    * \brief Get the spell stacking state at a certain index in a player's latest spells active changes.
+    *
+    * \param pid The player ID whose spells active changes should be used.
+    * \param index The index of the spell.
+    * \return The spell stacking state.
+    */
+    static bool GetSpellsActiveStackingState(unsigned short pid, unsigned int index) noexcept;
 
     /**
     * \brief Get the number of effects at an index in a player's latest spells active changes.

@@ -148,6 +148,17 @@ const char* SpellFunctions::GetSpellsActiveDisplayName(unsigned short pid, unsig
     return player->spellsActiveChanges.activeSpells.at(index).params.mDisplayName.c_str();
 }
 
+bool SpellFunctions::GetSpellsActiveStackingState(unsigned short pid, unsigned int index) noexcept
+{
+    Player* player;
+    GET_PLAYER(pid, player, "");
+
+    if (index >= player->spellsActiveChanges.activeSpells.size())
+        return "invalid";
+
+    return player->spellsActiveChanges.activeSpells.at(index).isStackingSpell;
+}
+
 unsigned int SpellFunctions::GetSpellsActiveEffectCount(unsigned short pid, unsigned int index) noexcept
 {
     Player* player;
