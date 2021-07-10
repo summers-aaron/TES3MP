@@ -208,6 +208,7 @@ namespace mwmp
 
         InventoryChanges inventoryChanges;
         SpellbookChanges spellbookChanges;
+        std::vector<SpellCooldown> cooldownChanges;
         SpellsActiveChanges spellsActiveChanges;
         std::vector<QuickKey> quickKeyChanges;
         std::vector<JournalItem> journalChanges;

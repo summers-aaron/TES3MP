@@ -70,6 +70,16 @@ namespace MWMechanics
             bool canUsePower (const ESM::Spell* spell) const;
             void usePower (const ESM::Spell* spell);
 
+            /*
+                Start of tes3mp addition
+
+                Make it possible to set timestamps for power cooldowns, necessary for ID_PLAYER_COOLDOWNS packets
+            */
+            void setPowerUseTimestamp(const ESM::Spell* spell, int startDay, float startHour);
+            /*
+                End of tes3mp addition
+            */
+
             void purgeCommonDisease();
             void purgeBlightDisease();
             void purgeCorprusDisease();

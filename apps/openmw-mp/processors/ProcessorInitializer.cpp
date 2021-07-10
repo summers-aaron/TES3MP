@@ -17,6 +17,7 @@
 #include "player/ProcessorPlayerCellChange.hpp"
 #include "player/ProcessorPlayerCellState.hpp"
 #include "player/ProcessorPlayerCharClass.hpp"
+#include "player/ProcessorPlayerCooldowns.hpp"
 #include "player/ProcessorPlayerDeath.hpp"
 #include "player/ProcessorPlayerDisposition.hpp"
 #include "player/ProcessorPlayerEquipment.hpp"
@@ -103,6 +104,7 @@ void ProcessorInitializer()
     PlayerProcessor::AddProcessor(new ProcessorPlayerCellChange());
     PlayerProcessor::AddProcessor(new ProcessorPlayerCellState());
     PlayerProcessor::AddProcessor(new ProcessorPlayerCharClass());
+    PlayerProcessor::AddProcessor(new ProcessorPlayerCooldowns());
     PlayerProcessor::AddProcessor(new ProcessorPlayerDeath());
     PlayerProcessor::AddProcessor(new ProcessorPlayerDisposition());
     PlayerProcessor::AddProcessor(new ProcessorPlayerEquipment());

@@ -18,6 +18,7 @@
 #include "../Packets/Player/PacketPlayerCellChange.hpp"
 #include "../Packets/Player/PacketPlayerCellState.hpp"
 #include "../Packets/Player/PacketPlayerClass.hpp"
+#include "../Packets/Player/PacketPlayerCooldowns.hpp"
 #include "../Packets/Player/PacketPlayerDeath.hpp"
 #include "../Packets/Player/PacketPlayerEquipment.hpp"
 #include "../Packets/Player/PacketPlayerFaction.hpp"
@@ -74,6 +75,7 @@ mwmp::PlayerPacketController::PlayerPacketController(RakNet::RakPeerInterface *p
     AddPacket<PacketPlayerCellState>(&packets, peer);
     AddPacket<PacketPlayerCharGen>(&packets, peer);
     AddPacket<PacketPlayerClass>(&packets, peer);
+    AddPacket<PacketPlayerCooldowns>(&packets, peer);
     AddPacket<PacketPlayerDeath>(&packets, peer);
     AddPacket<PacketPlayerEquipment>(&packets, peer);
     AddPacket<PacketPlayerFaction>(&packets, peer);

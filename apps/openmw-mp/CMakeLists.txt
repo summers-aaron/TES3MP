@@ -97,18 +97,18 @@ set(PROCESSORS_PLAYER
         processors/player/ProcessorPlayerBook.hpp processors/player/ProcessorPlayerBounty.hpp
         processors/player/ProcessorPlayerCast.hpp processors/player/ProcessorPlayerCellChange.hpp
         processors/player/ProcessorPlayerCellState.hpp processors/player/ProcessorPlayerCharClass.hpp
-        processors/player/ProcessorPlayerCharGen.hpp processors/player/ProcessorPlayerDeath.hpp
-        processors/player/ProcessorPlayerDisposition.hpp processors/player/ProcessorPlayerEquipment.hpp
-        processors/player/ProcessorPlayerFaction.hpp processors/player/ProcessorPlayerInput.hpp
-        processors/player/ProcessorPlayerInventory.hpp processors/player/ProcessorPlayerItemUse.hpp
-        processors/player/ProcessorPlayerJournal.hpp processors/player/ProcessorPlayerPlaceholder.hpp
-        processors/player/ProcessorPlayerLevel.hpp processors/player/ProcessorPlayerMiscellaneous.hpp
-        processors/player/ProcessorPlayerPosition.hpp processors/player/ProcessorPlayerQuickKeys.hpp
-        processors/player/ProcessorPlayerRest.hpp processors/player/ProcessorPlayerResurrect.hpp
-        processors/player/ProcessorPlayerShapeshift.hpp processors/player/ProcessorPlayerSkill.hpp
-        processors/player/ProcessorPlayerSpeech.hpp processors/player/ProcessorPlayerSpellbook.hpp
-        processors/player/ProcessorPlayerSpellsActive.hpp processors/player/ProcessorPlayerStatsDynamic.hpp
-        processors/player/ProcessorPlayerTopic.hpp
+        processors/player/ProcessorPlayerCharGen.hpp processors/player/ProcessorPlayerCooldowns.hpp
+        processors/player/ProcessorPlayerDeath.hpp processors/player/ProcessorPlayerDisposition.hpp
+        processors/player/ProcessorPlayerEquipment.hpp processors/player/ProcessorPlayerFaction.hpp
+        processors/player/ProcessorPlayerInput.hpp processors/player/ProcessorPlayerInventory.hpp
+        processors/player/ProcessorPlayerItemUse.hpp processors/player/ProcessorPlayerJournal.hpp
+        processors/player/ProcessorPlayerPlaceholder.hpp processors/player/ProcessorPlayerLevel.hpp
+        processors/player/ProcessorPlayerMiscellaneous.hpp processors/player/ProcessorPlayerPosition.hpp
+        processors/player/ProcessorPlayerQuickKeys.hpp processors/player/ProcessorPlayerRest.hpp
+        processors/player/ProcessorPlayerResurrect.hpp processors/player/ProcessorPlayerShapeshift.hpp
+        processors/player/ProcessorPlayerSkill.hpp processors/player/ProcessorPlayerSpeech.hpp
+        processors/player/ProcessorPlayerSpellbook.hpp processors/player/ProcessorPlayerSpellsActive.hpp
+        processors/player/ProcessorPlayerStatsDynamic.hpp processors/player/ProcessorPlayerTopic.hpp
         )
 
 source_group(tes3mp-server\\processors\\player FILES ${PROCESSORS_PLAYER})

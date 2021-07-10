@@ -1266,6 +1266,23 @@ void LocalPlayer::setSpellsActive()
     addSpellsActive();
 }
 
+void LocalPlayer::setCooldowns()
+{
+    MWBase::World* world = MWBase::Environment::get().getWorld();
+    MWWorld::Ptr ptrPlayer = getPlayerPtr();
+    MWMechanics::Spells& ptrSpells = ptrPlayer.getClass().getCreatureStats(ptrPlayer).getSpells();
+
+    for (const auto& cooldown : cooldownChanges)
+    {
+        if (world->getStore().get<ESM::Spell>().search(cooldown.id))
+        {
+            const ESM::Spell* spell = world->getStore().get<ESM::Spell>().search(cooldown.id);
+
+            ptrSpells.setPowerUseTimestamp(spell, cooldown.startTimestampDay, cooldown.startTimestampHour);
+        }
+    }
+}
+
 void LocalPlayer::setQuickKeys()
 {
     MWWorld::Ptr ptrPlayer = getPlayerPtr();
@@ -1645,6 +1662,25 @@ void LocalPlayer::sendSpellsActiveRemoval(const std::string id, bool isStackingS
     spellsActiveChanges.action = mwmp::SpellsActiveChanges::REMOVE;
     getNetworking()->getPlayerPacket(ID_PLAYER_SPELLS_ACTIVE)->setPlayer(this);
     getNetworking()->getPlayerPacket(ID_PLAYER_SPELLS_ACTIVE)->Send();
+}
+
+void LocalPlayer::sendCooldownChange(std::string id, int startTimestampDay, float startTimestampHour)
+{
+    // Skip any bugged spells that somehow have clientside-only dynamic IDs
+    if (id.find("$dynamic") != std::string::npos)
+        return;
+
+    cooldownChanges.clear();
+
+    SpellCooldown spellCooldown;
+    spellCooldown.id = id;
+    spellCooldown.startTimestampDay = startTimestampDay;
+    spellCooldown.startTimestampHour = startTimestampHour;
+
+    cooldownChanges.push_back(spellCooldown);
+;
+    getNetworking()->getPlayerPacket(ID_PLAYER_COOLDOWNS)->setPlayer(this);
+    getNetworking()->getPlayerPacket(ID_PLAYER_COOLDOWNS)->Send();
 }
 
 void LocalPlayer::sendQuickKey(unsigned short slot, int type, const std::string& itemId)

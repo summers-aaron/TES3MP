@@ -157,6 +157,13 @@ namespace mwmp
         bool shouldSend;
     };
 
+    struct SpellCooldown
+    {
+        std::string id;
+        int startTimestampDay;
+        double startTimestampHour;
+    };
+
     struct ActiveSpell
     {
         std::string id;

@@ -26,6 +26,14 @@ void SpellFunctions::ClearSpellsActiveChanges(unsigned short pid) noexcept
     player->spellsActiveChanges.activeSpells.clear();
 }
 
+void SpellFunctions::ClearCooldownChanges(unsigned short pid) noexcept
+{
+    Player* player;
+    GET_PLAYER(pid, player, );
+
+    player->cooldownChanges.clear();
+}
+
 unsigned int SpellFunctions::GetSpellbookChangesSize(unsigned short pid) noexcept
 {
     Player *player;
@@ -56,6 +64,14 @@ unsigned int SpellFunctions::GetSpellsActiveChangesAction(unsigned short pid) no
     GET_PLAYER(pid, player, 0);
 
     return player->spellsActiveChanges.action;
+}
+
+unsigned int SpellFunctions::GetCooldownChangesSize(unsigned short pid) noexcept
+{
+    Player* player;
+    GET_PLAYER(pid, player, 0);
+
+    return player->cooldownChanges.size();
 }
 
 void SpellFunctions::SetSpellbookChangesAction(unsigned short pid, unsigned char action) noexcept
@@ -113,6 +129,19 @@ void SpellFunctions::AddSpellActiveEffect(unsigned short pid, int effectId, doub
     effect.mArg = arg;
 
     storedActiveEffects.push_back(effect);
+}
+
+void SpellFunctions::AddCooldownSpell(unsigned short pid, const char* spellId, unsigned int startDay, double startHour) noexcept
+{
+    Player* player;
+    GET_PLAYER(pid, player, );
+
+    mwmp::SpellCooldown spellCooldown;
+    spellCooldown.id = spellId;
+    spellCooldown.startTimestampDay = startDay;
+    spellCooldown.startTimestampHour = startHour;
+
+    player->cooldownChanges.push_back(spellCooldown);
 }
 
 const char *SpellFunctions::GetSpellId(unsigned short pid, unsigned int index) noexcept
@@ -225,6 +254,39 @@ double SpellFunctions::GetSpellsActiveEffectTimeLeft(unsigned short pid, unsigne
     return player->spellsActiveChanges.activeSpells.at(spellIndex).params.mEffects.at(effectIndex).mTimeLeft;
 }
 
+const char* SpellFunctions::GetCooldownSpellId(unsigned short pid, unsigned int index) noexcept
+{
+    Player* player;
+    GET_PLAYER(pid, player, "");
+
+    if (index >= player->cooldownChanges.size())
+        return "invalid";
+
+    return player->cooldownChanges.at(index).id.c_str();
+}
+
+unsigned int SpellFunctions::GetCooldownStartDay(unsigned short pid, unsigned int index) noexcept
+{
+    Player* player;
+    GET_PLAYER(pid, player, 0);
+
+    if (index >= player->cooldownChanges.size())
+        return 0;
+
+    return player->cooldownChanges.at(index).startTimestampDay;
+}
+
+double SpellFunctions::GetCooldownStartHour(unsigned short pid, unsigned int index) noexcept
+{
+    Player* player;
+    GET_PLAYER(pid, player, 0.0);
+
+    if (index >= player->cooldownChanges.size())
+        return 0.0;
+
+    return player->cooldownChanges.at(index).startTimestampHour;
+}
+
 void SpellFunctions::SendSpellbookChanges(unsigned short pid, bool sendToOtherPlayers, bool skipAttachedPlayer) noexcept
 {
     Player *player;
@@ -251,6 +313,16 @@ void SpellFunctions::SendSpellsActiveChanges(unsigned short pid, bool sendToOthe
         packet->Send(false);
     if (sendToOtherPlayers)
         packet->Send(true);
+}
+
+void SpellFunctions::SendCooldownChanges(unsigned short pid) noexcept
+{
+    Player* player;
+    GET_PLAYER(pid, player, );
+
+    mwmp::PlayerPacket* packet = mwmp::Networking::get().getPlayerPacketController()->GetPacket(ID_PLAYER_COOLDOWNS);
+    packet->setPlayer(player);
+    packet->Send(false);
 }
 
 // All methods below are deprecated versions of methods from above

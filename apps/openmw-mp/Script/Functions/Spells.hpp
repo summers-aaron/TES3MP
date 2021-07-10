@@ -4,11 +4,13 @@
 #define SPELLAPI \
     {"ClearSpellbookChanges",          SpellFunctions::ClearSpellbookChanges},\
     {"ClearSpellsActiveChanges",       SpellFunctions::ClearSpellsActiveChanges},\
+    {"ClearCooldownChanges",           SpellFunctions::ClearCooldownChanges},\
     \
     {"GetSpellbookChangesSize",        SpellFunctions::GetSpellbookChangesSize},\
     {"GetSpellbookChangesAction",      SpellFunctions::GetSpellbookChangesAction},\
     {"GetSpellsActiveChangesSize",     SpellFunctions::GetSpellsActiveChangesSize},\
     {"GetSpellsActiveChangesAction",   SpellFunctions::GetSpellsActiveChangesAction},\
+    {"GetCooldownChangesSize",         SpellFunctions::GetCooldownChangesSize},\
     \
     {"SetSpellbookChangesAction",      SpellFunctions::SetSpellbookChangesAction},\
     {"SetSpellsActiveChangesAction",   SpellFunctions::SetSpellsActiveChangesAction},\
@@ -16,6 +18,7 @@
     {"AddSpell",                       SpellFunctions::AddSpell},\
     {"AddSpellActive",                 SpellFunctions::AddSpellActive},\
     {"AddSpellActiveEffect",           SpellFunctions::AddSpellActiveEffect},\
+    {"AddCooldownSpell",               SpellFunctions::AddCooldownSpell},\
     \
     {"GetSpellId",                     SpellFunctions::GetSpellId},\
     {"GetSpellsActiveId",              SpellFunctions::GetSpellsActiveId},\
@@ -28,8 +31,13 @@
     {"GetSpellsActiveEffectDuration",  SpellFunctions::GetSpellsActiveEffectDuration},\
     {"GetSpellsActiveEffectTimeLeft",  SpellFunctions::GetSpellsActiveEffectTimeLeft},\
     \
+    {"GetCooldownSpellId",             SpellFunctions::GetCooldownSpellId},\
+    {"GetCooldownStartDay",            SpellFunctions::GetCooldownStartDay},\
+    {"GetCooldownStartHour",           SpellFunctions::GetCooldownStartHour},\
+    \
     {"SendSpellbookChanges",           SpellFunctions::SendSpellbookChanges},\
     {"SendSpellsActiveChanges",        SpellFunctions::SendSpellsActiveChanges},\
+    {"SendCooldownChanges",            SpellFunctions::SendCooldownChanges},\
     \
     {"InitializeSpellbookChanges",     SpellFunctions::InitializeSpellbookChanges}
 
@@ -56,6 +64,16 @@ public:
     * \return void
     */
     static void ClearSpellsActiveChanges(unsigned short pid) noexcept;
+
+    /**
+    * \brief Clear the last recorded cooldown changes for a player.
+    *
+    * This is used to initialize the sending of new PlayerCooldown packets.
+    *
+    * \param pid The player ID whose cooldown changes should be used.
+    * \return void
+    */
+    static void ClearCooldownChanges(unsigned short pid) noexcept;
 
     /**
     * \brief Get the number of indexes in a player's latest spellbook changes.
@@ -88,6 +106,14 @@ public:
     * \return The action type (0 for SET, 1 for ADD, 2 for REMOVE).
     */
     static unsigned int GetSpellsActiveChangesAction(unsigned short pid) noexcept;
+
+    /**
+    * \brief Get the number of indexes in a player's latest cooldown changes.
+    *
+    * \param pid The player ID whose cooldown changes should be used.
+    * \return The number of indexes.
+    */
+    static unsigned int GetCooldownChangesSize(unsigned short pid) noexcept;
 
     /**
     * \brief Set the action type in a player's spellbook changes.
@@ -140,6 +166,17 @@ public:
     * \return void
     */
     static void AddSpellActiveEffect(unsigned short pid, int effectId, double magnitude, double duration, double timeLeft, int arg) noexcept;
+
+    /**
+    * \brief Add a new cooldown spell to the cooldown changes for a player.
+    *
+    * \param pid The player ID whose cooldown changes should be used.
+    * \param spellId The spellId of the spell.
+    * \param startDay The day on which the cooldown starts.
+    * \param startHour The hour at which the cooldown starts.
+    * \return void
+    */
+    static void AddCooldownSpell(unsigned short pid, const char* spellId, unsigned int startDay, double startHour) noexcept;
 
     /**
     * \brief Get the spell id at a certain index in a player's latest spellbook changes.
@@ -237,6 +274,33 @@ public:
     static double GetSpellsActiveEffectTimeLeft(unsigned short pid, unsigned int spellIndex, unsigned int effectIndex) noexcept;
 
     /**
+    * \brief Get the spell id at a certain index in a player's latest cooldown changes.
+    *
+    * \param pid The player ID whose cooldown changes should be used.
+    * \param index The index of the cooldown spell.
+    * \return The spell id.
+    */
+    static const char* GetCooldownSpellId(unsigned short pid, unsigned int index) noexcept;
+
+    /**
+    * \brief Get the starting day of the cooldown at a certain index in a player's latest cooldown changes.
+    *
+    * \param pid The player ID whose cooldown changes should be used.
+    * \param index The index of the cooldown spell.
+    * \return The starting day of the cooldown.
+    */
+    static unsigned int GetCooldownStartDay(unsigned short pid, unsigned int index) noexcept;
+
+    /**
+    * \brief Get the starting hour of the cooldown at a certain index in a player's latest cooldown changes.
+    *
+    * \param pid The player ID whose cooldown changes should be used.
+    * \param index The index of the cooldown spell.
+    * \return The starting hour of the cooldown.
+    */
+    static double GetCooldownStartHour(unsigned short pid, unsigned int index) noexcept;
+
+    /**
     * \brief Send a PlayerSpellbook packet with a player's recorded spellbook changes.
     *
     * \param pid The player ID whose spellbook changes should be used.
@@ -259,6 +323,14 @@ public:
     * \return void
     */
     static void SendSpellsActiveChanges(unsigned short pid, bool sendToOtherPlayers, bool skipAttachedPlayer) noexcept;
+
+    /**
+    * \brief Send a PlayerCooldowns packet with a player's recorded cooldown changes.
+    *
+    * \param pid The player ID whose cooldown changes should be used.
+    * \return void
+    */
+    static void SendCooldownChanges(unsigned short pid) noexcept;
 
     // All methods below are deprecated versions of methods from above
 
