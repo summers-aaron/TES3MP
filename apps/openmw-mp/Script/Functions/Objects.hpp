@@ -161,6 +161,8 @@
     {"SendObjectScale",                       ObjectFunctions::SendObjectScale},\
     {"SendObjectSound",                       ObjectFunctions::SendObjectSound},\
     {"SendObjectState",                       ObjectFunctions::SendObjectState},\
+    {"SendObjectMove",                        ObjectFunctions::SendObjectMove},\
+    {"SendObjectRotate",                      ObjectFunctions::SendObjectRotate},\
     {"SendDoorState",                         ObjectFunctions::SendDoorState},\
     {"SendDoorDestination",                   ObjectFunctions::SendDoorDestination},\
     {"SendContainer",                         ObjectFunctions::SendContainer},\
@@ -1444,6 +1446,28 @@ public:
     * \return void
     */
     static void SendObjectState(bool sendToOtherPlayers, bool skipAttachedPlayer) noexcept;
+
+    /**
+    * \brief Send an ObjectMove packet.
+    *
+    * \param sendToOtherPlayers Whether this packet should be sent to players other than the
+    *                           player attached to the packet (false by default).
+    * \param skipAttachedPlayer Whether the packet should skip being sent to the player attached
+    *                           to the packet (false by default).
+    * \return void
+    */
+    static void SendObjectMove(bool sendToOtherPlayers, bool skipAttachedPlayer) noexcept;
+
+    /**
+    * \brief Send an ObjectRotate packet.
+    *
+    * \param sendToOtherPlayers Whether this packet should be sent to players other than the
+    *                           player attached to the packet (false by default).
+    * \param skipAttachedPlayer Whether the packet should skip being sent to the player attached
+    *                           to the packet (false by default).
+    * \return void
+    */
+    static void SendObjectRotate(bool sendToOtherPlayers, bool skipAttachedPlayer) noexcept;
 
     /**
     * \brief Send a DoorState packet.
