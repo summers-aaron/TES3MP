@@ -15,6 +15,7 @@
 #include <components/esm/loadcrea.hpp>
 #include <components/esm/loaddoor.hpp>
 #include <components/esm/loadench.hpp>
+#include <components/esm/loadgmst.hpp>
 #include <components/esm/loadingr.hpp>
 #include <components/esm/loadligh.hpp>
 #include <components/esm/loadlock.hpp>
@@ -27,7 +28,6 @@
 #include <components/esm/loadstat.hpp>
 #include <components/esm/loadweap.hpp>
 #include <components/esm/loadsoun.hpp>
-#include <components/esm/variant.hpp>
 
 #include <components/openmw-mp/Base/BaseStructs.hpp>
 
@@ -48,6 +48,7 @@ namespace mwmp
         CREATURE,
         DOOR,
         ENCHANTMENT,
+        GAMESETTING,
         INGREDIENT,
         LIGHT,
         LOCKPICK,
@@ -60,7 +61,6 @@ namespace mwmp
         SOUND,
         SPELL,
         STATIC,
-        VARIANT,
         WEAPON
     };
 
@@ -230,6 +230,14 @@ namespace mwmp
         BaseOverrides baseOverrides;
     };
 
+    struct GameSettingRecord
+    {
+        ESM::GameSetting data;
+        std::string baseId;
+        BaseOverrides baseOverrides;
+        ClientVariable variable;
+    };
+
     struct IngredientRecord
     {
         ESM::Ingredient data;
@@ -313,13 +321,6 @@ namespace mwmp
     struct StaticRecord
     {
         ESM::Static data;
-        std::string baseId;
-        BaseOverrides baseOverrides;
-    };
-
-    struct VariantRecord
-    {
-        ESM::Variant data;
         std::string baseId;
         BaseOverrides baseOverrides;
     };
@@ -409,6 +410,7 @@ namespace mwmp
         std::vector<CreatureRecord> creatureRecords;
         std::vector<DoorRecord> doorRecords;
         std::vector<EnchantmentRecord> enchantmentRecords;
+        std::vector<GameSettingRecord> gameSettingRecords;
         std::vector<IngredientRecord> ingredientRecords;
         std::vector<LightRecord> lightRecords;
         std::vector<LockpickRecord> lockpickRecords;
@@ -421,7 +423,6 @@ namespace mwmp
         std::vector<SoundRecord> soundRecords;
         std::vector<SpellRecord> spellRecords;
         std::vector<StaticRecord> staticRecords;
-        std::vector<VariantRecord> variantRecords;
         std::vector<WeaponRecord> weaponRecords;
 
         std::vector<ESM::Cell> cellsToReset;

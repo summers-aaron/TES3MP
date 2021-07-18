@@ -108,6 +108,9 @@
     {"SetRecordCloseSound",                     RecordsDynamicFunctions::SetRecordCloseSound},\
     \
     {"SetRecordScriptText",                     RecordsDynamicFunctions::SetRecordScriptText},\
+    {"SetRecordIntegerVariable",                RecordsDynamicFunctions::SetRecordIntegerVariable},\
+    {"SetRecordFloatVariable",                  RecordsDynamicFunctions::SetRecordFloatVariable},\
+    {"SetRecordStringVariable",                 RecordsDynamicFunctions::SetRecordStringVariable},\
     \
     {"SetRecordIdByIndex",                      RecordsDynamicFunctions::SetRecordIdByIndex},\
     {"SetRecordEnchantmentIdByIndex",           RecordsDynamicFunctions::SetRecordEnchantmentIdByIndex},\
@@ -912,10 +915,37 @@ public:
     * \brief Set the script text of the temporary record stored on the server for the
     * currently specified record type.
     *
-    * \param sound The script text of the record.
+    * \param scriptText The script text of the record.
     * \return void
     */
     static void SetRecordScriptText(const char* scriptText) noexcept;
+
+    /**
+    * \brief Set the integer variable of the temporary record stored on the server for the
+    * currently specified record type.
+    *
+    * \param intVar The integer variable of the record.
+    * \return void
+    */
+    static void SetRecordIntegerVariable(int intVar) noexcept;
+
+    /**
+    * \brief Set the float variable of the temporary record stored on the server for the
+    * currently specified record type.
+    *
+    * \param floatVar The float variable of the record.
+    * \return void
+    */
+    static void SetRecordFloatVariable(double floatVar) noexcept;
+
+    /**
+    * \brief Set the string variable of the temporary record stored on the server for the
+    * currently specified record type.
+    *
+    * \param stringVar The string variable of the record.
+    * \return void
+    */
+    static void SetRecordStringVariable(const char* stringVar) noexcept;
 
     /**
     * \brief Set the id of the record at a certain index in the records stored on the server.

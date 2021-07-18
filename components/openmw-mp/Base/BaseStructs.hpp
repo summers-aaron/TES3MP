@@ -42,7 +42,9 @@ namespace mwmp
     {
         SHORT,
         LONG,
-        FLOAT
+        FLOAT,
+        INT,
+        STRING
     };
 
     struct ClientVariable
@@ -54,6 +56,7 @@ namespace mwmp
 
         int intValue;
         float floatValue;
+        std::string stringValue;
     };
 
     struct Time

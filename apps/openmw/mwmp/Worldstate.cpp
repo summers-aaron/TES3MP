@@ -330,6 +330,18 @@ void Worldstate::addRecords()
             RecordHelper::overrideRecord(record);
         }
     }
+    else if (recordsType == mwmp::RECORD_TYPE::GAMESETTING)
+    {
+        for (auto&& record : gameSettingRecords)
+        {
+            bool hasBaseId = !record.baseId.empty();
+
+            LOG_APPEND(TimedLog::LOG_INFO, "- gameSetting record %s\n-- baseId is %s", record.data.mId.c_str(),
+                hasBaseId ? record.baseId.c_str() : "empty");
+
+            RecordHelper::overrideRecord(record);
+        }
+    }
 }
 
 bool Worldstate::containsExploredMapTile(int cellX, int cellY)

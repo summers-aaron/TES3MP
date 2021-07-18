@@ -722,6 +722,37 @@ void RecordHelper::overrideRecord(const mwmp::EnchantmentRecord& record)
     }
 }
 
+void RecordHelper::overrideRecord(const mwmp::GameSettingRecord& record)
+{
+    const ESM::GameSetting& recordData = record.data;
+
+    if (recordData.mId.empty())
+    {
+        LOG_APPEND(TimedLog::LOG_INFO, "-- Ignoring record override with no id provided");
+        return;
+    }
+
+    MWBase::World* world = MWBase::Environment::get().getWorld();
+
+    if (record.baseId.empty())
+    {
+        world->getModifiableStore().overrideRecord(recordData);
+    }
+    else if (doesRecordIdExist<ESM::GameSetting>(record.baseId))
+    {
+        const ESM::GameSetting* baseData = world->getStore().get<ESM::GameSetting>().search(record.baseId);
+        ESM::GameSetting finalData = *baseData;
+        finalData.mId = recordData.mId;
+
+        world->getModifiableStore().overrideRecord(finalData);
+    }
+    else
+    {
+        LOG_APPEND(TimedLog::LOG_INFO, "-- Ignoring record override with invalid baseId %s", record.baseId.c_str());
+        return;
+    }
+}
+
 void RecordHelper::overrideRecord(const mwmp::IngredientRecord& record)
 {
     const ESM::Ingredient &recordData = record.data;

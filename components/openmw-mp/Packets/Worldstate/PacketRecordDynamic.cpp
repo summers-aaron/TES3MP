@@ -52,6 +52,8 @@ void PacketRecordDynamic::Packet(RakNet::BitStream *newBitstream, bool send)
             worldstate->recordsCount = Utils::getVectorSize(worldstate->creatureRecords);
         else if (worldstate->recordsType == mwmp::RECORD_TYPE::DOOR)
             worldstate->recordsCount = Utils::getVectorSize(worldstate->doorRecords);
+        else if (worldstate->recordsType == mwmp::RECORD_TYPE::GAMESETTING)
+            worldstate->recordsCount = Utils::getVectorSize(worldstate->gameSettingRecords);
         else if (worldstate->recordsType == mwmp::RECORD_TYPE::INGREDIENT)
             worldstate->recordsCount = Utils::getVectorSize(worldstate->ingredientRecords);
         else if (worldstate->recordsType == mwmp::RECORD_TYPE::LIGHT)
@@ -70,8 +72,6 @@ void PacketRecordDynamic::Packet(RakNet::BitStream *newBitstream, bool send)
             worldstate->recordsCount = Utils::getVectorSize(worldstate->staticRecords);
         else if (worldstate->recordsType == mwmp::RECORD_TYPE::SOUND)
             worldstate->recordsCount = Utils::getVectorSize(worldstate->soundRecords);
-        else if (worldstate->recordsType == mwmp::RECORD_TYPE::VARIANT)
-            worldstate->recordsCount = Utils::getVectorSize(worldstate->variantRecords);
         else
         {
             LOG_MESSAGE_SIMPLE(TimedLog::LOG_ERROR, "Processed invalid ID_RECORD_DYNAMIC packet about unimplemented recordsType %i",
@@ -122,6 +122,8 @@ void PacketRecordDynamic::Packet(RakNet::BitStream *newBitstream, bool send)
             Utils::resetVector(worldstate->creatureRecords, worldstate->recordsCount);
         else if (worldstate->recordsType == mwmp::RECORD_TYPE::DOOR)
             Utils::resetVector(worldstate->doorRecords, worldstate->recordsCount);
+        else if (worldstate->recordsType == mwmp::RECORD_TYPE::GAMESETTING)
+            Utils::resetVector(worldstate->gameSettingRecords, worldstate->recordsCount);
         else if (worldstate->recordsType == mwmp::RECORD_TYPE::INGREDIENT)
             Utils::resetVector(worldstate->ingredientRecords, worldstate->recordsCount);
         else if (worldstate->recordsType == mwmp::RECORD_TYPE::LOCKPICK)
@@ -140,8 +142,6 @@ void PacketRecordDynamic::Packet(RakNet::BitStream *newBitstream, bool send)
             Utils::resetVector(worldstate->soundRecords, worldstate->recordsCount);
         else if (worldstate->recordsType == mwmp::RECORD_TYPE::STATIC)
             Utils::resetVector(worldstate->staticRecords, worldstate->recordsCount);
-        else if (worldstate->recordsType == mwmp::RECORD_TYPE::VARIANT)
-            Utils::resetVector(worldstate->variantRecords, worldstate->recordsCount);
     }
 
     if (worldstate->recordsType == mwmp::RECORD_TYPE::SPELL)
@@ -617,6 +617,41 @@ void PacketRecordDynamic::Packet(RakNet::BitStream *newBitstream, bool send)
             }
         }
     }
+    else if (worldstate->recordsType == mwmp::RECORD_TYPE::GAMESETTING)
+    {
+        for (auto&& record : worldstate->gameSettingRecords)
+        {
+            auto& recordData = record.data;
+
+            RW(record.baseId, send, true);
+            RW(recordData.mId, send, true);
+            RW(record.variable.variableType, send, true);
+
+            short variableType = record.variable.variableType;
+
+            if (variableType == mwmp::VARIABLE_TYPE::INT)
+            {
+                RW(record.variable.intValue, send);
+                recordData.mValue.setType(ESM::VarType::VT_Int);
+                recordData.mValue.setInteger(record.variable.intValue);
+            }
+            else if (variableType == mwmp::VARIABLE_TYPE::FLOAT)
+            {
+                RW(record.variable.floatValue, send);
+
+                if (variableType == mwmp::VARIABLE_TYPE::FLOAT)
+                    recordData.mValue.setType(ESM::VarType::VT_Float);
+
+                recordData.mValue.setFloat(record.variable.floatValue);
+            }
+            else if (variableType == mwmp::VARIABLE_TYPE::STRING)
+            {
+                RW(record.variable.stringValue, send, true);
+                recordData.mValue.setType(ESM::VarType::VT_String);
+                recordData.mValue.setString(record.variable.stringValue);
+            }
+        }
+    }
     else if (worldstate->recordsType == mwmp::RECORD_TYPE::INGREDIENT)
     {
         for (auto &&record : worldstate->ingredientRecords)
@@ -888,16 +923,6 @@ void PacketRecordDynamic::Packet(RakNet::BitStream *newBitstream, bool send)
                 RW(overrides.hasMinRange, send);
                 RW(overrides.hasMaxRange, send);
             }
-        }
-    }
-    // Placeholder
-    else if (worldstate->recordsType == mwmp::RECORD_TYPE::VARIANT)
-    {
-        for (auto&& record : worldstate->variantRecords)
-        {
-            auto& recordData = record.data;
-
-            RW(record.baseId, send, true);
         }
     }
 }
