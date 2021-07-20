@@ -80,6 +80,23 @@ DedicatedPlayer *PlayerList::getPlayer(const MWWorld::Ptr &ptr)
     return nullptr;
 }
 
+DedicatedPlayer* PlayerList::getPlayer(int actorId)
+{
+    for (auto& playerEntry : playerList)
+    {
+        if (playerEntry.second == nullptr || playerEntry.second->getPtr().mRef == nullptr)
+            continue;
+
+        MWWorld::Ptr playerPtr = playerEntry.second->getPtr();
+        int playerActorId = playerPtr.getClass().getCreatureStats(playerPtr).getActorId();
+
+        if (actorId == playerActorId)
+            return playerEntry.second;
+    }
+
+    return nullptr;
+}
+
 std::vector<RakNet::RakNetGUID> PlayerList::getPlayersInCell(const ESM::Cell& cell)
 {
     std::vector<RakNet::RakNetGUID> playersInCell;
