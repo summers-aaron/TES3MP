@@ -803,6 +803,22 @@ namespace MWWorld
         // The player is not registered in any CellStore so must be checked manually
         if (actorId == getPlayerPtr().getClass().getCreatureStats(getPlayerPtr()).getActorId())
             return getPlayerPtr();
+        /*
+            Start of tes3mp addition
+
+            Make it possible to find dedicated players here as well
+        */
+        else
+        {
+            mwmp::DedicatedPlayer* dedicatedPlayer = mwmp::PlayerList::getPlayer(actorId);
+            if (dedicatedPlayer != nullptr)
+            {
+                return dedicatedPlayer->getPtr();
+            }
+        }
+        /*
+            End of tes3mp addition
+        */
         // Now search cells
         return mWorldScene->searchPtrViaActorId (actorId);
     }
