@@ -173,6 +173,7 @@ namespace mwmp
         bool isStackingSpell;
         int timestampDay;
         double timestampHour;
+        Target caster;
         ESM::ActiveSpells::ActiveSpellParams params;
     };
 

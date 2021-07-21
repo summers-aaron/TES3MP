@@ -229,18 +229,13 @@ namespace MWMechanics
         {
             bool isStackingSpell = it == end() || stack;
 
-            ESM::ActiveSpells::ActiveSpellParams esmParams;
-            esmParams.mEffects = effects;
-            esmParams.mDisplayName = displayName;
-            esmParams.mCasterActorId = casterActorId;
-
             if (this == &MWMechanics::getPlayer().getClass().getCreatureStats(MWMechanics::getPlayer()).getActiveSpells())
             {
-                mwmp::Main::get().getLocalPlayer()->sendSpellsActiveAddition(id, isStackingSpell, esmParams, params.mTimeStamp);
+                mwmp::Main::get().getLocalPlayer()->sendSpellsActiveAddition(id, isStackingSpell, params);
             }
             else if (mwmp::Main::get().getCellController()->isLocalActor(MechanicsHelper::getCurrentActor()))
             {
-                mwmp::Main::get().getCellController()->getLocalActor(MechanicsHelper::getCurrentActor())->sendSpellsActiveAddition(id, isStackingSpell, esmParams, params.mTimeStamp);
+                mwmp::Main::get().getCellController()->getLocalActor(MechanicsHelper::getCurrentActor())->sendSpellsActiveAddition(id, isStackingSpell, params);
             }
         }
         /*

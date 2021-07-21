@@ -34,6 +34,19 @@ void PacketActorSpellsActive::Actor(BaseActor &actor, bool send)
         RW(activeSpell.timestampHour, send);
         RW(activeSpell.params.mDisplayName, send, true);
 
+        RW(activeSpell.caster.isPlayer, send);
+
+        if (activeSpell.caster.isPlayer)
+        {
+            RW(activeSpell.caster.guid, send);
+        }
+        else
+        {
+            RW(activeSpell.caster.refId, send, true);
+            RW(activeSpell.caster.refNum, send);
+            RW(activeSpell.caster.mpNum, send);
+        }
+
         uint32_t effectCount;
 
         if (send)

@@ -719,9 +719,10 @@ void LocalPlayer::addSpellsActive()
     for (const auto& activeSpell : spellsActiveChanges.activeSpells)
     {
         MWWorld::TimeStamp timestamp = MWWorld::TimeStamp(activeSpell.timestampHour, activeSpell.timestampDay);
+        int casterActorId = MechanicsHelper::getActorId(activeSpell.caster);
 
         // Don't do a check for a spell's existence, because active effects from potions need to be applied here too
-        activeSpells.addSpell(activeSpell.id, activeSpell.isStackingSpell, activeSpell.params.mEffects, activeSpell.params.mDisplayName, 1, timestamp, false);
+        activeSpells.addSpell(activeSpell.id, activeSpell.isStackingSpell, activeSpell.params.mEffects, activeSpell.params.mDisplayName, casterActorId, timestamp, false);
     }
 }
 
@@ -1617,7 +1618,7 @@ void LocalPlayer::sendSpellsActive()
     getNetworking()->getPlayerPacket(ID_PLAYER_SPELLS_ACTIVE)->Send();
 }
 
-void LocalPlayer::sendSpellsActiveAddition(const std::string id, bool isStackingSpell, ESM::ActiveSpells::ActiveSpellParams params, MWWorld::TimeStamp timestamp)
+void LocalPlayer::sendSpellsActiveAddition(const std::string id, bool isStackingSpell, const MWMechanics::ActiveSpells::ActiveSpellParams& params)
 {
     // Skip any bugged spells that somehow have clientside-only dynamic IDs
     if (id.find("$dynamic") != std::string::npos)
@@ -1625,12 +1626,17 @@ void LocalPlayer::sendSpellsActiveAddition(const std::string id, bool isStacking
 
     spellsActiveChanges.activeSpells.clear();
 
+
+    MWWorld::Ptr caster = MWBase::Environment::get().getWorld()->searchPtrViaActorId(params.mCasterActorId);
+
     mwmp::ActiveSpell spell;
     spell.id = id;
     spell.isStackingSpell = isStackingSpell;
-    spell.timestampDay = timestamp.getDay();
-    spell.timestampHour = timestamp.getHour();
-    spell.params = params;
+    spell.caster = MechanicsHelper::getTarget(caster);
+    spell.timestampDay = params.mTimeStamp.getDay();
+    spell.timestampHour = params.mTimeStamp.getHour();
+    spell.params.mEffects = params.mEffects;
+    spell.params.mDisplayName = params.mDisplayName;
     spellsActiveChanges.activeSpells.push_back(spell);
 
     LOG_MESSAGE_SIMPLE(TimedLog::LOG_INFO, "Sending active spell addition with stacking %s, timestamp %i %f",

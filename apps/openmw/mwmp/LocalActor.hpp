@@ -3,6 +3,7 @@
 
 #include <components/openmw-mp/Base/BaseActor.hpp>
 #include "../mwmechanics/creaturestats.hpp"
+#include "../mwmechanics/activespells.hpp"
 #include "../mwworld/manualref.hpp"
 #include "../mwworld/timestamp.hpp"
 
@@ -27,7 +28,7 @@ namespace mwmp
         void updateAttackOrCast();
 
         void sendEquipment();
-        void sendSpellsActiveAddition(const std::string id, bool isStackingSpell, ESM::ActiveSpells::ActiveSpellParams params, MWWorld::TimeStamp timestamp);
+        void sendSpellsActiveAddition(const std::string id, bool isStackingSpell, const MWMechanics::ActiveSpells::ActiveSpellParams& params);
         void sendSpellsActiveRemoval(const std::string id, bool isStackingSpell, MWWorld::TimeStamp timestamp);
         void sendDeath(char newDeathState);
 

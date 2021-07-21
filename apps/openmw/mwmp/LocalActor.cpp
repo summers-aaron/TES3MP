@@ -285,7 +285,7 @@ void LocalActor::sendEquipment()
     Main::get().getNetworking()->getActorPacket(ID_ACTOR_EQUIPMENT)->Send();
 }
 
-void LocalActor::sendSpellsActiveAddition(const std::string id, bool isStackingSpell, ESM::ActiveSpells::ActiveSpellParams params, MWWorld::TimeStamp timestamp)
+void LocalActor::sendSpellsActiveAddition(const std::string id, bool isStackingSpell, const MWMechanics::ActiveSpells::ActiveSpellParams& params)
 {
     // Skip any bugged spells that somehow have clientside-only dynamic IDs
     if (id.find("$dynamic") != std::string::npos)
@@ -293,12 +293,16 @@ void LocalActor::sendSpellsActiveAddition(const std::string id, bool isStackingS
 
     spellsActiveChanges.activeSpells.clear();
 
+    const MWWorld::Ptr& caster = MWBase::Environment::get().getWorld()->searchPtrViaActorId(params.mCasterActorId);
+
     mwmp::ActiveSpell spell;
     spell.id = id;
     spell.isStackingSpell = isStackingSpell;
-    spell.timestampDay = timestamp.getDay();
-    spell.timestampHour = timestamp.getHour();
-    spell.params = params;
+    spell.caster = MechanicsHelper::getTarget(caster);
+    spell.timestampDay = params.mTimeStamp.getDay();
+    spell.timestampHour = params.mTimeStamp.getHour();
+    spell.params.mEffects = params.mEffects;
+    spell.params.mDisplayName = params.mDisplayName;
     spellsActiveChanges.activeSpells.push_back(spell);
 
     spellsActiveChanges.action = mwmp::SpellsActiveChanges::ADD;
