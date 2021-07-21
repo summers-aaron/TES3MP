@@ -24,6 +24,7 @@ namespace MechanicsHelper
     mwmp::Cast *getDedicatedCast(const MWWorld::Ptr& ptr);
 
     MWWorld::Ptr getPlayerPtr(const mwmp::Target& target);
+    unsigned int getActorId(const mwmp::Target& target);
 
     mwmp::Item getItem(const MWWorld::Ptr& itemPtr, int count);
     mwmp::Target getTarget(const MWWorld::Ptr& ptr);
