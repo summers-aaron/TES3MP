@@ -654,7 +654,7 @@ namespace MWPhysics
         ObjectMap::iterator found = mObjects.find(ptr);
         if (found != mObjects.end())
         {
-            found->second->setRotation(Misc::Convert::toBullet(ptr.getRefData().getBaseNode()->getAttitude()));
+            found->second->setRotation(ptr.getRefData().getBaseNode()->getAttitude());
             mTaskScheduler->updateSingleAabb(found->second);
             return;
         }
@@ -675,7 +675,7 @@ namespace MWPhysics
         ObjectMap::iterator found = mObjects.find(ptr);
         if (found != mObjects.end())
         {
-            found->second->setOrigin(Misc::Convert::toBullet(ptr.getRefData().getPosition().asVec3()));
+            found->second->updatePosition();
             mTaskScheduler->updateSingleAabb(found->second);
             return;
         }
@@ -705,7 +705,15 @@ namespace MWPhysics
         if (!shape)
             return;
 
-        auto actor = std::make_shared<Actor>(ptr, shape, mTaskScheduler.get());
+        // check if Actor should spawn above water
+        const MWMechanics::MagicEffects& effects = ptr.getClass().getCreatureStats(ptr).getMagicEffects();
+        const bool canWaterWalk = effects.get(ESM::MagicEffect::WaterWalking).getMagnitude() > 0;
+
+        auto actor = std::make_shared<Actor>(ptr, shape, mTaskScheduler.get(), canWaterWalk);
+        
+        // check if Actor is on the ground or in the air
+        traceDown(ptr, ptr.getRefData().getPosition().asVec3(), 10.f);
+
         mActors.emplace(ptr, std::move(actor));
     }
 

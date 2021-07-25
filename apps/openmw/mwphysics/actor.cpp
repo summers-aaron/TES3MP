@@ -32,8 +32,8 @@ namespace MWPhysics
 {
 
 
-Actor::Actor(const MWWorld::Ptr& ptr, const Resource::BulletShape* shape, PhysicsTaskScheduler* scheduler)
-  : mStandingOnPtr(nullptr), mCanWaterWalk(false), mWalkingOnWater(false)
+Actor::Actor(const MWWorld::Ptr& ptr, const Resource::BulletShape* shape, PhysicsTaskScheduler* scheduler, bool canWaterWalk)
+  : mStandingOnPtr(nullptr), mCanWaterWalk(canWaterWalk), mWalkingOnWater(false)
   , mCollisionObject(nullptr), mMeshTranslation(shape->mCollisionBox.center), mHalfExtents(shape->mCollisionBox.extents)
   , mVelocity(0,0,0), mStuckFrames(0), mLastStuckPosition{0, 0, 0}
   , mForce(0.f, 0.f, 0.f), mOnGround(true), mOnSlope(false)
@@ -159,11 +159,13 @@ void Actor::updatePosition()
     mPositionOffset = osg::Vec3f();
     mStandingOnPtr = nullptr;
     mSkipCollisions = true;
+    mSkipSimulation = true;
 }
 
 void Actor::setSimulationPosition(const osg::Vec3f& position)
 {
-    mSimulationPosition = position;
+    if (!std::exchange(mSkipSimulation, false))
+        mSimulationPosition = position;
 }
 
 osg::Vec3f Actor::getSimulationPosition() const
@@ -180,18 +182,20 @@ void Actor::updateCollisionObjectPosition()
 {
     std::scoped_lock lock(mPositionMutex);
     mShape->setLocalScaling(Misc::Convert::toBullet(mScale));
-    osg::Vec3f scaledTranslation = mRotation * osg::componentMultiply(mMeshTranslation, mScale);
-    osg::Vec3f newPosition = scaledTranslation + mPosition;
-    mLocalTransform.setOrigin(Misc::Convert::toBullet(newPosition));
-    mLocalTransform.setRotation(Misc::Convert::toBullet(mRotation));
-    mCollisionObject->setWorldTransform(mLocalTransform);
+    osg::Vec3f newPosition = getScaledMeshTranslation() + mPosition;
+
+    auto& trans = mCollisionObject->getWorldTransform();
+    trans.setOrigin(Misc::Convert::toBullet(newPosition));
+    trans.setRotation(Misc::Convert::toBullet(mRotation));
+    mCollisionObject->setWorldTransform(trans);
+
     mWorldPositionChanged = false;
 }
 
 osg::Vec3f Actor::getCollisionObjectPosition() const
 {
     std::scoped_lock lock(mPositionMutex);
-    return Misc::Convert::toOsg(mLocalTransform.getOrigin());
+    return getScaledMeshTranslation() + mPosition;
 }
 
 bool Actor::setPosition(const osg::Vec3f& position)

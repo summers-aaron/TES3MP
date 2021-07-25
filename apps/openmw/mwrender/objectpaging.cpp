@@ -364,6 +364,7 @@ namespace MWRender
             osg::ref_ptr<osg::StateSet> stateset = node.getStateSet() ? osg::clone(node.getStateSet(), osg::CopyOp::SHALLOW_COPY) : new osg::StateSet;
             stateset->setAttribute(m);
             stateset->addUniform(new osg::Uniform("colorMode", 0));
+            stateset->addUniform(new osg::Uniform("emissiveMult", 1.f));
             node.setStateSet(stateset);
         }
     };
@@ -477,8 +478,7 @@ namespace MWRender
         constexpr auto copyMask = ~Mask_UpdateVisitor;
 
         AnalyzeVisitor analyzeVisitor(copyMask);
-        osg::Vec3f center3 = { center.x(), center.y(), 0.f };
-        analyzeVisitor.mCurrentDistance = (viewPoint - center3).length2();
+        analyzeVisitor.mCurrentDistance = (viewPoint - worldCenter).length2();
         float minSize = mMinSize;
         if (mMinSizeMergeFactor)
             minSize *= mMinSizeMergeFactor;

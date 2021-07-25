@@ -27,7 +27,7 @@ namespace MWPhysics
     class Actor final : public PtrHolder
     {
     public:
-        Actor(const MWWorld::Ptr& ptr, const Resource::BulletShape* shape, PhysicsTaskScheduler* scheduler);
+        Actor(const MWWorld::Ptr& ptr, const Resource::BulletShape* shape, PhysicsTaskScheduler* scheduler, bool canWaterWalk);
         ~Actor() override;
 
         /**
@@ -73,9 +73,6 @@ namespace MWPhysics
          * Returns the half extents of the collision body (not scaled)
          */
         osg::Vec3f getOriginalHalfExtents() const;
-
-        /// Returns the mesh translation, scaled and rotated as necessary
-        osg::Vec3f getScaledMeshTranslation() const;
 
         /**
          * Returns the position of the collision body
@@ -181,6 +178,9 @@ namespace MWPhysics
         void addCollisionMask(int collisionMask);
         int getCollisionMask() const;
 
+        /// Returns the mesh translation, scaled and rotated as necessary
+        osg::Vec3f getScaledMeshTranslation() const;
+
         bool mCanWaterWalk;
         std::atomic<bool> mWalkingOnWater;
 
@@ -204,7 +204,7 @@ namespace MWPhysics
         osg::Vec3f mVelocity;
         bool mWorldPositionChanged;
         bool mSkipCollisions;
-        btTransform mLocalTransform;
+        bool mSkipSimulation;
         mutable std::mutex mPositionMutex;
 
         unsigned int mStuckFrames;
