@@ -187,8 +187,17 @@ namespace MWMechanics
                 // Fully resisted, show message
                 if (target == getPlayer())
                     MWBase::Environment::get().getWindowManager()->messageBox("#{sMagicPCResisted}");
-                else if (castByPlayer)
-                    MWBase::Environment::get().getWindowManager()->messageBox("#{sMagicTargetResisted}");
+                /*
+                    Start of tes3mp change (major)
+
+                    Don't display messages about whether the target has resisted the local player's spell or not,
+                    because this client has no way of knowing here whether that has happened
+                */
+                //else if (castByPlayer)
+                //    MWBase::Environment::get().getWindowManager()->messageBox("#{sMagicTargetResisted}");
+                /*
+                    End of tes3mp change (major)
+                */
             }
             else
             {
