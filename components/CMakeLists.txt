@@ -226,17 +226,14 @@ add_component_dir (fallback
 
 # Start of tes3mp change (major)
 #
-# Don't require the crashcatcher when building the server
+# Don't require the crashcatcher when building on platforms other than Windows or when building only the server,
+# as it causes compilation problems
 if (BUILD_OPENMW OR BUILD_OPENCS)
     if(WIN32)
         add_component_dir (crashcatcher
             windows_crashcatcher
             windows_crashmonitor
             windows_crashshm
-        )
-    elseif(NOT ANDROID)
-        add_component_dir (crashcatcher
-            crashcatcher
         )
     endif()
 endif()
