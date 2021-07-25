@@ -271,7 +271,10 @@ endif()
 set (ESM_UI ${CMAKE_SOURCE_DIR}/files/ui/contentselector.ui
     )
 
-IF(BUILD_OPENMW OR BUILD_OPENCS)
+# Start of tes3mp change (major)
+#
+# Don't require Qt when building the server
+if (BUILD_OPENMW OR BUILD_OPENCS)
 if (USE_QT)
     add_component_qt_dir (contentselector
         model/modelitem model/esmfile
@@ -296,7 +299,8 @@ if (USE_QT)
     QT5_WRAP_UI(ESM_UI_HDR ${ESM_UI})
     QT5_WRAP_CPP(MOC_SRCS ${COMPONENT_MOC_FILES})
 endif()
-ENDIF(BUILD_OPENMW OR BUILD_OPENCS)
+endif(BUILD_OPENMW OR BUILD_OPENCS)
+# End of tes3mp change (major)
 
 if (CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
     if("${CMAKE_SYSTEM_PROCESSOR}" STREQUAL "x86_64" AND NOT APPLE)
@@ -308,6 +312,10 @@ include_directories(${BULLET_INCLUDE_DIRS} ${CMAKE_CURRENT_BINARY_DIR})
 
 add_library(components STATIC ${COMPONENT_FILES} ${MOC_SRCS} ${ESM_UI_HDR})
 
+# Start of tes3mp change (major)
+#
+# Don't require OSG when building the server
+if (BUILD_OPENMW OR BUILD_OPENCS)
 target_link_libraries(components
     # CMake's built-in OSG finder does not use pkgconfig, so we have to
     # manually ensure the order is correct for inter-library dependencies.
@@ -334,10 +342,12 @@ target_link_libraries(components
     ${MyGUI_LIBRARIES}
     LZ4::LZ4
     )
+endif()
+# End of tes3mp change (major)
 
 # Start of tes3mp change (major)
 #
-# Don't require RecastNavigation or Base64 when building the server
+# Don't require RecastNavigation, Base64 or Bullet when building the server
 if (BUILD_OPENMW OR BUILD_OPENCS)
     target_link_libraries(components
             RecastNavigation::DebugUtils
@@ -345,11 +355,10 @@ if (BUILD_OPENMW OR BUILD_OPENCS)
             RecastNavigation::Recast
 
             Base64
+            ${BULLET_LIBRARIES}
             )
 endif ()
 # End of tes3mp change (major)
-
-target_link_libraries(components ${BULLET_LIBRARIES})
 
 if (WIN32)
     target_link_libraries(components
@@ -357,9 +366,15 @@ if (WIN32)
     ${Boost_ZLIB_LIBRARY})
 endif()
 
+# Start of tes3mp change (major)
+#
+# Don't require Qt when building the server
 if (USE_QT)
+if (BUILD_OPENMW OR BUILD_OPENCS
     target_link_libraries(components Qt5::Widgets Qt5::Core)
 endif()
+endif()
+# End of tes3mp change (major)
 
 if (GIT_CHECKOUT)
     add_dependencies (components git-version)
