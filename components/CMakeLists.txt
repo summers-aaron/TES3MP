@@ -370,7 +370,7 @@ endif()
 #
 # Don't require Qt when building the server
 if (USE_QT)
-if (BUILD_OPENMW OR BUILD_OPENCS
+if (BUILD_OPENMW OR BUILD_OPENCS)
     target_link_libraries(components Qt5::Widgets Qt5::Core)
 endif()
 endif()
