@@ -2127,9 +2127,6 @@ void CharacterController::update(float duration)
                 movementSettings.mPosition[2] = onground ? 1 : 0;
         }
 
-        osg::Vec3f rot = cls.getRotationVector(mPtr);
-        osg::Vec3f vec(movementSettings.asVec3());
-
         /*
             Start of tes3mp addition
 
@@ -2161,6 +2158,9 @@ void CharacterController::update(float duration)
         /*
             End of tes3mp addition
         */
+
+        osg::Vec3f rot = cls.getRotationVector(mPtr);
+        osg::Vec3f vec(movementSettings.asVec3());
 
         movementSettings.mSpeedFactor = std::min(vec.length(), 1.f);
         vec.normalize();
