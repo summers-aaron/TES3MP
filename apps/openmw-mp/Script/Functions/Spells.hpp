@@ -2,42 +2,48 @@
 #define OPENMW_SPELLAPI_HPP
 
 #define SPELLAPI \
-    {"ClearSpellbookChanges",          SpellFunctions::ClearSpellbookChanges},\
-    {"ClearSpellsActiveChanges",       SpellFunctions::ClearSpellsActiveChanges},\
-    {"ClearCooldownChanges",           SpellFunctions::ClearCooldownChanges},\
+    {"ClearSpellbookChanges",            SpellFunctions::ClearSpellbookChanges},\
+    {"ClearSpellsActiveChanges",         SpellFunctions::ClearSpellsActiveChanges},\
+    {"ClearCooldownChanges",             SpellFunctions::ClearCooldownChanges},\
     \
-    {"GetSpellbookChangesSize",        SpellFunctions::GetSpellbookChangesSize},\
-    {"GetSpellbookChangesAction",      SpellFunctions::GetSpellbookChangesAction},\
-    {"GetSpellsActiveChangesSize",     SpellFunctions::GetSpellsActiveChangesSize},\
-    {"GetSpellsActiveChangesAction",   SpellFunctions::GetSpellsActiveChangesAction},\
-    {"GetCooldownChangesSize",         SpellFunctions::GetCooldownChangesSize},\
+    {"GetSpellbookChangesSize",          SpellFunctions::GetSpellbookChangesSize},\
+    {"GetSpellbookChangesAction",        SpellFunctions::GetSpellbookChangesAction},\
+    {"GetSpellsActiveChangesSize",       SpellFunctions::GetSpellsActiveChangesSize},\
+    {"GetSpellsActiveChangesAction",     SpellFunctions::GetSpellsActiveChangesAction},\
+    {"GetCooldownChangesSize",           SpellFunctions::GetCooldownChangesSize},\
     \
-    {"SetSpellbookChangesAction",      SpellFunctions::SetSpellbookChangesAction},\
-    {"SetSpellsActiveChangesAction",   SpellFunctions::SetSpellsActiveChangesAction},\
+    {"SetSpellbookChangesAction",        SpellFunctions::SetSpellbookChangesAction},\
+    {"SetSpellsActiveChangesAction",     SpellFunctions::SetSpellsActiveChangesAction},\
     \
-    {"AddSpell",                       SpellFunctions::AddSpell},\
-    {"AddSpellActive",                 SpellFunctions::AddSpellActive},\
-    {"AddSpellActiveEffect",           SpellFunctions::AddSpellActiveEffect},\
-    {"AddCooldownSpell",               SpellFunctions::AddCooldownSpell},\
+    {"AddSpell",                         SpellFunctions::AddSpell},\
+    {"AddSpellActive",                   SpellFunctions::AddSpellActive},\
+    {"AddSpellActiveEffect",             SpellFunctions::AddSpellActiveEffect},\
+    {"AddCooldownSpell",                 SpellFunctions::AddCooldownSpell},\
     \
-    {"GetSpellId",                     SpellFunctions::GetSpellId},\
-    {"GetSpellsActiveId",              SpellFunctions::GetSpellsActiveId},\
-    {"GetSpellsActiveDisplayName",     SpellFunctions::GetSpellsActiveDisplayName},\
-    {"GetSpellsActiveStackingState",   SpellFunctions::GetSpellsActiveStackingState},\
-    {"GetSpellsActiveEffectCount",     SpellFunctions::GetSpellsActiveEffectCount},\
-    {"GetSpellsActiveEffectId",        SpellFunctions::GetSpellsActiveEffectId},\
-    {"GetSpellsActiveEffectArg",       SpellFunctions::GetSpellsActiveEffectArg},\
-    {"GetSpellsActiveEffectMagnitude", SpellFunctions::GetSpellsActiveEffectMagnitude},\
-    {"GetSpellsActiveEffectDuration",  SpellFunctions::GetSpellsActiveEffectDuration},\
-    {"GetSpellsActiveEffectTimeLeft",  SpellFunctions::GetSpellsActiveEffectTimeLeft},\
+    {"GetSpellId",                       SpellFunctions::GetSpellId},\
+    {"GetSpellsActiveId",                SpellFunctions::GetSpellsActiveId},\
+    {"GetSpellsActiveDisplayName",       SpellFunctions::GetSpellsActiveDisplayName},\
+    {"GetSpellsActiveStackingState",     SpellFunctions::GetSpellsActiveStackingState},\
+    {"GetSpellsActiveEffectCount",       SpellFunctions::GetSpellsActiveEffectCount},\
+    {"GetSpellsActiveEffectId",          SpellFunctions::GetSpellsActiveEffectId},\
+    {"GetSpellsActiveEffectArg",         SpellFunctions::GetSpellsActiveEffectArg},\
+    {"GetSpellsActiveEffectMagnitude",   SpellFunctions::GetSpellsActiveEffectMagnitude},\
+    {"GetSpellsActiveEffectDuration",    SpellFunctions::GetSpellsActiveEffectDuration},\
+    {"GetSpellsActiveEffectTimeLeft",    SpellFunctions::GetSpellsActiveEffectTimeLeft},\
     \
-    {"GetCooldownSpellId",             SpellFunctions::GetCooldownSpellId},\
-    {"GetCooldownStartDay",            SpellFunctions::GetCooldownStartDay},\
-    {"GetCooldownStartHour",           SpellFunctions::GetCooldownStartHour},\
+    {"DoesSpellsActiveHavePlayerCaster", SpellFunctions::DoesSpellsActiveHavePlayerCaster},\
+    {"GetSpellsActiveCasterPid",         SpellFunctions::GetSpellsActiveCasterPid},\
+    {"GetSpellsActiveCasterRefId",       SpellFunctions::GetSpellsActiveCasterRefId},\
+    {"GetSpellsActiveCasterRefNum",      SpellFunctions::GetSpellsActiveCasterRefNum},\
+    {"GetSpellsActiveCasterMpNum",       SpellFunctions::GetSpellsActiveCasterMpNum},\
     \
-    {"SendSpellbookChanges",           SpellFunctions::SendSpellbookChanges},\
-    {"SendSpellsActiveChanges",        SpellFunctions::SendSpellsActiveChanges},\
-    {"SendCooldownChanges",            SpellFunctions::SendCooldownChanges},\
+    {"GetCooldownSpellId",               SpellFunctions::GetCooldownSpellId},\
+    {"GetCooldownStartDay",              SpellFunctions::GetCooldownStartDay},\
+    {"GetCooldownStartHour",             SpellFunctions::GetCooldownStartHour},\
+    \
+    {"SendSpellbookChanges",             SpellFunctions::SendSpellbookChanges},\
+    {"SendSpellsActiveChanges",          SpellFunctions::SendSpellsActiveChanges},\
+    {"SendCooldownChanges",              SpellFunctions::SendCooldownChanges},\
     \
     {"InitializeSpellbookChanges",     SpellFunctions::InitializeSpellbookChanges}
 
@@ -272,6 +278,52 @@ public:
     * \return The time left for the effect.
     */
     static double GetSpellsActiveEffectTimeLeft(unsigned short pid, unsigned int spellIndex, unsigned int effectIndex) noexcept;
+
+    /**
+    * \brief Check whether the spell at a certain index in a player's latest spells active changes has a player
+    *        as its caster.
+    *
+    * \param pid The player ID whose spells active changes should be used.
+    * \param index The index of the spell.
+    * \return Whether a player is the caster of the spell.
+    */
+    static bool DoesSpellsActiveHavePlayerCaster(unsigned short pid, unsigned int index) noexcept;
+
+    /**
+    * \brief Get the player ID of the caster of the spell at a certain index in a player's latest spells active changes.
+    *
+    * \param pid The player ID whose spells active changes should be used.
+    * \param index The index of the spell.
+    * \return The player ID of the caster.
+    */
+    static int GetSpellsActiveCasterPid(unsigned short pid, unsigned int index) noexcept;
+
+    /**
+    * \brief Get the refId of the actor caster of the spell at a certain index in a player's latest spells active changes.
+    *
+    * \param pid The player ID whose spells active changes should be used.
+    * \param index The index of the spell.
+    * \return The refId of the caster.
+    */
+    static const char* GetSpellsActiveCasterRefId(unsigned short pid, unsigned int index) noexcept;
+
+    /**
+    * \brief Get the refNum of the actor caster of the spell at a certain index in a player's latest spells active changes.
+    *
+    * \param pid The player ID whose spells active changes should be used.
+    * \param index The index of the spell.
+    * \return The refNum of the caster.
+    */
+    static unsigned int GetSpellsActiveCasterRefNum(unsigned short pid, unsigned int index) noexcept;
+
+    /**
+    * \brief Get the mpNum of the actor caster of the spell at a certain index in a player's latest spells active changes.
+    *
+    * \param pid The player ID whose spells active changes should be used.
+    * \param index The index of the spell.
+    * \return The mpNum of the caster.
+    */
+    static unsigned int GetSpellsActiveCasterMpNum(unsigned short pid, unsigned int index) noexcept;
 
     /**
     * \brief Get the spell id at a certain index in a player's latest cooldown changes.

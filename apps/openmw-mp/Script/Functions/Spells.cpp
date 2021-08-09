@@ -180,10 +180,10 @@ const char* SpellFunctions::GetSpellsActiveDisplayName(unsigned short pid, unsig
 bool SpellFunctions::GetSpellsActiveStackingState(unsigned short pid, unsigned int index) noexcept
 {
     Player* player;
-    GET_PLAYER(pid, player, "");
+    GET_PLAYER(pid, player, false);
 
     if (index >= player->spellsActiveChanges.activeSpells.size())
-        return "invalid";
+        return false;
 
     return player->spellsActiveChanges.activeSpells.at(index).isStackingSpell;
 }
@@ -252,6 +252,66 @@ double SpellFunctions::GetSpellsActiveEffectTimeLeft(unsigned short pid, unsigne
         return 0;
 
     return player->spellsActiveChanges.activeSpells.at(spellIndex).params.mEffects.at(effectIndex).mTimeLeft;
+}
+
+bool SpellFunctions::DoesSpellsActiveHavePlayerCaster(unsigned short pid, unsigned int index) noexcept
+{
+    Player* player;
+    GET_PLAYER(pid, player, false);
+
+    if (index >= player->spellsActiveChanges.activeSpells.size())
+        return false;
+
+    return player->spellsActiveChanges.activeSpells.at(index).caster.isPlayer;
+}
+
+int SpellFunctions::GetSpellsActiveCasterPid(unsigned short pid, unsigned int index) noexcept
+{
+    Player* player;
+    GET_PLAYER(pid, player, -1);
+
+    if (index >= player->spellsActiveChanges.activeSpells.size())
+        return -1;
+
+    Player* caster = Players::getPlayer(player->spellsActiveChanges.activeSpells.at(index).caster.guid);
+
+    if (caster != nullptr)
+        return caster->getId();
+
+    return -1;
+}
+
+const char* SpellFunctions::GetSpellsActiveCasterRefId(unsigned short pid, unsigned int index) noexcept
+{
+    Player* player;
+    GET_PLAYER(pid, player, "");
+
+    if (index >= player->spellsActiveChanges.activeSpells.size())
+        return "";
+
+    return player->spellsActiveChanges.activeSpells.at(index).caster.refId.c_str();
+}
+
+unsigned int SpellFunctions::GetSpellsActiveCasterRefNum(unsigned short pid, unsigned int index) noexcept
+{
+    Player* player;
+    GET_PLAYER(pid, player, 0);
+
+    if (index >= player->spellsActiveChanges.activeSpells.size())
+        return 0;
+
+    return player->spellsActiveChanges.activeSpells.at(index).caster.refNum;
+}
+
+unsigned int SpellFunctions::GetSpellsActiveCasterMpNum(unsigned short pid, unsigned int index) noexcept
+{
+    Player* player;
+    GET_PLAYER(pid, player, 0);
+
+    if (index >= player->spellsActiveChanges.activeSpells.size())
+        return 0;
+
+    return player->spellsActiveChanges.activeSpells.at(index).caster.mpNum;
 }
 
 const char* SpellFunctions::GetCooldownSpellId(unsigned short pid, unsigned int index) noexcept
