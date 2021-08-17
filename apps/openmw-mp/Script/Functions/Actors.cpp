@@ -245,6 +245,11 @@ const char* ActorFunctions::GetActorSpellsActiveDisplayName(unsigned int actorIn
     return readActorList->baseActors.at(actorIndex).spellsActiveChanges.activeSpells.at(spellIndex).params.mDisplayName.c_str();
 }
 
+bool ActorFunctions::GetActorSpellsActiveStackingState(unsigned int actorIndex, unsigned int spellIndex) noexcept
+{
+    return readActorList->baseActors.at(actorIndex).spellsActiveChanges.activeSpells.at(spellIndex).isStackingSpell;
+}
+
 unsigned int ActorFunctions::GetActorSpellsActiveEffectCount(unsigned int actorIndex, unsigned int spellIndex) noexcept
 {
     return readActorList->baseActors.at(actorIndex).spellsActiveChanges.activeSpells.at(spellIndex).params.mEffects.size();

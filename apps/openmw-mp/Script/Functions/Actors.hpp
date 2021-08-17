@@ -52,6 +52,7 @@
     {"GetActorSpellsActiveChangesAction",      ActorFunctions::GetActorSpellsActiveChangesAction},\
     {"GetActorSpellsActiveId",                 ActorFunctions::GetActorSpellsActiveId},\
     {"GetActorSpellsActiveDisplayName",        ActorFunctions::GetActorSpellsActiveDisplayName},\
+    {"GetActorSpellsActiveStackingState",      ActorFunctions::GetActorSpellsActiveStackingState},\
     {"GetActorSpellsActiveEffectCount",        ActorFunctions::GetActorSpellsActiveEffectCount},\
     {"GetActorSpellsActiveEffectId",           ActorFunctions::GetActorSpellsActiveEffectId},\
     {"GetActorSpellsActiveEffectArg",          ActorFunctions::GetActorSpellsActiveEffectArg},\
@@ -463,6 +464,15 @@ public:
     * \return The spell display name.
     */
     static const char* GetActorSpellsActiveDisplayName(unsigned int actorIndex, unsigned int spellIndex) noexcept;
+
+    /**
+    * \brief Get the spell stacking state at a certain index in an actor's latest spells active changes.
+    *
+    * \param actorIndex The index of the actor.
+    * \param spellIndex The index of the spell.
+    * \return The spell stacking state.
+    */
+    static bool GetActorSpellsActiveStackingState(unsigned int actorIndex, unsigned int spellIndex) noexcept;
 
     /**
     * \brief Get the number of effects at an index in an actor's latest spells active changes.
