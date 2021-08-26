@@ -60,6 +60,12 @@
     {"GetActorSpellsActiveEffectDuration",     ActorFunctions::GetActorSpellsActiveEffectDuration},\
     {"GetActorSpellsActiveEffectTimeLeft",     ActorFunctions::GetActorSpellsActiveEffectTimeLeft},\
     \
+    {"DoesActorSpellsActiveHavePlayerCaster",  ActorFunctions::DoesActorSpellsActiveHavePlayerCaster},\
+    {"GetActorSpellsActiveCasterPid",          ActorFunctions::GetActorSpellsActiveCasterPid},\
+    {"GetActorSpellsActiveCasterRefId",        ActorFunctions::GetActorSpellsActiveCasterRefId},\
+    {"GetActorSpellsActiveCasterRefNum",       ActorFunctions::GetActorSpellsActiveCasterRefNum},\
+    {"GetActorSpellsActiveCasterMpNum",        ActorFunctions::GetActorSpellsActiveCasterMpNum},\
+    \
     {"DoesActorHavePosition",                  ActorFunctions::DoesActorHavePosition},\
     {"DoesActorHaveStatsDynamic",              ActorFunctions::DoesActorHaveStatsDynamic},\
     \
@@ -532,6 +538,52 @@ public:
     * \return The time left for the effect.
     */
     static double GetActorSpellsActiveEffectTimeLeft(unsigned int actorIndex, unsigned int spellIndex, unsigned int effectIndex) noexcept;
+
+    /**
+    * \brief Check whether the spell at a certain index in an actor's latest spells active changes has a player
+    *        as its caster.
+    *
+    * \param actorIndex The index of the actor.
+    * \param spellIndex The index of the spell.
+    * \return Whether a player is the caster of the spell.
+    */
+    static bool DoesActorSpellsActiveHavePlayerCaster(unsigned int actorIndex, unsigned int spellIndex) noexcept;
+
+    /**
+    * \brief Get the player ID of the caster of the spell at a certain index in an actor's latest spells active changes.
+    *
+    * \param actorIndex The index of the actor.
+    * \param spellIndex The index of the spell.
+    * \return The player ID of the caster.
+    */
+    static int GetActorSpellsActiveCasterPid(unsigned int actorIndex, unsigned int spellIndex) noexcept;
+
+    /**
+    * \brief Get the refId of the actor caster of the spell at a certain index in an actor's latest spells active changes.
+    *
+    * \param actorIndex The index of the actor.
+    * \param spellIndex The index of the spell.
+    * \return The refId of the caster.
+    */
+    static const char* GetActorSpellsActiveCasterRefId(unsigned int actorIndex, unsigned int spellIndex) noexcept;
+
+    /**
+    * \brief Get the refNum of the actor caster of the spell at a certain index in an actor's latest spells active changes.
+    *
+    * \param actorIndex The index of the actor.
+    * \param spellIndex The index of the spell.
+    * \return The refNum of the caster.
+    */
+    static unsigned int GetActorSpellsActiveCasterRefNum(unsigned int actorIndex, unsigned int spellIndex) noexcept;
+
+    /**
+    * \brief Get the mpNum of the actor caster of the spell at a certain index in an actor's latest spells active changes.
+    *
+    * \param actorIndex The index of the actor.
+    * \param spellIndex The index of the spell.
+    * \return The mpNum of the caster.
+    */
+    static unsigned int GetActorSpellsActiveCasterMpNum(unsigned int actorIndex, unsigned int spellIndex) noexcept;
 
     /**
     * \brief Check whether there is any positional data for the actor at a certain index in

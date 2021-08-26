@@ -280,6 +280,36 @@ double ActorFunctions::GetActorSpellsActiveEffectTimeLeft(unsigned int actorInde
     return readActorList->baseActors.at(actorIndex).spellsActiveChanges.activeSpells.at(spellIndex).params.mEffects.at(effectIndex).mTimeLeft;
 }
 
+bool ActorFunctions::DoesActorSpellsActiveHavePlayerCaster(unsigned int actorIndex, unsigned int spellIndex) noexcept
+{
+    return readActorList->baseActors.at(actorIndex).spellsActiveChanges.activeSpells.at(spellIndex).caster.isPlayer;
+}
+
+int ActorFunctions::GetActorSpellsActiveCasterPid(unsigned int actorIndex, unsigned int spellIndex) noexcept
+{
+    Player* caster = Players::getPlayer(readActorList->baseActors.at(actorIndex).spellsActiveChanges.activeSpells.at(spellIndex).caster.guid);
+
+    if (caster != nullptr)
+        return caster->getId();
+
+    return -1;
+}
+
+const char* ActorFunctions::GetActorSpellsActiveCasterRefId(unsigned int actorIndex, unsigned int spellIndex) noexcept
+{
+    return readActorList->baseActors.at(actorIndex).spellsActiveChanges.activeSpells.at(spellIndex).caster.refId.c_str();
+}
+
+unsigned int ActorFunctions::GetActorSpellsActiveCasterRefNum(unsigned int actorIndex, unsigned int spellIndex) noexcept
+{
+    return readActorList->baseActors.at(actorIndex).spellsActiveChanges.activeSpells.at(spellIndex).caster.refNum;
+}
+
+unsigned int ActorFunctions::GetActorSpellsActiveCasterMpNum(unsigned int actorIndex, unsigned int spellIndex) noexcept
+{
+    return readActorList->baseActors.at(actorIndex).spellsActiveChanges.activeSpells.at(spellIndex).caster.mpNum;
+}
+
 bool ActorFunctions::DoesActorHavePosition(unsigned int index) noexcept
 {
     return readActorList->baseActors.at(index).hasPositionData;
