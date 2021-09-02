@@ -939,6 +939,7 @@ void LocalPlayer::setCharacter()
             player.mRace = npc.mRace;
             player.mHead = npc.mHead;
             player.mHair = npc.mHair;
+            player.mModel = npc.mModel;
             player.setIsMale(npc.isMale());
             world->createRecord(player);
 

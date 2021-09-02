@@ -14,6 +14,7 @@
     {"GetHead",                 StatsFunctions::GetHead},\
     {"GetHair",                 StatsFunctions::GetHairstyle},\
     {"GetIsMale",               StatsFunctions::GetIsMale},\
+    {"GetModel",                StatsFunctions::GetModel},\
     {"GetBirthsign",            StatsFunctions::GetBirthsign},\
     \
     {"GetLevel",                StatsFunctions::GetLevel},\
@@ -45,6 +46,7 @@
     {"SetHead",                 StatsFunctions::SetHead},\
     {"SetHair",                 StatsFunctions::SetHairstyle},\
     {"SetIsMale",               StatsFunctions::SetIsMale},\
+    {"SetModel",                StatsFunctions::SetModel},\
     {"SetBirthsign",            StatsFunctions::SetBirthsign},\
     {"SetResetStats",           StatsFunctions::SetResetStats},\
     \
@@ -180,6 +182,14 @@ public:
     * \return Whether the player is male.
     */
     static int GetIsMale(unsigned short pid) noexcept;
+
+    /**
+    * \brief Get the model of a player.
+    *
+    * \param pid The player ID.
+    * \return The model of the player.
+    */
+    static const char* GetModel(unsigned short pid) noexcept;
 
     /**
     * \brief Get the birthsign of a player.
@@ -382,6 +392,15 @@ public:
     * \return void
     */
     static void SetIsMale(unsigned short pid, int state) noexcept;
+
+    /**
+    * \brief Set the model of a player.
+    *
+    * \param pid The player ID.
+    * \param name The new model of the player.
+    * \return void
+    */
+    static void SetModel(unsigned short pid, const char *model) noexcept;
 
     /**
     * \brief Set the birthsign of a player.

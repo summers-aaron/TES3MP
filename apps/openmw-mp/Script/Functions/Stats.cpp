@@ -104,6 +104,14 @@ int StatsFunctions::GetIsMale(unsigned short pid) noexcept
     return player->npc.isMale();
 }
 
+const char* StatsFunctions::GetModel(unsigned short pid) noexcept
+{
+    Player* player;
+    GET_PLAYER(pid, player, 0);
+
+    return player->npc.mModel.c_str();
+}
+
 const char *StatsFunctions::GetBirthsign(unsigned short pid) noexcept
 {
     Player *player;
@@ -325,6 +333,17 @@ void StatsFunctions::SetIsMale(unsigned short pid, int state) noexcept
     GET_PLAYER(pid, player,);
 
     player->npc.setIsMale(state > 0 ? true : false);
+}
+
+void StatsFunctions::SetModel(unsigned short pid, const char *model) noexcept
+{
+    Player* player;
+    GET_PLAYER(pid, player, );
+
+    if (player->npc.mModel == model)
+        return;
+
+    player->npc.mModel = model;
 }
 
 void StatsFunctions::SetBirthsign(unsigned short pid, const char *sign) noexcept
