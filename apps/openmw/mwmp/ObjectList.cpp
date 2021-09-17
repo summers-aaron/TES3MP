@@ -919,7 +919,7 @@ void ObjectList::setDoorDestinations(MWWorld::CellStore* cellStore)
                 if (baseObject.destinationCell.isExterior())
                     ptrFound.getCellRef().setDestCell("");
                 else
-                    ptrFound.getCellRef().setDestCell(baseObject.destinationCell.getDescription());
+                    ptrFound.getCellRef().setDestCell(baseObject.destinationCell.getShortDescription());
             }
         }
     }
@@ -1460,7 +1460,7 @@ void ObjectList::sendObjectPlace()
     if (baseObjects.size() == 0)
         return;
 
-    LOG_MESSAGE_SIMPLE(TimedLog::LOG_VERBOSE, "Sending ID_OBJECT_PLACE about %s", cell.getDescription().c_str());
+    LOG_MESSAGE_SIMPLE(TimedLog::LOG_VERBOSE, "Sending ID_OBJECT_PLACE about %s", cell.getShortDescription().c_str());
 
     for (const auto &baseObject : baseObjects)
         LOG_APPEND(TimedLog::LOG_VERBOSE, "- cellRef: %s, count: %i", baseObject.refId.c_str(), baseObject.count);
@@ -1474,7 +1474,7 @@ void ObjectList::sendObjectSpawn()
     if (baseObjects.size() == 0)
         return;
 
-    LOG_MESSAGE_SIMPLE(TimedLog::LOG_VERBOSE, "Sending ID_OBJECT_SPAWN about %s", cell.getDescription().c_str());
+    LOG_MESSAGE_SIMPLE(TimedLog::LOG_VERBOSE, "Sending ID_OBJECT_SPAWN about %s", cell.getShortDescription().c_str());
 
     for (const auto &baseObject : baseObjects)
         LOG_APPEND(TimedLog::LOG_VERBOSE, "- cellRef: %s-%i", baseObject.refId.c_str(), baseObject.refNum);
@@ -1545,7 +1545,7 @@ void ObjectList::sendObjectAnimPlay()
 
 void ObjectList::sendDoorState()
 {
-    LOG_MESSAGE_SIMPLE(TimedLog::LOG_VERBOSE, "Sending ID_DOOR_STATE about %s", cell.getDescription().c_str());
+    LOG_MESSAGE_SIMPLE(TimedLog::LOG_VERBOSE, "Sending ID_DOOR_STATE about %s", cell.getShortDescription().c_str());
 
     for (const auto &baseObject : baseObjects)
         LOG_APPEND(TimedLog::LOG_VERBOSE, "- cellRef: %s-%i, state: %s", baseObject.refId.c_str(), baseObject.refNum,
@@ -1569,7 +1569,7 @@ void ObjectList::sendVideoPlay()
 
 void ObjectList::sendClientScriptLocal()
 {
-    LOG_MESSAGE_SIMPLE(TimedLog::LOG_VERBOSE, "Sending ID_CLIENT_SCRIPT_LOCAL about %s", cell.getDescription().c_str());
+    LOG_MESSAGE_SIMPLE(TimedLog::LOG_VERBOSE, "Sending ID_CLIENT_SCRIPT_LOCAL about %s", cell.getShortDescription().c_str());
 
     for (const auto &baseObject : baseObjects)
     {
@@ -1637,7 +1637,7 @@ void ObjectList::sendContainer()
     else if (containerSubAction == mwmp::BaseObjectList::REPLY_TO_REQUEST)
         debugMessage += "REPLY_TO_REQUEST";
 
-    debugMessage += "\n- cell " + cell.getDescription();
+    debugMessage += "\n- cell " + cell.getShortDescription();
 
     for (const auto &baseObject : baseObjects)
     {

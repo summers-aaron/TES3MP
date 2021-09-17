@@ -221,6 +221,27 @@ namespace ESM
         return region + ' ' + cellGrid;
     }
 
+    /*
+        Start of tes3mp addition
+
+        Add a method that returns cell descriptions in OpenMW's previous way, because it was widely
+        used in TES3MP
+    */
+    std::string Cell::getShortDescription() const
+    {
+        if (mData.mFlags & Interior)
+        {
+            return mName;
+        }
+        else
+        {
+            return std::to_string(mData.mX) + ", " + std::to_string(mData.mY);
+        }
+    }
+    /*
+        End of tes3mp addition
+    */
+
     bool Cell::getNextRef(ESMReader &esm, CellRef &ref, bool &isDeleted, bool ignoreMoves, MovedCellRef *mref)
     {
         isDeleted = false;
