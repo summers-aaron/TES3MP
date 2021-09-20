@@ -45,6 +45,7 @@ Super special thanks
     Bret Curtis (psi29a)
     Gabriel Pascu (iGrebla)
     greetasdf
+    Jason Ginther
     Learwolf
     Marc Zinnschlag (Zini)
     Mitch (Zaberius)
@@ -55,26 +56,35 @@ Special thanks
 --------------
 
     Aesylwinn
+    Boyos
+    Brandon Guffey
+    Caledonii
     Camul
     David Wery
     DestinedToDie
     Donovan Ando
+    DrunkenMonk
     Gluka
     Goodevil
     Ignatious
     James Wards of Gore Corps LAN Club (gorecorps.co.nz)
+    Jeff Russell
     Jeremiah
     Kyle Willey of Loreshaper Games (steempeak.com/@loreshapergames)
     Lewis Sadlier
     Luc Keating
     Michael Zagar (Zoops)
+    Nkfree
     Olaxan
     ppsychrite
     Rhiyo
+    Ryan Gage
     Scorcio
     Simon Nemes
+    Snorkel the Dolphin
     Texafornian
     Thrud
+    Zach Wild
     Zaphida
     All the developers of OpenMW for creating an amazing open source project
 
