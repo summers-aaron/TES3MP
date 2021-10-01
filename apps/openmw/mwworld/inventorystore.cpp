@@ -919,10 +919,15 @@ void MWWorld::InventoryStore::fireEquipmentChangedEvent(const Ptr& actor)
     /*
         Start of tes3mp change (major)
 
-        Only fire inventory events for actors in loaded cells to avoid crashes
+        Only fire inventory events for local players or for other actors in loaded cells to avoid crashes
     */
-    if (mInventoryListener && MWBase::Environment::get().getWorld()->isCellActive(*actor.getCell()->getCell()))
-        mInventoryListener->equipmentChanged();
+    if (mInventoryListener)
+    {
+        if (actor == MWMechanics::getPlayer() || MWBase::Environment::get().getWorld()->isCellActive(*actor.getCell()->getCell()))
+        {
+            mInventoryListener->equipmentChanged();
+        }
+    }
     /*
         End of tes3mp change (major)
     */
