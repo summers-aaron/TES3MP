@@ -944,6 +944,9 @@ void LocalPlayer::setCharacter()
             world->createRecord(player);
 
             MWBase::Environment::get().getMechanicsManager()->playerLoaded();
+
+            // This is needed to update the player's model instantly if they're in 3rd person
+            world->reattachPlayerCamera();
         }
 
         MWBase::Environment::get().getWindowManager()->getInventoryWindow()->rebuildAvatar();
