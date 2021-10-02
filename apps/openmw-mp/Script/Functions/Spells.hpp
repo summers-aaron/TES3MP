@@ -155,9 +155,10 @@ public:
     * \param pid The player ID whose spells active changes should be used.
     * \param spellId The spellId of the spell.
     * \param displayName The displayName of the spell.
+    * \param stackingState Whether the spell should stack with other instances of itself.
     * \return void
     */
-    static void AddSpellActive(unsigned short pid, const char* spellId, const char* displayName) noexcept;
+    static void AddSpellActive(unsigned short pid, const char* spellId, const char* displayName, bool stackingState) noexcept;
 
     /**
     * \brief Add a new effect to the next active spell that will be added to a player.

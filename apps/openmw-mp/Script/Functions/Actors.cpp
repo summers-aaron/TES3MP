@@ -489,10 +489,11 @@ void ActorFunctions::UnequipActorItem(unsigned short slot) noexcept
     ActorFunctions::EquipActorItem(slot, "", 0, -1, -1);
 }
 
-void ActorFunctions::AddActorSpellActive(const char* spellId, const char* displayName) noexcept
+void ActorFunctions::AddActorSpellActive(const char* spellId, const char* displayName, bool stackingState) noexcept
 {
     mwmp::ActiveSpell spell;
     spell.id = spellId;
+    spell.isStackingSpell = stackingState;
     spell.params.mDisplayName = displayName;
     spell.params.mEffects = storedActorActiveEffects;
 

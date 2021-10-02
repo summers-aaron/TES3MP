@@ -879,9 +879,10 @@ public:
     *
     * \param spellId The spellId of the spell.
     * \param displayName The displayName of the spell.
+    * \param stackingState Whether the spell should stack with other instances of itself.
     * \return void
     */
-    static void AddActorSpellActive(const char* spellId, const char* displayName) noexcept;
+    static void AddActorSpellActive(const char* spellId, const char* displayName, bool stackingState) noexcept;
 
     /**
     * \brief Add a new effect to the next active spell that will be added to the temporary actor

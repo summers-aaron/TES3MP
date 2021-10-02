@@ -101,13 +101,14 @@ void SpellFunctions::AddSpell(unsigned short pid, const char* spellId) noexcept
     player->spellbookChanges.spells.push_back(spell);
 }
 
-void SpellFunctions::AddSpellActive(unsigned short pid, const char* spellId, const char* displayName) noexcept
+void SpellFunctions::AddSpellActive(unsigned short pid, const char* spellId, const char* displayName, bool stackingState) noexcept
 {
     Player* player;
     GET_PLAYER(pid, player, );
 
     mwmp::ActiveSpell spell;
     spell.id = spellId;
+    spell.isStackingSpell = stackingState;
     spell.params.mDisplayName = displayName;
     spell.params.mEffects = storedActiveEffects;
 
