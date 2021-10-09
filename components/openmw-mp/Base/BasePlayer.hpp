@@ -232,6 +232,7 @@ namespace mwmp
 
         unsigned int movementFlags = 0;
         char drawState;
+        bool isJumping = false;
         bool isFlying = false;
         bool hasTcl = false;
 

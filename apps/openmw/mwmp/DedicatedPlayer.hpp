@@ -85,6 +85,8 @@ namespace mwmp
         bool hasReceivedInitialEquipment;
         bool hasFinishedInitialTeleportation;
         bool isLevitationPurged;
+
+        bool wasJumping;
     };
 }
 #endif //OPENMW_DEDICATEDPLAYER_HPP

@@ -612,7 +612,7 @@ void LocalPlayer::updateAnimFlags(bool forceUpdate)
     bool isForceMoveJumping = ptrNpcStats.getMovementFlag(CreatureStats::Flag_ForceMoveJump);
     
     isFlying = world->isFlying(ptrPlayer);
-    bool isJumping = !world->isOnGround(ptrPlayer) && !isFlying;
+    isJumping = !world->isOnGround(ptrPlayer) && !isFlying;
 
     // We need to send a new packet at the end of jumping, flying and TCL-ing too,
     // so keep track of what we were doing last frame

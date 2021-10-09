@@ -64,6 +64,9 @@ DedicatedPlayer::DedicatedPlayer(RakNet::RakNetGUID guid) : BasePlayer(guid)
 
     hasReceivedInitialEquipment = false;
     hasFinishedInitialTeleportation = false;
+
+    isJumping = false;
+    wasJumping = false;
 }
 
 DedicatedPlayer::~DedicatedPlayer()
@@ -207,6 +210,17 @@ void DedicatedPlayer::setAnimFlags()
         levitationCast.mAlwaysSucceed = true;
         levitationCast.cast("Levitate");
         isLevitationPurged = false;
+    }
+
+    if (isJumping && !wasJumping)
+    {
+        world->setOnGround(ptr, false);
+        wasJumping = true;
+    }
+    else if (wasJumping && !isJumping)
+    {
+        world->setOnGround(ptr, true);
+        wasJumping = false;
     }
 
     MWMechanics::CreatureStats *ptrCreatureStats = &ptr.getClass().getCreatureStats(ptr);

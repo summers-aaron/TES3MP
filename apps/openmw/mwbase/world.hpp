@@ -446,6 +446,17 @@ namespace MWBase
             /*
                 Start of tes3mp addition
 
+                Make it possible to set whether a Ptr is on the ground or not, needed for proper
+                synchronization in multiplayer
+            */
+            virtual void setOnGround(const MWWorld::Ptr& ptr, bool onGround) = 0;
+            /*
+                End of tes3mp addition
+            */
+
+            /*
+                Start of tes3mp addition
+
                 Make it possible to set the physics framerate from elsewhere
             */
             virtual void setPhysicsFramerate(float physFramerate) = 0;
