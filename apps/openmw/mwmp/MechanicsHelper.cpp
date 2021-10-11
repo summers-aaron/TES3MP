@@ -562,6 +562,11 @@ void MechanicsHelper::processCast(Cast cast, const MWWorld::Ptr& caster)
     }
 }
 
+bool MechanicsHelper::isStackingSpell(const std::string& id)
+{
+    return !MWBase::Environment::get().getWorld()->getStore().get<ESM::Spell>().search(id);
+}
+
 bool MechanicsHelper::doesEffectListContainEffect(const ESM::EffectList& effectList, short effectId, short attributeId, short skillId)
 {
     for (const auto &effect : effectList.mList)
