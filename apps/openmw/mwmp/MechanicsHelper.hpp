@@ -50,11 +50,6 @@ namespace MechanicsHelper
     void unequipItemsByEffect(const MWWorld::Ptr& ptr, short enchantmentType, short effectId, short attributeId = -1, short skillId = -1);
 
     MWWorld::Ptr getItemPtrFromStore(const mwmp::Item& item, MWWorld::ContainerStore& store);
-
-    MWWorld::Ptr getCurrentActor();
-    void storeCurrentActor(const MWWorld::Ptr& actor);
-
-    static MWWorld::Ptr currentActor;
 }
 
 
