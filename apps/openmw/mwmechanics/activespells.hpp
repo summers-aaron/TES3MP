@@ -51,6 +51,16 @@ namespace MWMechanics
             mutable MagicEffects mEffects;
             mutable bool mSpellsChanged;
 
+            /*
+                Start of tes3mp addition
+
+                Track the actorId corresponding to these ActiveSpells
+            */
+            int mActorId;
+            /*
+                End of tes3mp addition
+            */
+
             void rebuildEffects() const;
 
             /// Add any effects that are in "from" and not in "addTo" to "addTo"
@@ -145,6 +155,17 @@ namespace MWMechanics
             const MagicEffects& getMagicEffects() const;
 
             void visitEffectSources (MWMechanics::EffectSourceVisitor& visitor) const;
+
+            /*
+                Start of tes3mp addition
+
+                Make it possible to set and get the actorId for these ActiveSpells
+            */
+            int getActorId() const;
+            void setActorId(int actorId);
+            /*
+                End of tes3mp addition
+            */
 
     };
 }

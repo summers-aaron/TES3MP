@@ -517,4 +517,22 @@ namespace MWMechanics
             mSpellsChanged = true;
         }
     }
+
+    /*
+        Start of tes3mp addition
+
+        Make it possible to set and get the actorId for these ActiveSpells
+    */
+    int ActiveSpells::getActorId() const
+    {
+        return mActorId;
+    }
+
+    void ActiveSpells::setActorId(int actorId)
+    {
+        mActorId = actorId;
+    }
+    /*
+        End of tes3mp addition
+    */
 }
