@@ -38,7 +38,7 @@ namespace mwmp
                         localPlayer.setSpellsActive();
                 }
             }
-            else
+            else if (player != 0)
             {
                 LOG_APPEND(TimedLog::LOG_INFO, "- Packet was about %s", player->npc.mName.c_str());
 
