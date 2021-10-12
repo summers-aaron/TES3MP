@@ -43,17 +43,22 @@ namespace MWMechanics
                     /*
                         Start of tes3mp addition
 
-                        Whenever a player loses an active spell, send an ID_PLAYER_SPELLS_ACTIVE packet to the server with it
-                    */
-                    bool isStackingSpell = !MWBase::Environment::get().getWorld()->getStore().get<ESM::Spell>().search(iter->first);
+                        Whenever the local player loses an active spell, send an ID_PLAYER_SPELLS_ACTIVE packet to the server with it
 
+                        Whenever a local actor loses an active spell, send an ID_ACTOR_SPELLS_ACTIVE packet to the server with it
+                    */
                     if (this == &MWMechanics::getPlayer().getClass().getCreatureStats(MWMechanics::getPlayer()).getActiveSpells())
                     {
-                        mwmp::Main::get().getLocalPlayer()->sendSpellsActiveRemoval(iter->first, isStackingSpell, iter->second.mTimeStamp);
+                        mwmp::Main::get().getLocalPlayer()->sendSpellsActiveRemoval(iter->first,
+                            MechanicsHelper::isStackingSpell(iter->first), iter->second.mTimeStamp);
                     }
-                    else if (mwmp::Main::get().getCellController()->isLocalActor(MechanicsHelper::getCurrentActor()))
+                    else
                     {
-                        mwmp::Main::get().getCellController()->getLocalActor(MechanicsHelper::getCurrentActor())->sendSpellsActiveRemoval(iter->first, isStackingSpell, iter->second.mTimeStamp);
+                        MWWorld::Ptr actorPtr = MWBase::Environment::get().getWorld()->searchPtrViaActorId(getActorId());
+
+                        if (mwmp::Main::get().getCellController()->isLocalActor(actorPtr))
+                            mwmp::Main::get().getCellController()->getLocalActor(actorPtr)->sendSpellsActiveRemoval(iter->first,
+                                MechanicsHelper::isStackingSpell(iter->first), iter->second.mTimeStamp);
                     }
                     /*
                         End of tes3mp addition
@@ -233,9 +238,12 @@ namespace MWMechanics
             {
                 mwmp::Main::get().getLocalPlayer()->sendSpellsActiveAddition(id, isStackingSpell, params);
             }
-            else if (mwmp::Main::get().getCellController()->isLocalActor(MechanicsHelper::getCurrentActor()))
+            else
             {
-                mwmp::Main::get().getCellController()->getLocalActor(MechanicsHelper::getCurrentActor())->sendSpellsActiveAddition(id, isStackingSpell, params);
+                MWWorld::Ptr actorPtr = MWBase::Environment::get().getWorld()->searchPtrViaActorId(getActorId());
+
+                if (mwmp::Main::get().getCellController()->isLocalActor(actorPtr))
+                    mwmp::Main::get().getCellController()->getLocalActor(actorPtr)->sendSpellsActiveAddition(id, isStackingSpell, params);
             }
         }
         /*
