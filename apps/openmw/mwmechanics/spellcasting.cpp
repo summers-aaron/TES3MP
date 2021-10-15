@@ -180,6 +180,19 @@ namespace MWMechanics
             if (!reflected && reflectEffect(*effectIt, magicEffect, caster, target, reflectedEffects))
                 continue;
 
+            /*
+                Start of tes3mp addition
+
+                Now that reflected effects have been handled, don't unilaterally process effects further for dedicated players
+                and actors on this client and instead expect their effects to be applied correctly through the SpellsActive
+                packets received
+            */
+            if (mwmp::PlayerList::isDedicatedPlayer(target) || mwmp::Main::get().getCellController()->isDedicatedActor(target))
+                continue;
+            /*
+                End of tes3mp addition
+            */
+
             // Try resisting.
             float magnitudeMult = getEffectMultiplier(effectIt->mEffectID, target, caster, spell, &targetEffects);
             if (magnitudeMult == 0)
@@ -187,17 +200,8 @@ namespace MWMechanics
                 // Fully resisted, show message
                 if (target == getPlayer())
                     MWBase::Environment::get().getWindowManager()->messageBox("#{sMagicPCResisted}");
-                /*
-                    Start of tes3mp change (major)
-
-                    Don't display messages about whether the target has resisted the local player's spell or not,
-                    because this client has no way of knowing here whether that has happened
-                */
-                //else if (castByPlayer)
-                //    MWBase::Environment::get().getWindowManager()->messageBox("#{sMagicTargetResisted}");
-                /*
-                    End of tes3mp change (major)
-                */
+                else if (castByPlayer)
+                    MWBase::Environment::get().getWindowManager()->messageBox("#{sMagicTargetResisted}");
             }
             else
             {
@@ -248,16 +252,7 @@ namespace MWMechanics
                     if (!appliedOnce)
                         effect.mDuration = std::max(1.f, effect.mDuration);
 
-                    /*
-                        Start of tes3mp change (major)
-
-                        If the target is a DedicatedPlayer or DedicatedActor, don't apply effects to them unilaterally on this
-                        client and wait for the server's response to the other client to apply the effects for us
-                    */
-                    if (effect.mDuration == 0 && !mwmp::PlayerList::isDedicatedPlayer(target) && !mwmp::Main::get().getCellController()->isDedicatedActor(target))
-                    /*
-                        End of tes3mp change (major)
-                    */
+                    if (effect.mDuration == 0)
                     {
                         // We still should add effect to list to allow GetSpellEffects to detect this spell
                         appliedLastingEffects.push_back(effect);
@@ -294,16 +289,7 @@ namespace MWMechanics
                         if (!wasDead && isDead)
                             MWBase::Environment::get().getMechanicsManager()->actorKilled(target, caster);
                     }
-                    /*
-                        Start of tes3mp change (major)
-
-                        If the target is a DedicatedPlayer or DedicatedActor, don't apply effects to them unilaterally on this
-                        client and wait for the server's response to the other client to apply the effects for us
-                    */
-                    else if (!mwmp::PlayerList::isDedicatedPlayer(target) && !mwmp::Main::get().getCellController()->isDedicatedActor(target))
-                    /*
-                        End of tes3mp change (major)
-                    */
+                    else
                     {
                         effect.mTimeLeft = effect.mDuration;
 
