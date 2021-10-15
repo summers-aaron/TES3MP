@@ -98,7 +98,8 @@ void LocalActor::updatePosition(bool forceUpdate)
     else
     {
         posIsChanging = direction.pos[0] != 0 || direction.pos[1] != 0 || direction.pos[2] != 0 ||
-            direction.rot[0] != 0 || direction.rot[1] != 0 || direction.rot[2] != 0;
+            direction.rot[0] != 0 || direction.rot[1] != 0 || direction.rot[2] != 0 ||
+            !MWBase::Environment::get().getWorld()->isOnGround(ptr);
     }
 
     if (forceUpdate || posIsChanging || posWasChanged)
