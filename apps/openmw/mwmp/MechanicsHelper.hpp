@@ -46,6 +46,8 @@ namespace MechanicsHelper
     void processAttack(mwmp::Attack attack, const MWWorld::Ptr& attacker);
     void processCast(mwmp::Cast cast, const MWWorld::Ptr& caster);
 
+    void createSpellGfx(const MWWorld::Ptr& targetPtr, const std::vector<ESM::ActiveEffect>& mEffects);
+
     bool isStackingSpell(const std::string& id);
     bool doesEffectListContainEffect(const ESM::EffectList& effectList, short effectId, short attributeId = -1, short skillId = -1);
     void unequipItemsByEffect(const MWWorld::Ptr& ptr, short enchantmentType, short effectId, short attributeId = -1, short skillId = -1);

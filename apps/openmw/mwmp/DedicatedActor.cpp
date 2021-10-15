@@ -368,6 +368,8 @@ void DedicatedActor::addSpellsActive()
         MWWorld::TimeStamp timestamp = MWWorld::TimeStamp(activeSpell.timestampHour, activeSpell.timestampDay);
         int casterActorId = MechanicsHelper::getActorId(activeSpell.caster);
 
+        MechanicsHelper::createSpellGfx(getPtr(), activeSpell.params.mEffects);
+
         // Don't do a check for a spell's existence, because active effects from potions need to be applied here too
         activeSpells.addSpell(activeSpell.id, activeSpell.isStackingSpell, activeSpell.params.mEffects, activeSpell.params.mDisplayName, casterActorId, timestamp, false);
     }

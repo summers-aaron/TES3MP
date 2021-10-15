@@ -13,6 +13,8 @@
 #include "../mwmechanics/spellcasting.hpp"
 #include "../mwmechanics/spellutil.hpp"
 
+#include "../mwrender/animation.hpp"
+
 #include "../mwworld/class.hpp"
 #include "../mwworld/inventorystore.hpp"
 
@@ -559,6 +561,28 @@ void MechanicsHelper::processCast(Cast cast, const MWWorld::Ptr& caster)
         LOG_APPEND(TimedLog::LOG_VERBOSE, "- itemId: %s", cast.itemId.c_str());
         MWBase::Environment::get().getWorld()->castSpell(caster);
         inventoryStore.setSelectedEnchantItem(inventoryStore.end());
+    }
+}
+
+void MechanicsHelper::createSpellGfx(const MWWorld::Ptr& targetPtr, const std::vector<ESM::ActiveEffect>& mEffects)
+{
+    for (auto&& effect : mEffects)
+    {
+        const ESM::MagicEffect* magicEffect = MWBase::Environment::get().getWorld()->getStore().get<ESM::MagicEffect>().find(effect.mEffectId);
+
+        const ESM::Static* castStatic;
+        if (!magicEffect->mHit.empty())
+            castStatic = MWBase::Environment::get().getWorld()->getStore().get<ESM::Static>().find(magicEffect->mHit);
+        else
+            castStatic = MWBase::Environment::get().getWorld()->getStore().get<ESM::Static>().find("VFX_DefaultHit");
+
+        bool loop = (magicEffect->mData.mFlags & ESM::MagicEffect::ContinuousVfx) != 0;
+        // Note: in case of non actor, a free effect should be fine as well
+        MWRender::Animation* anim = MWBase::Environment::get().getWorld()->getAnimation(targetPtr);
+        if (anim && !castStatic->mModel.empty())
+        {
+            anim->addEffect("meshes\\" + castStatic->mModel, magicEffect->mIndex, loop, "", magicEffect->mParticle);
+        }
     }
 }
 
