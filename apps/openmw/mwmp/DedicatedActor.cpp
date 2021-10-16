@@ -373,8 +373,6 @@ void DedicatedActor::addSpellsActive()
         // Don't do a check for a spell's existence, because active effects from potions need to be applied here too
         activeSpells.addSpell(activeSpell.id, activeSpell.isStackingSpell, activeSpell.params.mEffects, activeSpell.params.mDisplayName, casterActorId, timestamp, false);
     }
-
-    reloadPtr();
 }
 
 void DedicatedActor::removeSpellsActive()
