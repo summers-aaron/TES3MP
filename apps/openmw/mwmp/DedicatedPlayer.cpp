@@ -120,7 +120,7 @@ void DedicatedPlayer::move(float dt)
 
     ESM::Position refPos = ptr.getRefData().getPosition();
     MWBase::World *world = MWBase::Environment::get().getWorld();
-    const int maxInterpolationDistance = 40;
+    const int maxInterpolationDistance = 80;
 
     // Apply interpolation only if the position hasn't changed too much from last time
     bool shouldInterpolate =
