@@ -1715,8 +1715,12 @@ namespace MWWorld
     void World::setInertialForce(const Ptr& ptr, const osg::Vec3f &force)
     {
         MWPhysics::Actor *actor = mPhysics->getActor(ptr);
-        actor->setOnGround(false);
-        actor->setInertialForce(force);
+
+        if (actor != nullptr)
+        {
+            actor->setOnGround(false);
+            actor->setInertialForce(force);
+        }
     }
     /*
         End of tes3mp addition
@@ -1731,7 +1735,11 @@ namespace MWWorld
     void World::setOnGround(const Ptr& ptr, bool onGround)
     {
         MWPhysics::Actor* actor = mPhysics->getActor(ptr);
-        actor->setOnGround(onGround);
+
+        if (actor != nullptr)
+        {
+            actor->setOnGround(onGround);
+        }
     }
     /*
         End of tes3mp addition
