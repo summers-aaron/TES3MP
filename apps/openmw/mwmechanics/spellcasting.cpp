@@ -361,6 +361,20 @@ namespace MWMechanics
                     else
                         sndMgr->playSound3D(target, schools[magicEffect->mData.mSchool]+" hit", 1.0f, 1.0f);
 
+                    /*
+                        Start of tes3mp addition
+
+                        Send an ID_OBJECT_SOUND packet every time a sound is made here
+                    */
+                    mwmp::ObjectList* objectList = mwmp::Main::get().getNetworking()->getObjectList();
+                    objectList->reset();
+                    objectList->packetOrigin = mwmp::CLIENT_GAMEPLAY;
+                    objectList->addObjectSound(target, magicEffect->mHitSound.empty() ? schools[magicEffect->mData.mSchool] + " hit" : magicEffect->mHitSound, 1.0f, 1.0f);
+                    objectList->sendObjectSound();
+                    /*
+                        End of tes3mp addition
+                    */
+
                     // Add VFX
                     const ESM::Static* castStatic;
                     if (!magicEffect->mHit.empty())
@@ -639,6 +653,20 @@ namespace MWMechanics
                     };
                     MWBase::SoundManager *sndMgr = MWBase::Environment::get().getSoundManager();
                     sndMgr->playSound3D(mCaster, "Spell Failure " + schools[school], 1.0f, 1.0f);
+
+                    /*
+                        Start of tes3mp addition
+
+                        Send an ID_OBJECT_SOUND packet every time a sound is made here
+                    */
+                    mwmp::ObjectList* objectList = mwmp::Main::get().getNetworking()->getObjectList();
+                    objectList->reset();
+                    objectList->packetOrigin = mwmp::CLIENT_GAMEPLAY;
+                    objectList->addObjectSound(mCaster, "Spell Failure " + schools[school], 1.0f, 1.0f);
+                    objectList->sendObjectSound();
+                    /*
+                        End of tes3mp addition
+                    */
                 }
                 return false;
             }
@@ -758,6 +786,21 @@ namespace MWMechanics
 
                     MWBase::SoundManager *sndMgr = MWBase::Environment::get().getSoundManager();
                     sndMgr->playSound3D(mCaster, "Spell Failure " + schools[school], 1.0f, 1.0f);
+
+                    /*
+                        Start of tes3mp addition
+
+                        Send an ID_OBJECT_SOUND packet every time a sound is made here
+                    */
+                    mwmp::ObjectList* objectList = mwmp::Main::get().getNetworking()->getObjectList();
+                    objectList->reset();
+                    objectList->packetOrigin = mwmp::CLIENT_GAMEPLAY;
+                    objectList->addObjectSound(mCaster, "Spell Failure " + schools[school], 1.0f, 1.0f);
+                    objectList->sendObjectSound();
+                    /*
+                        End of tes3mp addition
+                    */
+
                     return false;
                 }
             }
