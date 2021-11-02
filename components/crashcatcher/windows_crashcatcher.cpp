@@ -196,7 +196,7 @@ namespace Crash
         // must remain until monitor has finished
         waitMonitor();
 
-        std::string message = "TES3MP has encountered a fatal error.\nCrash log saved to '" + std::string(mShm->mStartup.mLogFilePath) + "'.\n Please report this to https://github.com/TES3MP/openmw-tes3mp/issues !";
+        std::string message = "TES3MP has encountered a fatal error.\nCrash log saved to '" + std::string(mShm->mStartup.mLogFilePath) + "'.\n Please report this to https://github.com/TES3MP/TES3MP/issues !";
         SDL_ShowSimpleMessageBox(0, "Fatal Error", message.c_str(), nullptr);
     }
 
