@@ -4,7 +4,7 @@
 #define TES3MP_VERSION "0.8.0"
 #define TES3MP_PROTO_VERSION 9
 
-#define TES3MP_DEFAULT_PASSW "SuperPassword"
+#define TES3MP_DEFAULT_PASSW "blankpassword"
 #define TES3MP_MASTERSERVER_PASSW "12345"
 
 
