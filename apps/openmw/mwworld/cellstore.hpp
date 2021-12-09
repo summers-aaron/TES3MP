@@ -272,6 +272,17 @@ namespace MWWorld
             /*
                 Start of tes3mp addition
 
+                Allow the searching of objects by their reference numbers while ensuring
+                they have a certain refId
+            */
+            Ptr searchExactPlus (std::string refId, unsigned int refNum, unsigned int mpNum);
+            /*
+                End of tes3mp addition
+            */
+
+            /*
+                Start of tes3mp addition
+
                 Make it possible to get the mMergedRefs in the CellStore from elsewhere in the code
             */
             std::vector<LiveCellRefBase*> &getMergedRefs();
