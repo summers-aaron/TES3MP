@@ -50,6 +50,7 @@ Super special thanks
     Marc Zinnschlag (Zini)
     Mitch (Zaberius)
     scrawl
+    Testman
 
 
 Special thanks
@@ -73,6 +74,7 @@ Special thanks
     Kyle Willey of Loreshaper Games (steempeak.com/@loreshapergames)
     Lewis Sadlier
     Luc Keating
+    Mark Epstein aka StirlizZ
     Michael Zagar (Zoops)
     Nkfree
     Olaxan
@@ -82,6 +84,7 @@ Special thanks
     Scorcio
     Simon Nemes
     Snorkel the Dolphin
+    Swims-in-Shadows aka StrayHALO_MAN
     Texafornian
     Thrud
     Zach Wild
