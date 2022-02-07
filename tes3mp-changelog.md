@@ -1,3 +1,47 @@
+0.8.0
+-----
+
+* Synchronization of custom records for interior cells, allowing for on-the-fly creation of entirely new interiors or ones based on existing interiors
+* Synchronization of custom records for clientside scripts, allowing for on-the-fly creation or overriding of MWScripts
+* Synchronization of custom records for containers, doors, activators, statics, ingredients, apparatuses, lockpicks, probes, repair tools, lights, body parts, sounds and record-based game settings
+* Synchronization of clientside local variables based on which clientside scripts are set to be synchronized by the server
+* Synchronization of clientside global variables based on rules defined for each one in the server scripts, with the possibility of also creating new clientside globals on-the-fly
+* Synchronization of active spell effects for players and actors that no longer relies on players witnessing the spellcasting associated with the effects
+* Synchronization of death animations for players and actors
+* Synchronization of merchant inventories and gold pools
+* Synchronization of environmental sounds made by players, e.g. when picking up or dropping items, when opening or closing chests and doors
+* Synchronization of plant harvesting from herbalism mods
+* Reworked attack synchronization with more precision, fixing skipped attacks for creatures with fast attack animations and making melee attack animations not depend on the direction a player or actor is moving in on the current client
+* Reworked spellcasting synchronization, fixing improper failed spellcasting for actors with fast casting animations and reducing desyncs by not tying spellcasting for non-local actors and players to their animations on the current client
+* Reworked equipment synchronization for players with less spammy packets
+* Packet for resetting interior and exterior cells on-the-fly
+* Packet for setting players as allies so they don't break each other's stealth and so their companions don't fight back when attacked by mistake
+* Packet for overriding cell destinations, useful for moving players to instances of interiors instead of regular interiors
+* Packet for tracking hits received by objects
+* Packet for tracking dialogue choices selected by players
+* Packet for tracking the cooldowns of powers used by players
+* Allow GameSettings packet to override clientside game settings
+* Allow custom records to override AI services for NPCs, alarm and flee values for NPCs and creatures, as well as scales, blood types, soul values and attack damage for creatures
+* Fix freezes related to having too many players in a single interior cell
+* Fix packet spam from some situations where actors start fights with players during dialogue
+* Fix ObjectActivate packets not being sent when picking up items from inventory screen
+* Fix ObjectDelete packets not being sent when non-container items are purchased from merchants who own them
+* Fix PlayerItemUse packets not being sent when using quick keys
+* Fix ConsoleCommand packets being ignored when sent by the server without a cell being associated with them
+* Fix desyncs caused by late-arriving ActorAuthority packets by sending the packets to everyone on the server instead of only the players who have the associated cell loaded
+* Fix indexes used when synchronizing the unassigning of quick keys
+* Fix stealing being ignored when using Take All on owned containers
+* Fix guards ignoring fights between players and other guards
+* Prevent players from attacking while in persuasion dialogues with NPCs
+* Prevent players from sending DoorState packets when not logged in
+* Prevent NPCs from saying their dying words if they have been loaded up as dead from the server
+* Prevent players and actors from playing their equipping sounds when they are first encountered
+* Alleviate actor-related desyncs by not ignoring an entire packet when one of the actors referenced in it cannot be found
+* Track kills caused through spell effects that do damage over time
+* Track uses of the console by players
+* Add serverside script functions for saving the identities of summoners
+* Implement hashing for player passwords
+
 0.7.0
 -----
 
