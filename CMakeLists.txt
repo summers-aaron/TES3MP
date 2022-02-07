@@ -390,6 +390,12 @@ if(NOT HAVE_STDINT_H)
     message(FATAL_ERROR "stdint.h was not found" )
 endif()
 
+# Start of tes3mp addition
+#
+# Don't require certain dependencies for the server
+# but keep OSG's headers (HACK)
+IF(BUILD_OPENMW OR BUILD_OPENCS)
+# End of tes3mp addition
 if(OPENMW_USE_SYSTEM_OSG)
     find_package(OpenSceneGraph 3.4.0 REQUIRED ${USED_OSG_COMPONENTS})
     if (${OPENSCENEGRAPH_VERSION} VERSION_GREATER 3.6.2 AND ${OPENSCENEGRAPH_VERSION} VERSION_LESS 3.6.5)
@@ -406,12 +412,15 @@ include_directories(BEFORE SYSTEM ${OPENSCENEGRAPH_INCLUDE_DIRS})
 if(OSG_STATIC)
     add_definitions(-DOSG_LIBRARY_STATIC)
 endif()
-
 # Start of tes3mp addition
 #
 # Don't require certain dependencies for the server
-IF(BUILD_OPENMW OR BUILD_OPENCS)
+# but keep OSG's headers (HACK)
+ELSE(BUILD_OPENMW OR BUILD_OPENCS)
+    include_directories(${OPENSCENEGRAPH_INCLUDE_DIRS})
+ENDIF(BUILD_OPENMW OR BUILD_OPENCS)
 # End of tes3mp addition
+
 set(BOOST_COMPONENTS system filesystem program_options iostreams)
 if(WIN32)
     set(BOOST_COMPONENTS ${BOOST_COMPONENTS} locale)
@@ -429,10 +438,25 @@ endif()
 set(Boost_NO_BOOST_CMAKE ON)
 
 find_package(Boost 1.6.2 REQUIRED COMPONENTS ${BOOST_COMPONENTS} OPTIONAL_COMPONENTS ${BOOST_OPTIONAL_COMPONENTS})
+# Start of tes3mp addition
+#
+# Don't require certain dependencies for the server
+IF(BUILD_OPENMW OR BUILD_OPENCS)
+# End of tes3mp addition
 if(OPENMW_USE_SYSTEM_MYGUI)
     find_package(MyGUI 3.2.2 REQUIRED)
 endif()
+# End of tes3mp addition
+#
+# Don't require certain dependencies for the server
+ENDIF(BUILD_OPENMW OR BUILD_OPENCS)
+# End of tes3mp addition
 find_package(SDL2 2.0.9 REQUIRED)
+# Start of tes3mp addition
+#
+# Don't require certain dependencies for the server
+IF(BUILD_OPENMW OR BUILD_OPENCS)
+# End of tes3mp addition
 find_package(OpenAL REQUIRED)
 # End of tes3mp addition
 #
@@ -578,7 +602,17 @@ IF(BUILD_OPENMW OR BUILD_OPENCS)
 # End of tes3mp addition
 add_subdirectory (extern/osg-ffmpeg-videoplayer)
 add_subdirectory (extern/oics)
+# Start of tes3mp addition
+#
+# Don't require certain dependencies for the server
+ENDIF(BUILD_OPENMW OR BUILD_OPENCS)
+# End of tes3mp addition
 add_subdirectory (extern/Base64)
+# Start of tes3mp addition
+#
+# Don't require certain dependencies for the server
+IF(BUILD_OPENMW OR BUILD_OPENCS)
+# End of tes3mp addition
 if (BUILD_OPENCS)
     add_subdirectory (extern/osgQt)
 endif()
