@@ -329,6 +329,11 @@ if (WIN32)
     add_definitions(-DNOMINMAX -DWIN32_LEAN_AND_MEAN)
 endif()
 
+# Start of tes3mp addition
+#
+# Don't require certain dependencies for the server
+IF(BUILD_OPENMW OR BUILD_OPENCS)
+# End of tes3mp addition
 if(OPENMW_USE_SYSTEM_BULLET)
     set(REQUIRED_BULLET_VERSION 286) # Bullet 286 required due to runtime bugfixes for btCapsuleShape
     if (DEFINED ENV{TRAVIS_BRANCH} OR DEFINED ENV{APPVEYOR})
@@ -361,6 +366,11 @@ if(OPENMW_USE_SYSTEM_BULLET)
         message(FATAL_ERROR "Bullet does not uses double precision")
     endif()
 endif()
+# Start of tes3mp addition
+#
+# Don't require certain dependencies for the server
+ENDIF(BUILD_OPENMW OR BUILD_OPENCS)
+# End of tes3mp addition
 
 if (NOT WIN32 AND BUILD_WIZARD) # windows users can just run the morrowind installer
     find_package(LIBUNSHIELD REQUIRED) # required only for non win32 when building openmw-wizard
