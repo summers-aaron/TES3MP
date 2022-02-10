@@ -220,8 +220,7 @@ public:
             {"OnClientScriptLocal",      Callback<unsigned short, const char*>()},
             {"OnClientScriptGlobal",     Callback<unsigned short>()},
             {"OnMpNumIncrement",         Callback<int>()},
-            {"OnRequestDataFileList",    Callback<>()},
-            {"OnServerWindowInput",      Callback<const char *>()}
+            {"OnRequestDataFileList",    Callback<>()}
     };
 };
 
