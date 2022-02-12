@@ -232,18 +232,16 @@ namespace MWMechanics
         */
         if (sendPacket)
         {
-            bool isStackingSpell = it == end() || stack;
-
             if (this == &MWMechanics::getPlayer().getClass().getCreatureStats(MWMechanics::getPlayer()).getActiveSpells())
             {
-                mwmp::Main::get().getLocalPlayer()->sendSpellsActiveAddition(id, isStackingSpell, params);
+                mwmp::Main::get().getLocalPlayer()->sendSpellsActiveAddition(id, stack, params);
             }
             else
             {
                 MWWorld::Ptr actorPtr = MWBase::Environment::get().getWorld()->searchPtrViaActorId(getActorId());
 
                 if (mwmp::Main::get().getCellController()->isLocalActor(actorPtr))
-                    mwmp::Main::get().getCellController()->getLocalActor(actorPtr)->sendSpellsActiveAddition(id, isStackingSpell, params);
+                    mwmp::Main::get().getCellController()->getLocalActor(actorPtr)->sendSpellsActiveAddition(id, stack, params);
             }
         }
         /*
