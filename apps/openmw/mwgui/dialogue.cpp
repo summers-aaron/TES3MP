@@ -465,10 +465,6 @@ namespace MWGui
     {
         if (dialogueChoiceType == mwmp::DialogueChoiceType::TOPIC)
         {
-            // If we're using a translated version of Morrowind, translate this topic from English into our language
-            if (MWBase::Environment::get().getWindowManager()->getTranslationDataStorage().hasTranslation())
-                topic = MWBase::Environment::get().getWindowManager()->getTranslationDataStorage().getLocalizedTopicId(topic);
-
             onTopicActivated(topic);
         }
         else if (dialogueChoiceType == mwmp::DialogueChoiceType::PERSUASION)

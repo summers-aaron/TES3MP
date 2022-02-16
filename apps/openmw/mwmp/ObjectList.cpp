@@ -1036,7 +1036,33 @@ void ObjectList::makeDialogueChoices(MWWorld::CellStore* cellStore)
                     LOG_APPEND(TimedLog::LOG_VERBOSE, "-- topic was %s", baseObject.topicId.c_str());
                 }
 
-                MWBase::Environment::get().getWindowManager()->getDialogueWindow()->activateDialogueChoice(baseObject.dialogueChoiceType, baseObject.topicId);
+                std::string topic = baseObject.topicId;
+
+                if (MWBase::Environment::get().getWindowManager()->getTranslationDataStorage().hasTranslation())
+                {
+                    char delimiter = '|';
+
+                    // If we're using a translated version of Morrowind, we may have received a string that had the original
+                    // topic delimited from its possible English translation by a | character, in which case we need to use
+                    // the original topic here
+                    if (topic.find(delimiter) != std::string::npos)
+                    {
+                        topic = topic.substr(0, topic.find(delimiter));
+                    }
+                    // Alternatively, we may have received a topic that needs to be translated into the current language's
+                    // version of it
+                    else
+                    {
+                        std::string translatedTopic = MWBase::Environment::get().getWindowManager()->getTranslationDataStorage().getLocalizedTopicId(topic);
+
+                        if (!translatedTopic.empty())
+                        {
+                            topic = translatedTopic;
+                        }
+                    }
+                }
+
+                MWBase::Environment::get().getWindowManager()->getDialogueWindow()->activateDialogueChoice(baseObject.dialogueChoiceType, topic);
             }
             else
             {
@@ -1329,7 +1355,7 @@ void ObjectList::addObjectDialogueChoice(const MWWorld::Ptr& ptr, std::string di
 
         // For translated versions of the game, make sure we translate the topic back into English first
         if (MWBase::Environment::get().getWindowManager()->getTranslationDataStorage().hasTranslation())
-            baseObject.topicId = MWBase::Environment::get().getWindowManager()->getTranslationDataStorage().topicID(dialogueChoice);
+            baseObject.topicId = dialogueChoice + "|" + MWBase::Environment::get().getWindowManager()->getTranslationDataStorage().topicID(dialogueChoice);
         else
             baseObject.topicId = dialogueChoice;
     }
