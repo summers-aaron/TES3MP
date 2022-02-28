@@ -112,6 +112,22 @@ void ObjectList::addContainerItem(mwmp::BaseObject& baseObject, const MWWorld::P
     baseObject.containerItems.push_back(containerItem);
 }
 
+void ObjectList::addContainerItem(mwmp::BaseObject& baseObject, const MWGui::ItemStack& itemStack, int itemCount, int actionCount)
+{
+    mwmp::ContainerItem containerItem;
+    containerItem.refId = itemStack.mBase.getCellRef().getRefId();
+    containerItem.count = itemCount;
+    containerItem.charge = itemStack.mBase.getCellRef().getCharge();
+    containerItem.enchantmentCharge = itemStack.mBase.getCellRef().getEnchantmentCharge();
+    containerItem.soul = itemStack.mBase.getCellRef().getSoul();
+    containerItem.actionCount = actionCount;
+
+    LOG_APPEND(TimedLog::LOG_VERBOSE, "--- Adding container item %s to packet with count %i and actionCount %i",
+        containerItem.refId.c_str(), itemCount, actionCount);
+
+    baseObject.containerItems.push_back(containerItem);
+}
+
 void ObjectList::addContainerItem(mwmp::BaseObject& baseObject, const std::string itemId, int itemCount, int actionCount)
 {
     mwmp::ContainerItem containerItem;
