@@ -489,7 +489,7 @@ void signalHandler(int signum)
 {
     std::cout << "Interrupt signal (" << signum << ") received.\n";
     //15 is SIGTERM(Normal OS stop call), 2 is SIGINT(Ctrl+C)
-    if(signum == 15 or signum == 2)
+    if(signum == 15 || signum == 2)
     {
         killLoop = true;
     }
@@ -507,7 +507,7 @@ int Networking::mainLoop()
     sigIntHandler.sa_flags = 0;
 #endif
     
-    while (running and !killLoop)
+    while (running && !killLoop)
     {
 #ifndef _WIN32
         sigaction(SIGTERM, &sigIntHandler, NULL);
