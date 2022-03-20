@@ -3916,6 +3916,12 @@ namespace MWWorld
         MWWorld::Ptr player = getPlayerPtr();
         player.getClass().getInventoryStore(player).rechargeItems(duration);
 
+        /*
+            Start of tes3mp change (major)
+
+            Don't unilaterally recharge world items on clients
+        */
+        /*
         if (activeOnly)
         {
             for (auto &cell : mWorldScene->getActiveCells())
@@ -3925,6 +3931,10 @@ namespace MWWorld
         }
         else
             mCells.recharge(duration);
+        */
+        /*
+            End of tes3mp change (major)
+        */
     }
 
     void World::teleportToClosestMarker (const MWWorld::Ptr& ptr,

@@ -384,16 +384,7 @@ bool OMW::Engine::frame(float frametime)
                 {
                     double hours = (frametime * mEnvironment.getWorld()->getTimeScaleFactor()) / 3600.0;
                     mEnvironment.getWorld()->advanceTime(hours, true);
-
-                    /*
-                        Start of tes3mp change (major)
-
-                        Don't unilaterally recharge world items on clients
-                    */
-                    //mEnvironment.getWorld()->rechargeItems(frametime, true);
-                    /*
-                        End of tes3mp change (major)
-                    */
+                    mEnvironment.getWorld()->rechargeItems(frametime, true);
                 }
             }
         }
