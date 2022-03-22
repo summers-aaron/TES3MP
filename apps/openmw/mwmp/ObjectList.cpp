@@ -365,14 +365,7 @@ void ObjectList::activateObjects(MWWorld::CellStore* cellStore)
         else
         {
             LOG_APPEND(TimedLog::LOG_VERBOSE, "-- Activated object is %s %i-%i", baseObject.refId.c_str(), baseObject.refNum, baseObject.mpNum);
-            if (baseObject.refId.empty())
-            {
-                ptrFound = cellStore->searchExact(baseObject.refNum, baseObject.mpNum);
-            }
-            else
-            {
-                ptrFound = cellStore->searchExactPlus(baseObject.refId, baseObject.refNum, baseObject.mpNum);
-            }
+            ptrFound = cellStore->searchExact(baseObject.refNum, baseObject.mpNum, baseObject.refId);
         }
 
         if (ptrFound)
@@ -1014,16 +1007,8 @@ void ObjectList::makeDialogueChoices(MWWorld::CellStore* cellStore)
     for (const auto& baseObject : baseObjects)
     {
         LOG_APPEND(TimedLog::LOG_VERBOSE, "- cellRef: %s %i-%i", baseObject.refId.c_str(), baseObject.refNum, baseObject.mpNum);
-        MWWorld::Ptr ptrFound;
-
-        if (baseObject.refId.empty())
-        {
-            ptrFound = cellStore->searchExact(baseObject.refNum, baseObject.mpNum);
-        }
-        else
-        {
-            ptrFound = cellStore->searchExactPlus(baseObject.refId, baseObject.refNum, baseObject.mpNum);
-        }
+        
+        MWWorld::Ptr ptrFound = cellStore->searchExact(baseObject.refNum, baseObject.mpNum, baseObject.refId);
 
         if (ptrFound)
         {

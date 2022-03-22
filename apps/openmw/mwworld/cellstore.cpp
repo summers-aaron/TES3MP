@@ -605,8 +605,9 @@ namespace MWWorld
     {
         const unsigned int mRefNumToFind;
         const unsigned int mMpNumToFind;
+        const std::string mRefIdToFind;
     public:
-        SearchExactVisitor(const unsigned int refNum, const unsigned int mpNum) : mRefNumToFind(refNum), mMpNumToFind(mpNum) {}
+        SearchExactVisitor(const unsigned int refNum, const unsigned int mpNum, const std::string refId) : mRefNumToFind(refNum), mMpNumToFind(mpNum), mRefIdToFind(refId) {}
 
         Ptr mFound;
 
@@ -614,38 +615,11 @@ namespace MWWorld
         {
             if (ptr.getCellRef().getRefNum().mIndex == mRefNumToFind && ptr.getCellRef().getMpNum() == mMpNumToFind)
             {
-                mFound = ptr;
-                return false;
-            }
-            return true;
-        }
-    };
-    /*
-        End of tes3mp addition
-    */
-
-    /*
-        Start of tes3mp addition
-
-        A custom type of search visitor used to find objects by their reference numbers
-        while ensuring they have a certain refId
-    */
-    class SearchExactPlusVisitor
-    {
-        const std::string mRefIdToFind;
-        const unsigned int mRefNumToFind;
-        const unsigned int mMpNumToFind;
-    public:
-        SearchExactPlusVisitor(const std::string refId, const unsigned int refNum, const unsigned int mpNum) : mRefIdToFind(refId), mRefNumToFind(refNum), mMpNumToFind(mpNum) {}
-
-        Ptr mFound;
-
-        bool operator()(const Ptr& ptr)
-        {
-            if (ptr.getCellRef().getRefNum().mIndex == mRefNumToFind && ptr.getCellRef().getMpNum() == mMpNumToFind && Misc::StringUtils::ciEqual(ptr.getCellRef().getRefId(), mRefIdToFind))
-            {
-                mFound = ptr;
-                return false;
+                if (mRefIdToFind.empty() || Misc::StringUtils::ciEqual(ptr.getCellRef().getRefId(), mRefIdToFind))
+                {
+                    mFound = ptr;
+                    return false;
+                }
             }
             return true;
         }
@@ -659,33 +633,13 @@ namespace MWWorld
 
         Allow the searching of objects by their reference numbers
     */
-    Ptr CellStore::searchExact (const unsigned int refNum, const unsigned int mpNum)
+    Ptr CellStore::searchExact (const unsigned int refNum, const unsigned int mpNum, const std::string refId)
     {
         // Ensure that all objects searched for have a valid reference number
         if (refNum == 0 && mpNum == 0)
             return 0;
 
-        SearchExactVisitor searchVisitor(refNum, mpNum);
-        forEach(searchVisitor);
-        return searchVisitor.mFound;
-    }
-    /*
-        End of tes3mp addition
-    */
-
-    /*
-        Start of tes3mp addition
-
-        Allow the searching of objects by their reference numbers while ensuring
-        they have a certain refId
-    */
-    Ptr CellStore::searchExactPlus(const std::string refId, const unsigned int refNum, const unsigned int mpNum)
-    {
-        // Ensure that all objects searched for have a valid reference number
-        if (refNum == 0 && mpNum == 0)
-            return 0;
-
-        SearchExactPlusVisitor searchVisitor(refId, refNum, mpNum);
+        SearchExactVisitor searchVisitor(refNum, mpNum, refId);
         forEach(searchVisitor);
         return searchVisitor.mFound;
     }
