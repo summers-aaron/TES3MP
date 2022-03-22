@@ -179,7 +179,7 @@ void ObjectList::editContainers(MWWorld::CellStore* cellStore)
 
         LOG_APPEND(TimedLog::LOG_VERBOSE, "- container %s %i-%i", baseObject.refId.c_str(), baseObject.refNum, baseObject.mpNum);
 
-        MWWorld::Ptr ptrFound = cellStore->searchExact(baseObject.refNum, baseObject.mpNum);
+        MWWorld::Ptr ptrFound = cellStore->searchExact(baseObject.refNum, baseObject.mpNum, baseObject.refId);
 
         if (ptrFound)
         {
@@ -380,7 +380,7 @@ void ObjectList::activateObjects(MWWorld::CellStore* cellStore)
             }
             else
             {
-                activatingActorPtr = cellStore->searchExact(baseObject.activatingActor.refNum, baseObject.activatingActor.mpNum);
+                activatingActorPtr = cellStore->searchExact(baseObject.activatingActor.refNum, baseObject.activatingActor.mpNum, baseObject.activatingActor.refId);
                 LOG_APPEND(TimedLog::LOG_VERBOSE, "-- Object has been activated by actor %s %i-%i", activatingActorPtr.getCellRef().getRefId().c_str(),
                     activatingActorPtr.getCellRef().getRefNum().mIndex, activatingActorPtr.getCellRef().getMpNum());
             }
@@ -500,7 +500,7 @@ void ObjectList::spawnObjects(MWWorld::CellStore* cellStore)
                 if (baseObject.master.isPlayer)
                     masterPtr = MechanicsHelper::getPlayerPtr(baseObject.master);
                 else
-                    masterPtr = cellStore->searchExact(baseObject.master.refNum, baseObject.master.mpNum);
+                    masterPtr = cellStore->searchExact(baseObject.master.refNum, baseObject.master.mpNum, baseObject.master.refId);
 
                 if (masterPtr)
                 {
@@ -579,7 +579,7 @@ void ObjectList::deleteObjects(MWWorld::CellStore* cellStore)
     {
         LOG_APPEND(TimedLog::LOG_VERBOSE, "- cellRef: %s %i-%i", baseObject.refId.c_str(), baseObject.refNum, baseObject.mpNum);
 
-        MWWorld::Ptr ptrFound = cellStore->searchExact(baseObject.refNum, baseObject.mpNum);
+        MWWorld::Ptr ptrFound = cellStore->searchExact(baseObject.refNum, baseObject.mpNum, baseObject.refId);
 
         if (ptrFound)
         {
@@ -632,7 +632,7 @@ void ObjectList::lockObjects(MWWorld::CellStore* cellStore)
     {
         LOG_APPEND(TimedLog::LOG_VERBOSE, "- cellRef: %s %i-%i", baseObject.refId.c_str(), baseObject.refNum, baseObject.mpNum);
 
-        MWWorld::Ptr ptrFound = cellStore->searchExact(baseObject.refNum, baseObject.mpNum);
+        MWWorld::Ptr ptrFound = cellStore->searchExact(baseObject.refNum, baseObject.mpNum, baseObject.refId);
 
         if (ptrFound)
         {
@@ -653,7 +653,7 @@ void ObjectList::triggerTrapObjects(MWWorld::CellStore* cellStore)
     {
         LOG_APPEND(TimedLog::LOG_VERBOSE, "- cellRef: %s %i-%i", baseObject.refId.c_str(), baseObject.refNum, baseObject.mpNum);
 
-        MWWorld::Ptr ptrFound = cellStore->searchExact(baseObject.refNum, baseObject.mpNum);
+        MWWorld::Ptr ptrFound = cellStore->searchExact(baseObject.refNum, baseObject.mpNum, baseObject.refId);
 
         if (ptrFound)
         {
@@ -680,7 +680,7 @@ void ObjectList::scaleObjects(MWWorld::CellStore* cellStore)
         LOG_APPEND(TimedLog::LOG_VERBOSE, "- cellRef: %s %i-%i, scale: %f", baseObject.refId.c_str(), baseObject.refNum,
             baseObject.mpNum, baseObject.scale);
 
-        MWWorld::Ptr ptrFound = cellStore->searchExact(baseObject.refNum, baseObject.mpNum);
+        MWWorld::Ptr ptrFound = cellStore->searchExact(baseObject.refNum, baseObject.mpNum, baseObject.refId);
 
         if (ptrFound)
         {
@@ -699,7 +699,7 @@ void ObjectList::setObjectStates(MWWorld::CellStore* cellStore)
         LOG_APPEND(TimedLog::LOG_VERBOSE, "- cellRef: %s %i-%i, state: %s", baseObject.refId.c_str(), baseObject.refNum,
             baseObject.mpNum, baseObject.objectState ? "true" : "false");
 
-        MWWorld::Ptr ptrFound = cellStore->searchExact(baseObject.refNum, baseObject.mpNum);
+        MWWorld::Ptr ptrFound = cellStore->searchExact(baseObject.refNum, baseObject.mpNum, baseObject.refId);
 
         if (ptrFound)
         {
@@ -729,7 +729,7 @@ void ObjectList::moveObjects(MWWorld::CellStore* cellStore)
     {
         LOG_APPEND(TimedLog::LOG_VERBOSE, "- cellRef: %s %i-%i", baseObject.refId.c_str(), baseObject.refNum, baseObject.mpNum);
 
-        MWWorld::Ptr ptrFound = cellStore->searchExact(baseObject.refNum, baseObject.mpNum);
+        MWWorld::Ptr ptrFound = cellStore->searchExact(baseObject.refNum, baseObject.mpNum, baseObject.refId);
 
         if (ptrFound)
         {
@@ -748,7 +748,7 @@ void ObjectList::restockObjects(MWWorld::CellStore* cellStore)
     {
         LOG_APPEND(TimedLog::LOG_VERBOSE, "- cellRef: %s %i-%i", baseObject.refId.c_str(), baseObject.refNum, baseObject.mpNum);
 
-        MWWorld::Ptr ptrFound = cellStore->searchExact(baseObject.refNum, baseObject.mpNum);
+        MWWorld::Ptr ptrFound = cellStore->searchExact(baseObject.refNum, baseObject.mpNum, baseObject.refId);
 
         if (ptrFound)
         {
@@ -774,7 +774,7 @@ void ObjectList::rotateObjects(MWWorld::CellStore* cellStore)
     {
         LOG_APPEND(TimedLog::LOG_VERBOSE, "- cellRef: %s %i-%i", baseObject.refId.c_str(), baseObject.refNum, baseObject.mpNum);
 
-        MWWorld::Ptr ptrFound = cellStore->searchExact(baseObject.refNum, baseObject.mpNum);
+        MWWorld::Ptr ptrFound = cellStore->searchExact(baseObject.refNum, baseObject.mpNum, baseObject.refId);
 
         if (ptrFound)
         {
@@ -793,7 +793,7 @@ void ObjectList::animateObjects(MWWorld::CellStore* cellStore)
     {
         LOG_APPEND(TimedLog::LOG_VERBOSE, "- cellRef: %s %i-%i", baseObject.refId.c_str(), baseObject.refNum, baseObject.mpNum);
 
-        MWWorld::Ptr ptrFound = cellStore->searchExact(baseObject.refNum, baseObject.mpNum);
+        MWWorld::Ptr ptrFound = cellStore->searchExact(baseObject.refNum, baseObject.mpNum, baseObject.refId);
 
         if (ptrFound)
         {
@@ -835,7 +835,7 @@ void ObjectList::playObjectSounds(MWWorld::CellStore* cellStore)
         else
         {
             objectDescription = baseObject.refId + " " + std::to_string(baseObject.refNum) + "-" + std::to_string(baseObject.mpNum);
-            ptrFound = cellStore->searchExact(baseObject.refNum, baseObject.mpNum);
+            ptrFound = cellStore->searchExact(baseObject.refNum, baseObject.mpNum, baseObject.refId);
         }
 
         if (ptrFound)
@@ -866,7 +866,7 @@ void ObjectList::setGoldPoolsForObjects(MWWorld::CellStore* cellStore)
     {
         LOG_APPEND(TimedLog::LOG_VERBOSE, "- cellRef: %s %i-%i", baseObject.refId.c_str(), baseObject.refNum, baseObject.mpNum);
 
-        MWWorld::Ptr ptrFound = cellStore->searchExact(baseObject.refNum, baseObject.mpNum);
+        MWWorld::Ptr ptrFound = cellStore->searchExact(baseObject.refNum, baseObject.mpNum, baseObject.refId);
 
         if (ptrFound)
         {
@@ -898,7 +898,7 @@ void ObjectList::activateDoors(MWWorld::CellStore* cellStore)
     {
         LOG_APPEND(TimedLog::LOG_VERBOSE, "- cellRef: %s %i-%i", baseObject.refId.c_str(), baseObject.refNum, baseObject.mpNum);
 
-        MWWorld::Ptr ptrFound = cellStore->searchExact(baseObject.refNum, baseObject.mpNum);
+        MWWorld::Ptr ptrFound = cellStore->searchExact(baseObject.refNum, baseObject.mpNum, baseObject.refId);
 
         if (ptrFound)
         {
@@ -919,7 +919,7 @@ void ObjectList::setDoorDestinations(MWWorld::CellStore* cellStore)
     {
         LOG_APPEND(TimedLog::LOG_VERBOSE, "- cellRef: %s %i-%i", baseObject.refId.c_str(), baseObject.refNum, baseObject.mpNum);
 
-        MWWorld::Ptr ptrFound = cellStore->searchExact(baseObject.refNum, baseObject.mpNum);
+        MWWorld::Ptr ptrFound = cellStore->searchExact(baseObject.refNum, baseObject.mpNum, baseObject.refId);
 
         if (ptrFound)
         {
@@ -985,7 +985,7 @@ void ObjectList::runConsoleCommands(MWWorld::CellStore* cellStore)
             {
                 LOG_APPEND(TimedLog::LOG_VERBOSE, "-- Running on object %s %i-%i", baseObject.refId.c_str(), baseObject.refNum, baseObject.mpNum);
 
-                MWWorld::Ptr ptrFound = cellStore->searchExact(baseObject.refNum, baseObject.mpNum);
+                MWWorld::Ptr ptrFound = cellStore->searchExact(baseObject.refNum, baseObject.mpNum, baseObject.refId);
 
                 if (ptrFound)
                 {
@@ -1080,7 +1080,7 @@ void ObjectList::setClientLocals(MWWorld::CellStore* cellStore)
     {
         LOG_APPEND(TimedLog::LOG_VERBOSE, "- cellRef: %s %i-%i", baseObject.refId.c_str(), baseObject.refNum, baseObject.mpNum);
 
-        MWWorld::Ptr ptrFound = cellStore->searchExact(baseObject.refNum, baseObject.mpNum);
+        MWWorld::Ptr ptrFound = cellStore->searchExact(baseObject.refNum, baseObject.mpNum, baseObject.refId);
 
         if (ptrFound)
         {
@@ -1190,7 +1190,7 @@ void ObjectList::addRequestedContainers(MWWorld::CellStore* cellStore, const std
         LOG_APPEND(TimedLog::LOG_VERBOSE, "- cellRef: %s %i-%i", baseObject.refId.c_str(),
             baseObject.refNum, baseObject.mpNum);
 
-        MWWorld::Ptr ptrFound = cellStore->searchExact(baseObject.refNum, baseObject.mpNum);
+        MWWorld::Ptr ptrFound = cellStore->searchExact(baseObject.refNum, baseObject.mpNum, baseObject.refId);
 
         if (ptrFound)
         {
