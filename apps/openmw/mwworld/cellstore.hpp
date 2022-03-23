@@ -265,7 +265,7 @@ namespace MWWorld
                 Allow the searching of objects by their reference numbers and, optionally,
                 their refIds
             */
-            Ptr searchExact (unsigned int refNum, unsigned int mpNum, std::string refId = "");
+            Ptr searchExact (unsigned int refNum, unsigned int mpNum, std::string refId = "", bool actorsOnly = false);
             /*
                 End of tes3mp addition
             */
