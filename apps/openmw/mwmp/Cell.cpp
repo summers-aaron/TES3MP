@@ -531,7 +531,7 @@ void Cell::initializeDedicatedActors(ActorList& actorList)
         // If this key doesn't exist, create it
         if (dedicatedActors.count(mapIndex) == 0)
         {
-            MWWorld::Ptr ptrFound = store->searchExact(baseActor.refNum, baseActor.mpNum);
+            MWWorld::Ptr ptrFound = store->searchExact(baseActor.refNum, baseActor.mpNum, baseActor.refId, true);
 
             if (!ptrFound) continue;
 
