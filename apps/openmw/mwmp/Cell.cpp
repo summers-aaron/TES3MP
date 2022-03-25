@@ -79,10 +79,24 @@ void Cell::updateLocal(bool forceUpdate)
         }
         else
         {
-            // Forcibly update this local actor if its data has never been sent before;
-            // otherwise, use the current forceUpdate value
-            if (actor->getPtr().getRefData().isEnabled() && !actor->getPtr().getRefData().isDeleted())
-                actor->update(actor->hasSentData ? forceUpdate : true);
+            if (actor->getPtr().getRefData().isEnabled())
+            {
+                if (actor->getPtr().getRefData().isDeleted())
+                {
+                    std::string mapIndex = it->first;
+                    LOG_APPEND(TimedLog::LOG_VERBOSE, "- Deleting LocalActor %s whose reference has been deleted",
+                        mapIndex.c_str(), getShortDescription().c_str());
+                    cellController->removeLocalActorRecord(mapIndex);
+                    delete actor;
+                    localActors.erase(it++);
+                }
+                else
+                {
+                    // Forcibly update this local actor if its data has never been sent before;
+                    // otherwise, use the current forceUpdate value
+                    actor->update(actor->hasSentData ? forceUpdate : true);
+                }
+            }
 
             ++it;
         }
