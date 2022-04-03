@@ -331,7 +331,7 @@ MWWorld::ContainerStoreIterator MWWorld::ContainerStore::add (const Ptr& itemPtr
 
         Send an ID_PLAYER_INVENTORY packet every time an item gets added for a player here
     */
-    if (actorPtr == player && this == &player.getClass().getContainerStore(player))
+    if (this == &player.getClass().getContainerStore(player))
     {
         mwmp::LocalPlayer *localPlayer = mwmp::Main::get().getLocalPlayer();
 
@@ -562,7 +562,7 @@ int MWWorld::ContainerStore::remove(const Ptr& item, int count, const Ptr& actor
     */
     Ptr player = MWBase::Environment::get().getWorld()->getPlayerPtr();
 
-    if (actor == player && this == &player.getClass().getContainerStore(player))
+    if (this == &player.getClass().getContainerStore(player))
     {
         mwmp::LocalPlayer *localPlayer = mwmp::Main::get().getLocalPlayer();
 
