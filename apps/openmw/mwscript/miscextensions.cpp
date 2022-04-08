@@ -423,9 +423,10 @@ namespace MWScript
                         Start of tes3mp addition
 
                         Send an ID_OBJECT_LOCK packet every time an object is locked
-                        through a script
+                        through a script, as long as the lock level being set is not
+                        the one it already has
                     */
-                    if (mwmp::Main::get().getLocalPlayer()->isLoggedIn())
+                    if (mwmp::Main::get().getLocalPlayer()->isLoggedIn() && ptr.getCellRef().getLockLevel() != lockLevel)
                     {
                         mwmp::ObjectList *objectList = mwmp::Main::get().getNetworking()->getObjectList();
                         objectList->reset();
@@ -471,9 +472,9 @@ namespace MWScript
                         Start of tes3mp addition
 
                         Send an ID_OBJECT_LOCK packet every time an object is unlocked
-                        through a script
+                        through a script, as long as it's not already unlocked
                     */
-                    if (mwmp::Main::get().getLocalPlayer()->isLoggedIn())
+                    if (mwmp::Main::get().getLocalPlayer()->isLoggedIn() && ptr.getCellRef().getLockLevel() > 0)
                     {
                         mwmp::ObjectList *objectList = mwmp::Main::get().getNetworking()->getObjectList();
                         objectList->reset();
