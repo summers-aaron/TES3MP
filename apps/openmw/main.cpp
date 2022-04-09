@@ -279,11 +279,23 @@ bool parseOptions (int argc, char** argv, OMW::Engine& engine, Files::Configurat
     engine.setCompileAll(variables["script-all"].as<bool>());
     engine.setCompileAllDialogue(variables["script-all-dialogue"].as<bool>());
     engine.setScriptConsoleMode (variables["script-console"].as<bool>());
+    
+    /*
+        Start of tes3mp change (major)
+
+        Clients should not be allowed to set any of these unilaterally in multiplayer, so
+        disable them
+    */
+    /*
     engine.setStartupScript (variables["script-run"].as<Files::EscapeHashString>().toStdString());
     engine.setWarningsMode (variables["script-warn"].as<int>());
     engine.setScriptBlacklist (variables["script-blacklist"].as<Files::EscapeStringVector>().toStdStringVector());
     engine.setScriptBlacklistUse (variables["script-blacklist-use"].as<bool>());
     engine.setSaveGameFile (variables["load-savegame"].as<Files::EscapePath>().mPath.string());
+    */
+    /*
+        End of tes3mp change (major)
+    */
 
     // other settings
     Fallback::Map::init(variables["fallback"].as<FallbackMap>().mMap);
