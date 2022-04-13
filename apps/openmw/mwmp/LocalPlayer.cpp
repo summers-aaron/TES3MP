@@ -155,7 +155,6 @@ bool LocalPlayer::processCharGen()
         }
         getNetworking()->getPlayerPacket(ID_PLAYER_CHARGEN)->setPlayer(this);
         getNetworking()->getPlayerPacket(ID_PLAYER_CHARGEN)->Send();
-        charGenState.currentStage++;
 
         return false;
     }
