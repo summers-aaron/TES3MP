@@ -92,6 +92,9 @@ set(MYGUI_FILES
     openmw_jail_screen.layout
     DejaVuLGCSansMono.ttf
     ../launcher/images/openmw.png
+    # Start of tes3mp addition
+    ../tes3mp/tes3mp_logo.png
+    # End of tes3mp addition
     OpenMWResourcePlugin.xml
     skins.xml
 

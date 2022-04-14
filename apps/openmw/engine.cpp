@@ -668,7 +668,15 @@ void OMW::Engine::createWindow(Settings::Manager& settings)
     {
         while (!mWindow)
         {
-            mWindow = SDL_CreateWindow("OpenMW", pos_x, pos_y, width, height, flags);
+            /*
+                Start of tes3mp change (major)
+
+                Rename the window into TES3MP
+            */
+            mWindow = SDL_CreateWindow("TES3MP", pos_x, pos_y, width, height, flags);
+            /*
+                End of tes3mp change (major)
+            */
             if (!mWindow)
             {
                 // Try with a lower AA
@@ -742,7 +750,15 @@ void OMW::Engine::createWindow(Settings::Manager& settings)
 void OMW::Engine::setWindowIcon()
 {
     boost::filesystem::ifstream windowIconStream;
-    std::string windowIcon = (mResDir / "mygui" / "openmw.png").string();
+    /*
+        Start of tes3mp change (major)
+
+        Use TES3MP's logo for the window icon
+    */
+    std::string windowIcon = (mResDir / "mygui" / "tes3mp_logo.png").string();
+    /*
+        End of tes3mp change (major)
+    */
     windowIconStream.open(windowIcon, std::ios_base::in | std::ios_base::binary);
     if (windowIconStream.fail())
         Log(Debug::Error) << "Error: Failed to open " << windowIcon;
