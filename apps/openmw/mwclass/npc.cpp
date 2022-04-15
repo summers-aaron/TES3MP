@@ -607,6 +607,7 @@ namespace MWClass
             objectList->packetOrigin = mwmp::CLIENT_GAMEPLAY;
             objectList->addObjectHit(victim, ptr);
             objectList->sendObjectHit();
+            return;
         }
         /*
             End of tes3mp change (major)
