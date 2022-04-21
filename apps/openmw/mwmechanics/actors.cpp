@@ -2479,24 +2479,24 @@ namespace MWMechanics
     void Actors::cleanupSummonedCreature (MWMechanics::CreatureStats& casterStats, int creatureActorId)
     {
         MWWorld::Ptr ptr = MWBase::Environment::get().getWorld()->searchPtrViaActorId(creatureActorId);
-        if (!ptr.isEmpty())
-        {
-            /*
-                Start of tes3mp change (major)
 
-                Send an ID_OBJECT_DELETE packet every time a summoned creature despawns
-            */
-            if (mwmp::Main::get().getCellController()->hasLocalAuthority(*ptr.getCell()->getCell()))
-            {
-                mwmp::ObjectList *objectList = mwmp::Main::get().getNetworking()->getObjectList();
-                objectList->reset();
-                objectList->packetOrigin = mwmp::CLIENT_GAMEPLAY;
-                objectList->addObjectGeneric(ptr);
-                objectList->sendObjectDelete();
-            }
-            /*
-                End of tes3mp change (major)
-            */
+        /*
+            Start of tes3mp change (major)
+
+            Do a cleanup here and send an ID_OBJECT_DELETE packet every time a summoned creature
+            despawns for the local player or for a local actor
+        */
+        if (!ptr.isEmpty() &&
+            (casterStats.getActorId() == getPlayer().getClass().getCreatureStats(getPlayer()).getActorId() || mwmp::Main::get().getCellController()->hasLocalAuthority(*ptr.getCell()->getCell())))
+        {
+            mwmp::ObjectList *objectList = mwmp::Main::get().getNetworking()->getObjectList();
+            objectList->reset();
+            objectList->packetOrigin = mwmp::CLIENT_GAMEPLAY;
+            objectList->addObjectGeneric(ptr);
+            objectList->sendObjectDelete();
+        /*
+            End of tes3mp change (major)
+        */
 
             const ESM::Static* fx = MWBase::Environment::get().getWorld()->getStore().get<ESM::Static>()
                     .search("VFX_Summon_End");
