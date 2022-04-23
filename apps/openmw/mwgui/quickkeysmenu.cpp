@@ -514,22 +514,21 @@ namespace MWGui
                     Instead of unilaterally using an item, send an ID_PLAYER_ITEM_USE packet and let the server
                     decide if the item actually gets used
                 */
+                /*
                 if (!item.getClass().getEquipmentSlots(item).first.empty() && !store.isEquipped(item))
                 {
-
-                    /*
                     MWBase::Environment::get().getWindowManager()->useItem(item);
 
                     // make sure that item was successfully equipped
                     if (!store.isEquipped(item))
                         return;
-                    */
-
-                    mwmp::Main::get().getLocalPlayer()->sendItemUse(item, true, MWMechanics::DrawState_Spell);
                 }
                 
-                //store.setSelectedEnchantItem(it);
-                //MWBase::Environment::get().getWorld()->getPlayer().setDrawState(MWMechanics::DrawState_Spell);
+                store.setSelectedEnchantItem(it);
+                MWBase::Environment::get().getWorld()->getPlayer().setDrawState(MWMechanics::DrawState_Spell);
+                */
+
+                mwmp::Main::get().getLocalPlayer()->sendItemUse(item, true, MWMechanics::DrawState_Spell);
                 /*
                     End of tes3mp change (major)
                 */
