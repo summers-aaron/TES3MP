@@ -550,6 +550,7 @@ void ObjectList::spawnObjects(MWWorld::CellStore* cellStore)
                             foundSummonedCreature = true;
                             break;
                         }
+                        ++it;
                     }
 
                     // If it is, update its creatureActorId
