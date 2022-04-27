@@ -39,7 +39,7 @@ namespace mwmp
 
         mHistory->setNeedKeyFocus(false);
 
-        windowState = 0;
+        windowState = CHAT_DISABLED;
         mCommandLine->setVisible(0);
         delay = 3; // 3 sec.
     }
@@ -49,7 +49,9 @@ namespace mwmp
         // Give keyboard focus to the combo box whenever the console is
         // turned on
         setEditState(0);
-        windowState = CHAT_ENABLED;
+
+        if (windowState == CHAT_DISABLED)
+            windowState = CHAT_ENABLED;
     }
 
     void GUIChat::onClose()
@@ -114,7 +116,7 @@ namespace mwmp
 
     void GUIChat::print(const std::string &msg, const std::string &color)
     {
-        if (windowState == 2 && !isVisible())
+        if (windowState == CHAT_HIDDENMODE && !isVisible())
         {
             setVisible(true);
         }
