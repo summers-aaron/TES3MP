@@ -123,6 +123,7 @@ namespace mwmp
         std::string rangedAmmoId;
 
         ESM::Position hitPosition;
+        ProjectileOrigin projectileOrigin;
 
         float damage = 0;
         float attackStrength = 0;
