@@ -1,3 +1,9 @@
+0.8.1
+-----
+
+* Allow GameSettings packet to override clientside VR settings
+* Include projectile origins in packets for attacking and casting, necessary for VR compatibility
+
 0.8.0
 -----
 
