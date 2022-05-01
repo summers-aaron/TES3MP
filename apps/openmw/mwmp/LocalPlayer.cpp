@@ -589,6 +589,7 @@ void LocalPlayer::updateAttackOrCast()
         getNetworking()->getPlayerPacket(ID_PLAYER_CAST)->Send();
 
         cast.shouldSend = false;
+        cast.hasProjectile = false;
     }
 }
 
