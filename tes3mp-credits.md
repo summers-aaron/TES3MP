@@ -47,6 +47,7 @@ Super special thanks
     greetasdf
     Jason Ginther
     Learwolf
+    Mads Buvik Sandvei (madsbuvi)
     Marc Zinnschlag (Zini)
     Mitch (Zaberius)
     scrawl
@@ -62,6 +63,7 @@ Special thanks
     Caledonii
     Camul
     David Wery
+    Delphik
     DestinedToDie
     Donovan Ando
     DrunkenMonk
@@ -70,7 +72,7 @@ Special thanks
     Ignatious
     James Wards of Gore Corps LAN Club (gorecorps.co.nz)
     Jeff Russell
-    Jeremiah
+    Jeremy M.
     Kyle Willey of Loreshaper Games (steempeak.com/@loreshapergames)
     Lewis Sadlier
     Luc Keating
@@ -89,5 +91,5 @@ Special thanks
     Thrud
     Zach Wild
     Zaphida
-    All the developers of OpenMW for creating an amazing open source project
+    OpenMW for creating an amazing open source project
 
