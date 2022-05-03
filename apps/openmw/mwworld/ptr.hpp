@@ -52,7 +52,16 @@ namespace MWWorld
 
                 std::stringstream str;
                 str<< "Bad LiveCellRef cast to "<<typeid(T).name()<<" from ";
-                if(mRef != nullptr) str<< getTypeName();
+                /*
+                    Start of tes3mp change (major)
+
+                    Print additional information
+                */
+                if(mRef != nullptr) str<< getTypeName() << " " << mRef->mRef.getRefId().c_str() << " " << mRef->mRef.getRefNum().mIndex << "-" << mRef->mRef.getMpNum();
+                /*
+                    End of tes3mp change (major)
+                */
+
                 else str<< "an empty object";
 
                 throw std::runtime_error(str.str());
@@ -128,7 +137,15 @@ namespace MWWorld
 
             std::stringstream str;
             str<< "Bad LiveCellRef cast to "<<typeid(T).name()<<" from ";
-            if(mRef != nullptr) str<< getTypeName();
+            /*
+                Start of tes3mp change (major)
+
+                Print additional information
+            */
+            if(mRef != nullptr) str<< getTypeName() << " " << mRef->mRef.getRefId().c_str() << " " << mRef->mRef.getRefNum().mIndex << "-" << mRef->mRef.getMpNum();
+            /*
+                End of tes3mp change (major)
+            */
             else str<< "an empty object";
 
             throw std::runtime_error(str.str());
