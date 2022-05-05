@@ -58,6 +58,7 @@ Special thanks
 --------------
 
     Aesylwinn
+    Battlerax - Various small fixes
     Boyos
     Brandon Guffey
     Caledonii
@@ -89,6 +90,7 @@ Special thanks
     Swims-in-Shadows aka StrayHALO_MAN
     Texafornian
     Thrud
+    Wraith
     Zach Wild
     Zaphida
     OpenMW for creating an amazing open source project
