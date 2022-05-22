@@ -200,12 +200,12 @@ namespace MWScript
                         last packet regarding its state did not already attempt to enable it (to prevent
                         packet spam)
                     */
-                    if (mwmp::Main::get().getLocalPlayer()->isLoggedIn())
+                    if (mwmp::Main::get().getLocalPlayer()->isLoggedIn() && ptr.isInCell())
                     {
                         unsigned char packetOrigin = ScriptController::getPacketOriginFromContextType(runtime.getContext().getContextType());
 
-                        if (packetOrigin == Interpreter::Context::CONSOLE || packetOrigin == Interpreter::Context::DIALOGUE ||
-                            (ptr.isInCell() && ptr.getRefData().getLastCommunicatedState() != MWWorld::RefData::StateCommunication::Enabled))
+                        if (packetOrigin == mwmp::CLIENT_CONSOLE || packetOrigin == mwmp::CLIENT_DIALOGUE ||
+                            ptr.getRefData().getLastCommunicatedState() != MWWorld::RefData::StateCommunication::Enabled)
                         {
                             ptr.getRefData().setLastCommunicatedState(MWWorld::RefData::StateCommunication::Enabled);
 
@@ -251,12 +251,12 @@ namespace MWScript
                         last packet regarding its state did not already attempt to disable it (to prevent
                         packet spam)
                     */
-                    if (mwmp::Main::get().getLocalPlayer()->isLoggedIn())
+                    if (mwmp::Main::get().getLocalPlayer()->isLoggedIn() && ptr.isInCell())
                     {
                         unsigned char packetOrigin = ScriptController::getPacketOriginFromContextType(runtime.getContext().getContextType());
 
-                        if (packetOrigin == Interpreter::Context::CONSOLE || packetOrigin == Interpreter::Context::DIALOGUE ||
-                            (ptr.isInCell() && ptr.getRefData().getLastCommunicatedState() != MWWorld::RefData::StateCommunication::Disabled))
+                        if (packetOrigin == mwmp::CLIENT_CONSOLE || packetOrigin == mwmp::CLIENT_DIALOGUE ||
+                            ptr.getRefData().getLastCommunicatedState() != MWWorld::RefData::StateCommunication::Disabled)
                         {
                             ptr.getRefData().setLastCommunicatedState(MWWorld::RefData::StateCommunication::Disabled);
 
