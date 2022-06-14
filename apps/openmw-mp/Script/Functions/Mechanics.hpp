@@ -286,9 +286,9 @@ public:
     * \param jailDays The number of days to spend jailed, where each day affects one skill point.
     * \param ignoreJailTeleportation Whether the player being teleported to the nearest jail
     *                                marker should be overridden.
-    * \param ignoreJailSkillIncrease Whether the player's Sneak and Security skills should be
-    *                                prevented from increasing as a result of the jailing,
-    *                                overriding default behavior.
+    * \param ignoreJailSkillIncreases Whether the player's Sneak and Security skills should be
+    *                                 prevented from increasing as a result of the jailing,
+    *                                 overriding default behavior.
     * \param jailProgressText The text that should be displayed while jailed.
     * \param jailEndText The text that should be displayed once the jailing period is over.
     * \return void

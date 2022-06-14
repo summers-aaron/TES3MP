@@ -828,7 +828,7 @@ public:
     /**
     * \brief Set the distance of the AI package associated with the current AI action.
     *
-    * \param duration The distance of the package.
+    * \param distance The distance of the package.
     * \return void
     */
     static void SetActorAIDistance(unsigned int distance) noexcept;

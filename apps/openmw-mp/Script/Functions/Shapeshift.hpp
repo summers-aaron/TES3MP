@@ -89,8 +89,6 @@ public:
     *
     * \param pid The player ID.
     * \param refId The creature refId.
-    * \param displaysCreatureName Whether the player's name appears as that of the creature
-    *                             when hovered over by others.
     * \return void
     */
     static void SetCreatureRefId(unsigned short pid, const char *refId) noexcept;

@@ -77,7 +77,7 @@ public:
     * \param groupname The groupname of the animation.
     * \param mode The mode of the animation.
     * \param count The number of times the animation should be played.
-    * \param bool Whether the animation should persist or not.
+    * \param persist Whether the animation should persist or not.
     * \return void
     */
     static void PlayAnimation(unsigned short pid, const char* groupname, int mode, int count, bool persist) noexcept;

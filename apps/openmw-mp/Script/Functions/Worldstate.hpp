@@ -266,7 +266,7 @@ public:
     /**
     * \brief Set the region affected by the next WorldRegionAuthority packet sent.
     *
-    * \param region The region.
+    * \param authorityRegion The region.
     * \return void
     */
     static void SetAuthorityRegion(const char* authorityRegion) noexcept;
@@ -364,7 +364,6 @@ public:
     /**
     * \brief Set the world's time scale in the write-only worldstate stored on the server.
     *
-    * \param pid The player ID.
     * \param timeScale The time scale.
     * \return void
     */
@@ -592,8 +591,10 @@ public:
     *        worldstate.
     *
     * \param pid The player ID attached to the packet.
-    * \param broadcast Whether this packet should be sent only to the attached player
-    *                  or to all players on the server.
+    * \param sendToOtherPlayers Whether this packet should be sent to players other than the
+    *                           player attached to the packet (false by default).
+    * \param skipAttachedPlayer Whether the packet should skip being sent to the player attached
+    *                           to the packet (false by default).
     * \return void
     */
     static void SendWorldMap(unsigned short pid, bool sendToOtherPlayers, bool skipAttachedPlayer) noexcept;
