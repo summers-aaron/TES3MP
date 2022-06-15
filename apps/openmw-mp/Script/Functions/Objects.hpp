@@ -723,7 +723,7 @@ public:
     * \brief Get the number of client local variables of the object at a certain index in the
     * read object list.
     *
-    * \param index The index of the object.
+    * \param objectIndex The index of the object.
     * \return The number of client local variables.
     */
     static unsigned int GetClientLocalsSize(unsigned int objectIndex) noexcept;
@@ -742,7 +742,7 @@ public:
     * \brief Get the type of the client local variable at a certain variableIndex in the client locals
     * of the object at a certain objectIndex in the read object list.
     *
-    * \param index The index of the object.
+    * \param objectIndex The index of the object.
     * \param variableIndex The index of the client local.
     * \return The variable type (0 for INTEGER, 1 for LONG, 2 for FLOAT).
     */
@@ -752,7 +752,7 @@ public:
     * \brief Get the integer value of the client local variable at a certain variableIndex in the client
     * locals of the object at a certain objectIndex in the read object list.
     *
-    * \param index The index of the object.
+    * \param objectIndex The index of the object.
     * \param variableIndex The index of the client local.
     * \return The integer value.
     */
@@ -762,7 +762,7 @@ public:
     * \brief Get the float value of the client local variable at a certain variableIndex in the client
     * locals of the object at a certain objectIndex in the read object list.
     *
-    * \param index The index of the object.
+    * \param objectIndex The index of the object.
     * \param variableIndex The index of the client local.
     * \return The float value.
     */
@@ -881,8 +881,8 @@ public:
     /**
     * \brief Set the container subaction type of the temporary object list stored on the server.
     *
-    * \param action The action type (0 for NONE, 1 for DRAG, 2 for DROP, 3 for TAKE_ALL,
-    *               4 for REPLY_TO_REQUEST, 5 for RESTOCK_RESULT).
+    * \param subAction The action type (0 for NONE, 1 for DRAG, 2 for DROP, 3 for TAKE_ALL,
+    *                  4 for REPLY_TO_REQUEST, 5 for RESTOCK_RESULT).
     * \return void
     */
     static void SetObjectListContainerSubAction(unsigned char subAction) noexcept;
@@ -960,7 +960,7 @@ public:
     *
     * Object durabilities are set through this value.
     *
-    * \param charge The enchantment charge.
+    * \param enchantmentCharge The enchantment charge.
     * \return void
     */
     static void SetObjectEnchantmentCharge(double enchantmentCharge) noexcept;
@@ -1062,7 +1062,7 @@ public:
     /**
     * \brief Set the droppedByPlayer state of the temporary object stored on the server.
     *
-    * \param droppedByPlayer Whether the object has been dropped by a player or not.
+    * \param dropedByPlayerState Whether the object has been dropped by a player or not.
     * \return void
     */
     static void SetObjectDroppedByPlayerState(bool dropedByPlayerState) noexcept;
@@ -1247,7 +1247,7 @@ public:
     /**
     * \brief Set the enchantment charge of the temporary container item stored on the server.
     *
-    * \param charge The enchantment charge.
+    * \param enchantmentCharge The enchantment charge.
     * \return void
     */
     static void SetContainerItemEnchantmentCharge(double enchantmentCharge) noexcept;
@@ -1255,7 +1255,7 @@ public:
     /**
     * \brief Set the soul of the temporary container item stored on the server.
     *
-    * \param refId The soul.
+    * \param soul The soul.
     * \return void
     */
     static void SetContainerItemSoul(const char* soul) noexcept;
@@ -1354,9 +1354,10 @@ public:
     /**
     * \brief Send an ObjectDelete packet.
     *
-    * \param broadcast Whether this packet should be sent only to the player for whom the current
-    *                  object list was initialized or to everyone on the server.
-    *
+    * \param sendToOtherPlayers Whether this packet should be sent to players other than the
+    *                           player attached to the packet (false by default).
+    * \param skipAttachedPlayer Whether the packet should skip being sent to the player attached
+    *                           to the packet (false by default).
     * \return void
     */
     static void SendObjectDelete(bool sendToOtherPlayers, bool skipAttachedPlayer) noexcept;
@@ -1371,6 +1372,7 @@ public:
     * \return void
     */
     static void SendObjectLock(bool sendToOtherPlayers, bool skipAttachedPlayer) noexcept;
+
     /**
     * \brief Send an ObjectDialogueChoice packet.
     *
@@ -1407,9 +1409,10 @@ public:
     /**
     * \brief Send an ObjectTrap packet.
     *
-    * \param broadcast Whether this packet should be sent only to the player for whom the current
-    *                  object list was initialized or to everyone on the server.
-    *
+    * \param sendToOtherPlayers Whether this packet should be sent to players other than the
+    *                           player attached to the packet (false by default).
+    * \param skipAttachedPlayer Whether the packet should skip being sent to the player attached
+    *                           to the packet (false by default).
     * \return void
     */
     static void SendObjectTrap(bool sendToOtherPlayers, bool skipAttachedPlayer) noexcept;

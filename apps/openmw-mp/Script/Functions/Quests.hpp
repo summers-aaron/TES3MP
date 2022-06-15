@@ -66,9 +66,9 @@ public:
     * \param quest The quest of the journal item.
     * \param index The quest index of the journal item.
     * \param actorRefId The actor refId of the journal item.
-    * \param The daysPassed for the journal item.
-    * \param The month for the journal item.
-    * \param The day of the month for the journal item.
+    * \param daysPassed The daysPassed for the journal item.
+    * \param month The month for the journal item.
+    * \param day The day of the month for the journal item.
     * \return void
     */
     static void AddJournalEntryWithTimestamp(unsigned short pid, const char* quest, unsigned int index, const char* actorRefId,

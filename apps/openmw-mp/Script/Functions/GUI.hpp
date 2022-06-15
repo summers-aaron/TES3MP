@@ -116,7 +116,7 @@ public:
     *
     * \param pid The player ID whose quick key changes should be used.
     * \param slot The slot to be used.
-    * \param slot The type of the quick key (0 for ITEM, 1 for ITEM_MAGIC, 2 for MAGIC, 3 for UNASSIGNED).
+    * \param type The type of the quick key (0 for ITEM, 1 for ITEM_MAGIC, 2 for MAGIC, 3 for UNASSIGNED).
     * \param itemId The itemId of the item.
     * \return void
     */

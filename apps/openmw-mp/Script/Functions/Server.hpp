@@ -205,7 +205,7 @@ public:
     /**
      * \brief Checking if the server requires a password to connect.
      *
-     * @return
+     * \return Whether the server requires a password
      */
     static bool HasPassword() noexcept;
 
@@ -230,7 +230,7 @@ public:
     /**
     * \brief Set the game mode of the server, as displayed in the server browser.
     *
-    * \param name The new game mode.
+    * \param gameMode The new game mode.
     * \return void
     */
     static void SetGameMode(const char* gameMode) noexcept;
